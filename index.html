@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthy Music - AI Music for Health</title>
+    <style>
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            --primary: #b8c6db;
+            --secondary: #f5e6fa;
+            --accent: #fbc2eb;
+            --pastel-blue: #a7c7e7;
+            --pastel-purple: #e0c3fc;
+            --pastel-pink: #fbc2eb;
+            --teal: #14b8a6;
+            --coral: #f97316;
+            --mint: #10b981;
+            --warm-orange: #fb923c;
+            --soft-teal: #5eead4;
+            --light-coral: #fdba74;
+            --glass-bg: rgba(255, 255, 255, 0.28);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass-blur: 18px;
+            --text-dark: #222;
+            --text-light: #fff;
+            --footer-bg: #b8c6db;
+        }
+
+        /* ===== BASE STYLES ===== */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--pastel-blue) 0%, var(--pastel-pink) 100%);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        .hidden { 
+            display: none !important; 
+        }
+
+        /* ===== LAYOUT COMPONENTS ===== */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header, footer {
+            background: #8b5cf6;
+            color: var(--text-light);
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 32px #0001;
+        }
+
+        .logo {
+            font-size: 1.7rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        /* ===== GLASSMORPHISM EFFECTS ===== */
+        .glass {
+            background: var(--glass-bg);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1.5px solid var(--glass-border);
+        }
+
+        /* ===== PAGE LAYOUTS ===== */
+        .page {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* ===== SIGN-IN PAGE STYLES ===== */
+        .signin-form {
+            min-width: 320px;
+            max-width: 350px;
+            margin: 2rem auto;
+            padding: 2.5rem 2rem 2rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .signin-form h1 {
+            margin-bottom: 0.5rem;
+        }
+
+        .signin-form .input-group {
+            width: 100%;
+            position: relative;
+        }
+
+        .signin-form input {
+            width: 100%;
+            padding: 1.1rem 1rem 0.7rem 1rem;
+            border-radius: 12px;
+            border: 1.5px solid #ccc;
+            font-size: 1rem;
+            background: var(--glass-bg);
+            color: var(--text-dark);
+            outline: none;
+            transition: border 0.3s, box-shadow 0.3s;
+        }
+
+        .signin-form input:focus {
+            border: 1.5px solid var(--teal);
+            box-shadow: 0 0 8px 2px #14b8a688;
+        }
+
+        .signin-form label {
+            position: absolute;
+            left: 1rem;
+            top: 1.1rem;
+            color: #888;
+            font-size: 1rem;
+            pointer-events: none;
+            transition: 0.3s cubic-bezier(.4,0,.2,1);
+            background: transparent;
+        }
+
+        .signin-form input:focus + label,
+        .signin-form input:not(:placeholder-shown) + label {
+            top: -0.7rem;
+            left: 0.8rem;
+            font-size: 0.85rem;
+            color: var(--teal);
+            background: var(--glass-bg);
+            padding: 0 0.3rem;
+        }
+
+        .signin-form button {
+            background: var(--teal);
+            color: var(--text-light);
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 12px #14b8a655;
+            margin-top: 1rem;
+        }
+
+        .signin-form button:hover {
+            background: var(--soft-teal);
+            box-shadow: 0 4px 24px #5eead455;
+        }
+
+        /* ===== MUSIC ANIMATIONS ===== */
+        .music-notes {
+            position: absolute;
+            left: 0; right: 0; top: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .note {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.6;
+            animation: gentleSpin 6s ease-in-out infinite;
+        }
+
+        .note1 { left: 25%; top: 15%; animation-delay: 0s; color: #14b8a6; }
+        .note2 { left: 75%; top: 20%; animation-delay: 1.5s; color: #f97316; }
+        .note3 { left: 20%; top: 85%; animation-delay: 3s; color: #10b981; }
+        .note4 { left: 80%; top: 80%; animation-delay: 4.5s; color: #fb923c; }
+
+        @keyframes gentleSpin {
+            0% { transform: rotate(0deg) scale(1); opacity: 0.6; }
+            25% { transform: rotate(22.5deg) scale(1.05); opacity: 0.8; }
+            50% { transform: rotate(45deg) scale(1); opacity: 0.6; }
+            75% { transform: rotate(67.5deg) scale(1.05); opacity: 0.8; }
+            100% { transform: rotate(90deg) scale(1); opacity: 0.6; }
+        }
+
+        .music-note-spin {
+            display: inline-block;
+            animation: simpleSpin 3s linear infinite;
+            margin-left: 0.5rem;
+        }
+
+        .music-note-corner {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            animation: simpleSpin 4s linear infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes simpleSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== INSTRUMENT DECORATIONS ===== */
+        .ground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(to top, #666666, #888888);
+            border-top: 2px solid #555555;
+            z-index: 0;
+        }
+
+        .instruments {
+            position: absolute;
+            pointer-events: none;
+            z-index: 2;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+        }
+
+        .instrument-left {
+            position: absolute;
+            left: 5%;
+            bottom: 10px;
+            width: 160px;
+            height: 160px;
+            opacity: 0.9;
+            transform: rotate(-20deg) perspective(300px) rotateY(-10deg);
+        }
+
+        .instrument-right {
+            position: absolute;
+            right: 8%;
+            bottom: 15px;
+            width: 180px;
+            height: 180px;
+            opacity: 0.85;
+            transform: rotate(25deg) perspective(300px) rotateY(15deg);
+        }
+
+        .instrument-center-left {
+            position: absolute;
+            left: 30%;
+            bottom: 8px;
+            width: 140px;
+            height: 140px;
+            opacity: 0.9;
+            transform: rotate(-15deg) perspective(250px) rotateY(-8deg);
+        }
+
+        .instrument-center-right {
+            position: absolute;
+            right: 30%;
+            bottom: 12px;
+            width: 120px;
+            height: 120px;
+            opacity: 0.9;
+            transform: rotate(18deg) perspective(250px) rotateY(12deg);
+        }
+
+        .instrument-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(6px 12px 16px rgba(0,0,0,0.5));
+        }
+
+        /* ===== FEATURE PAGE STYLES ===== */
+        .features-list {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .feature {
+            flex: 1 1 250px;
+            min-width: 220px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature.glass {
+            background: var(--glass-bg);
+            border: 1.5px solid var(--glass-border);
+        }
+
+        .features-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .features-desc {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .next-btn {
+            display: block;
+            margin: 2rem auto 0 auto;
+            background: var(--pastel-purple);
+            color: var(--text-dark);
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 12px #e0c3fc55;
+        }
+
+        .next-btn:hover {
+            background: var(--pastel-pink);
+            box-shadow: 0 4px 24px #fbc2eb55;
+        }
+
+        /* ===== PAGE 2 SPECIFIC STYLES ===== */
+        #page2 .feature {
+            position: relative;
+            overflow: hidden;
+        }
+
+        #page2 .feature button {
+            background: var(--coral);
+            color: var(--text-light);
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        #page2 .feature button:hover {
+            background: var(--light-coral);
+        }
+
+        #page2 .feature svg polyline {
+            stroke: var(--mint);
+        }
+
+        #page2 .next-btn {
+            background: var(--mint);
+            color: var(--text-light);
+        }
+
+        #page2 .next-btn:hover {
+            background: var(--soft-teal);
+        }
+
+        #page2 #backToPage1 {
+            background: var(--warm-orange);
+            color: var(--text-light);
+        }
+
+        #page2 #backToPage1:hover {
+            background: var(--light-coral);
+        }
+
+        .hover-prompt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(20, 184, 166, 0.85);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* ===== PRICING & TESTIMONIALS ===== */
+        .pricing-table {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .pricing-plan {
+            flex: 1 1 250px;
+            min-width: 220px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .pricing-plan.glass {
+            background: var(--glass-bg);
+            border: 1.5px solid var(--glass-border);
+        }
+
+        .pricing-plan h3 {
+            margin-top: 0;
+        }
+
+        .pricing-plan button {
+            background: var(--pastel-purple);
+            color: var(--text-dark);
+            border: none;
+            padding: 0.7rem 2rem;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 12px #e0c3fc55;
+        }
+
+        .pricing-plan button:hover {
+            background: var(--pastel-pink);
+            box-shadow: 0 4px 24px #fbc2eb55;
+        }
+
+        .testimonials-list {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .testimonial {
+            flex: 1 1 300px;
+            min-width: 220px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial.glass {
+            background: var(--glass-bg);
+            border: 1.5px solid var(--glass-border);
+        }
+
+        /* ===== CONTACT FORM ===== */
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-width: 400px;
+            margin: 2rem auto 0 auto;
+        }
+
+        .contact-form .input-group {
+            position: relative;
+        }
+
+        .contact-form input, .contact-form textarea {
+            padding: 1.1rem 1rem 0.7rem 1rem;
+            border-radius: 12px;
+            border: 1.5px solid #ccc;
+            font-size: 1rem;
+            background: var(--glass-bg);
+            color: var(--text-dark);
+            outline: none;
+            transition: border 0.3s, box-shadow 0.3s;
+        }
+
+        .contact-form input:focus, .contact-form textarea:focus {
+            border: 1.5px solid var(--pastel-purple);
+            box-shadow: 0 0 8px 2px #e0c3fc88;
+        }
+
+        .contact-form label {
+            position: absolute;
+            left: 1rem;
+            top: 1.1rem;
+            color: #888;
+            font-size: 1rem;
+            pointer-events: none;
+            transition: 0.3s cubic-bezier(.4,0,.2,1);
+            background: transparent;
+        }
+
+        .contact-form input:focus + label,
+        .contact-form input:not(:placeholder-shown) + label {
+            top: -0.7rem;
+            left: 0.8rem;
+            font-size: 0.85rem;
+            color: var(--pastel-purple);
+            background: var(--glass-bg);
+            padding: 0 0.3rem;
+        }
+
+        .contact-form button {
+            background: var(--pastel-purple);
+            color: var(--text-dark);
+            border: none;
+            padding: 1rem;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 12px #e0c3fc55;
+        }
+
+        .contact-form button:hover {
+            background: var(--pastel-pink);
+            box-shadow: 0 4px 24px #fbc2eb55;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .footer-nav, .footer-social {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-social a {
+            color: var(--text-dark);
+            font-size: 1.3rem;
+            text-decoration: none;
+        }
+
+        .footer-social a:hover {
+            color: var(--pastel-purple);
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 800px) {
+            .features-list, .testimonials-list, .pricing-table, .footer-content { 
+                flex-direction: column; 
+                align-items: stretch; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="logo">Healthy Music</div>
+        </div>
+    </header>
+    <!-- Page 1: Sign In -->
+    <div id="page1" class="page">
+        <div class="ground"></div>
+        <form class="signin-form glass" id="signinForm" autocomplete="off" style="position: relative;">
+            <div class="music-note-corner">&#127925;</div>
+            <h1>Welcome to Healthy Music<span class="music-note-spin">&#127925;</span></h1>
+            <div style="margin-bottom: 1rem; color: #888; font-size: 1.05rem; text-align: center;">Please enter your name and email to continue.</div>
+            <div class="input-group" style="width: 100%; margin-bottom: 1.5rem;">
+                <input type="text" id="signinName" placeholder="Name" required style="width: 100%;">
+            </div>
+            <div class="input-group" style="width: 100%; margin-bottom: 0.5rem;">
+                <input type="email" id="signinEmail" placeholder="Email Address" required style="width: 100%;">
+                <div id="emailError" style="color: #d9534f; font-size: 0.95rem; margin-top: 0.3rem; display: none;">Please enter a valid email address from a supported provider (Gmail, Yahoo, Outlook, etc.).</div>
+            </div>
+            <button type="submit">Sign In <span style="font-size:1.2em;">&#127925;</span></button>
+        </form>
+        <div class="instruments">
+            <!-- Grand Piano -->
+            <div class="instrument-left">
+                <svg class="instrument-svg" viewBox="0 0 300 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Piano Bottom/Stand (3D perspective) -->
+                    <rect x="40" y="180" width="220" height="40" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+                    <rect x="45" y="185" width="210" height="30" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <!-- Piano Legs (3D perspective) - Moved out more like a bench -->
+                    <rect x="40" y="220" width="15" height="25" fill="#8B4513" stroke="#654321" stroke-width="2"/>
+                    <rect x="245" y="220" width="15" height="25" fill="#8B4513" stroke="#654321" stroke-width="2"/>
+                    <!-- Visible Black Table Legs -->
+                    <rect x="25" y="180" width="10" height="25" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+                    <rect x="25" y="205" width="10" height="25" fill="#1A1A1A" stroke="#000000" stroke-width="2" transform="rotate(30 30 217.5)"/>
+                    <!-- Piano Body (3D perspective) - Rectangular and mirrored -->
+                    <rect x="30" y="60" width="240" height="120" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="3"/>
+                    <!-- Piano Side Panel (3D depth) - Mirrored -->
+                    <rect x="30" y="60" width="20" height="120" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+                    <!-- Piano Rim (3D perspective) - Rectangular -->
+                    <rect x="30" y="60" width="240" height="5" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+                    <!-- Piano Keys (3D perspective) - Rotated 180 degrees, more realistic -->
+                    <rect x="40" y="118" width="220" height="60" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="2"/>
+                    <!-- 3D Keyboard Surface -->
+                    <rect x="42" y="120" width="216" height="56" fill="url(#keyboardGradient)" stroke="#CCCCCC" stroke-width="1"/>
+                    <!-- Simplified Key Divisions -->
+                    <line x1="54" y1="120" x2="54" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                    <line x1="68" y1="120" x2="68" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                    <line x1="82" y1="120" x2="82" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                    <line x1="96" y1="120" x2="96" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                    <line x1="110" y1="120" x2="110" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                    <line x1="124" y1="120" x2="124" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                    <line x1="138" y1="120" x2="138" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                    <line x1="152" y1="120" x2="152" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                    <line x1="166" y1="120" x2="166" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                    <line x1="180" y1="120" x2="180" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                    <line x1="194" y1="120" x2="194" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                    <line x1="208" y1="120" x2="208" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                    <line x1="222" y1="120" x2="222" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                    <line x1="236" y1="120" x2="236" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                    <line x1="250" y1="120" x2="250" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                    <!-- Black Keys (3D perspective) - Rotated 180 degrees -->
+                    <rect x="49" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <rect x="63" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <rect x="77" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <rect x="91" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <rect x="105" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <rect x="119" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <rect x="133" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <rect x="147" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <rect x="161" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <rect x="175" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <rect x="189" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <rect x="203" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <rect x="217" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <rect x="231" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <rect x="245" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <!-- Piano Pedals (3D perspective) -->
+                    <rect x="120" y="190" width="10" height="20" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <rect x="140" y="190" width="10" height="20" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <rect x="160" y="190" width="10" height="20" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                    <!-- Piano Brand -->
+                    <text x="150" y="110" text-anchor="middle" fill="#666666" font-size="8" font-family="Arial">STEINWAY</text>
+                    <!-- 3D Shadow on ground -->
+                    <ellipse cx="150" cy="245" rx="100" ry="15" fill="rgba(0,0,0,0.3)"/>
+                    <!-- Keyboard Gradient Definition -->
+                    <defs>
+                        <linearGradient id="keyboardGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1"/>
+                            <stop offset="50%" style="stop-color:#F8F8F8;stop-opacity:1"/>
+                            <stop offset="100%" style="stop-color:#E8E8E8;stop-opacity:1"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+    </div>
+    <!-- Page 2: Features -->
+    <div id="page2" class="page hidden">
+        <div class="container">
+            <div class="features-title">Your Healthy Music Dashboard</div>
+            <div class="features-desc">Explore your personalized features below.</div>
+            <div class="features-list">
+                <div class="feature glass" id="healthBox" style="cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;" onclick="goToHealthPage()">
+                    <h3>Health Tracking <span style="font-size:1.2em;">&#128200;</span></h3>
+                    <p>Monitor your progress and see how music impacts your well-being.</p>
+                    <div style="margin-top:1.5rem;">
+                        <svg width="100%" height="40" viewBox="0 0 200 40">
+                            <polyline points="0,30 20,20 40,25 60,10 80,15 100,5 120,20 140,10 160,25 180,15 200,30" fill="none" stroke="#10b981" stroke-width="3"/>
+                        </svg>
+                    </div>
+                    <button style="margin-top:1rem; background:var(--mint); color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: background 0.2s;">See My Progress</button>
+                </div>
+                <div class="feature glass" id="sessionsBox" style="cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;" onclick="goToSessionsPage()">
+                    <h3>Guided Sessions <span style="font-size:1.2em;">&#119070;</span></h3>
+                    <p>Enjoy meditation, relaxation, and focus sessions with expert guidance.</p>
+                    <button style="margin-top:1rem; background:var(--coral); position: relative;" onmouseover="showHoverText(this)" onmouseout="hideHoverText(this)">Start Session</button>
+                    <div class="hover-text" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #87CEEB; font-size: 0.8rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; display: none;">go to page</div>
+                </div>
+                <div class="feature glass" id="playlistBox" style="cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;" onclick="goToPlaylistPage()">
+                    <h3>Personalized Playlists <span style="font-size:1.2em;">&#127925;</span></h3>
+                    <p>AI curates music tailored to your mood and health goals.</p>
+                    <button style="margin-top:1rem; background:var(--coral); position: relative;" onmouseover="showHoverText(this)" onmouseout="hideHoverText(this)">Play Playlist</button>
+                    <div class="hover-text" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #87CEEB; font-size: 0.8rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; display: none;">go to page</div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 3rem;">
+                <button class="next-btn" id="backToPage1" style="background:var(--warm-orange);">&#8592; Back</button>
+                <button class="next-btn" id="toPage3">Next &#8594;</button>
+            </div>
+        </div>
+    </div>
+    <!-- Page 3: Pricing, Testimonials, Contact -->
+    <div id="page3" class="page hidden">
+        <div class="container">
+            <h2 style="text-align:center;">Pricing</h2>
+            <div class="pricing-table">
+                <div class="pricing-plan glass">
+                    <h3>Free <span style="font-size:1.2em;">&#127925;</span></h3>
+                    <p><strong>$0</strong>/month</p>
+                    <p>Access to basic playlists and limited sessions.</p>
+                    <button>Sign Up</button>
+                </div>
+                <div class="pricing-plan glass">
+                    <h3>Premium <span style="font-size:1.2em;">&#119070;</span></h3>
+                    <p><strong>$9.99</strong>/month</p>
+                    <p>Unlimited playlists, advanced health tracking, and all guided sessions.</p>
+                    <button>Start Free Trial</button>
+                </div>
+            </div>
+            <h2 style="text-align:center; margin-top:3rem;">What Our Users Say</h2>
+            <div class="testimonials-list">
+                <div class="testimonial glass">
+                    <p>"Healthy Music helped me manage my stress and sleep better every night!" <span style="font-size:1.2em;">&#127926;</span></p>
+                    <strong>- Alex</strong>
+                </div>
+                <div class="testimonial glass">
+                    <p>"The AI playlists are spot on. I feel more energized and focused at work." <span style="font-size:1.2em;">&#127925;</span></p>
+                    <strong>- Jamie</strong>
+                </div>
+                <div class="testimonial glass">
+                    <p>"I love the guided sessions. They make meditation so much easier for me." <span style="font-size:1.2em;">&#119070;</span></p>
+                    <strong>- Taylor</strong>
+                </div>
+            </div>
+            <h2 style="text-align:center; margin-top:3rem;">Contact Us</h2>
+            <form class="contact-form" onsubmit="event.preventDefault(); alert('Thank you for contacting us!');">
+                <div class="input-group">
+                    <input type="text" placeholder=" " id="name" required>
+                    <label for="name">Your Name</label>
+                </div>
+                <div class="input-group">
+                    <input type="email" placeholder=" " id="email" required>
+                    <label for="email">Your Email</label>
+                </div>
+                <div class="input-group">
+                    <textarea rows="4" placeholder=" " id="message" required></textarea>
+                    <label for="message">Your Message</label>
+                </div>
+                <button type="submit">Send Message <span style="font-size:1.2em;">&#127925;</span></button>
+            </form>
+            <div style="display: flex; justify-content: flex-start; margin-top: 3rem;">
+                <button class="next-btn" id="backToPage2" style="background:var(--warm-orange);">&#8592; Back</button>
+            </div>
+        </div>
+    </div>
+    <!-- Page 4: Health Tracking -->
+    <div id="page4" class="page hidden">
+        <div class="container">
+            <h2 style="text-align:center; margin-bottom:2rem;">Health Tracking Dashboard</h2>
+            <div class="glass" style="padding: 2rem; margin-bottom: 2rem;">
+                <h3>Your Weekly Progress</h3>
+                <div style="display: flex; gap: 1rem; margin: 1rem 0;">
+                    <div style="flex: 1; text-align: center;">
+                        <div style="font-size: 2rem; color: var(--mint);">85%</div>
+                        <div>Stress Reduction</div>
+                    </div>
+                    <div style="flex: 1; text-align: center;">
+                        <div style="font-size: 2rem; color: var(--teal);">92%</div>
+                        <div>Sleep Quality</div>
+                    </div>
+                    <div style="flex: 1; text-align: center;">
+                        <div style="font-size: 2rem; color: var(--coral);">78%</div>
+                        <div>Focus Time</div>
+                    </div>
+                </div>
+            </div>
+            <button class="next-btn" onclick="goBackToPage2()" style="background:var(--mint);">&#8592; Back to Dashboard</button>
+        </div>
+    </div>
+    <!-- Page 5: Guided Sessions -->
+    <div id="page5" class="page hidden">
+        <div class="container">
+            <h2 style="text-align:center; margin-bottom:2rem;">Guided Sessions</h2>
+            <div class="glass" style="padding: 2rem; margin-bottom: 2rem;">
+                <h3>Available Sessions</h3>
+                <div style="display: grid; gap: 1rem; margin: 1rem 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                        <span>Morning Meditation (10 min)</span>
+                        <button style="background: var(--coral); color: white; border: none; padding: 0.5rem 1rem; border-radius: 15px;">Start</button>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                        <span>Stress Relief (15 min)</span>
+                        <button style="background: var(--coral); color: white; border: none; padding: 0.5rem 1rem; border-radius: 15px;">Start</button>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                        <span>Deep Focus (20 min)</span>
+                        <button style="background: var(--coral); color: white; border: none; padding: 0.5rem 1rem; border-radius: 15px;">Start</button>
+                    </div>
+                </div>
+            </div>
+            <button class="next-btn" onclick="goBackToPage2()" style="background:var(--coral);">&#8592; Back to Dashboard</button>
+        </div>
+    </div>
+    <!-- Page 6: Playlists -->
+    <div id="page6" class="page hidden">
+        <div class="container">
+            <h2 style="text-align:center; margin-bottom:2rem;">Your Playlists</h2>
+            <div class="glass" style="padding: 2rem; margin-bottom: 2rem;">
+                <h3>AI-Generated Playlists</h3>
+                <div style="display: grid; gap: 1rem; margin: 1rem 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                        <span>🎵 Energizing Morning Mix</span>
+                        <button style="background: var(--coral); color: white; border: none; padding: 0.5rem 1rem; border-radius: 15px;">Play</button>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                        <span>🎵 Calm Evening Vibes</span>
+                        <button style="background: var(--coral); color: white; border: none; padding: 0.5rem 1rem; border-radius: 15px;">Play</button>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                        <span>🎵 Focus & Productivity</span>
+                        <button style="background: var(--coral); color: white; border: none; padding: 0.5rem 1rem; border-radius: 15px;">Play</button>
+                    </div>
+                </div>
+            </div>
+            <button class="next-btn" onclick="goBackToPage2()" style="background:var(--coral);">&#8592; Back to Dashboard</button>
+        </div>
+    </div>
+    <footer>
+        <div class="container footer-content">
+            <div class="logo">Healthy Music</div>
+            <div class="footer-social">
+                <a href="#" title="Twitter">&#x1F426;</a>
+                <a href="#" title="Facebook">&#x1F5E8;</a>
+                <a href="#" title="Instagram">&#x1F33F;</a>
+            </div>
+            <div style="flex: 1 1 100%; text-align: center; margin-top: 1rem;">
+                &copy; 2024 Healthy Music. All rights reserved.
+            </div>
+        </div>
+    </footer>
+    <script>
+    // Email validation function
+    function isValidEmail(email) {
+        // Basic email format check
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+            return false;
+        }
+        
+        // Check for common email providers
+        const validDomains = [
+            'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com',
+            'protonmail.com', 'aol.com', 'mail.com', 'yandex.com', 'zoho.com',
+            'gmx.com', 'live.com', 'msn.com', 'me.com', 'mac.com'
+        ];
+        
+        const domain = email.split('@')[1].toLowerCase();
+        return validDomains.includes(domain);
+    }
+    
+    // SPA navigation logic
+    const page1 = document.getElementById('page1');
+    const page2 = document.getElementById('page2');
+    const page3 = document.getElementById('page3');
+    const page4 = document.getElementById('page4');
+    const page5 = document.getElementById('page5');
+    const page6 = document.getElementById('page6');
+    
+    document.getElementById('signinForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Email validation
+        const nameInput = document.getElementById('signinName');
+        const emailInput = document.getElementById('signinEmail');
+        const emailError = document.getElementById('emailError');
+        
+        if (!isValidEmail(emailInput.value)) {
+            emailError.textContent = 'Please enter a valid email address from a supported provider (Gmail, Yahoo, Outlook, etc.).';
+            emailError.style.display = 'block';
+            emailInput.focus();
+            return;
+        } else {
+            emailError.style.display = 'none';
+        }
+        
+        // Clear input fields and hide their content
+        nameInput.value = '';
+        emailInput.value = '';
+        page1.classList.add('hidden');
+        page2.classList.remove('hidden');
+    });
+    
+    document.getElementById('toPage3').addEventListener('click', function() {
+        page2.classList.add('hidden');
+        page3.classList.remove('hidden');
+        window.scrollTo(0, 0);
+    });
+    document.getElementById('backToPage1').addEventListener('click', function() {
+        page2.classList.add('hidden');
+        page1.classList.remove('hidden');
+        window.scrollTo(0, 0);
+    });
+    document.getElementById('backToPage2').addEventListener('click', function() {
+        page3.classList.add('hidden');
+        page2.classList.remove('hidden');
+        window.scrollTo(0, 0);
+    });
+    
+    // New page navigation functions
+    function goToHealthPage() {
+        page2.classList.add('hidden');
+        page4.classList.remove('hidden');
+        window.scrollTo(0, 0);
+    }
+    
+    function goToSessionsPage() {
+        page2.classList.add('hidden');
+        page5.classList.remove('hidden');
+        window.scrollTo(0, 0);
+    }
+    
+    function goToPlaylistPage() {
+        page2.classList.add('hidden');
+        page6.classList.remove('hidden');
+        window.scrollTo(0, 0);
+    }
+    
+    function goBackToPage2() {
+        page4.classList.add('hidden');
+        page5.classList.add('hidden');
+        page6.classList.add('hidden');
+        page2.classList.remove('hidden');
+        window.scrollTo(0, 0);
+    }
+    
+    // Hover effects for feature boxes
+    document.addEventListener('DOMContentLoaded', function() {
+        const healthBox = document.getElementById('healthBox');
+        
+        if (healthBox) {
+            healthBox.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.01)';
+                this.style.boxShadow = '0 6px 20px 0 rgba(31, 38, 135, 0.15)';
+                this.querySelector('.hover-prompt').style.opacity = '1';
+            });
+            
+            healthBox.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.style.boxShadow = '0 8px 32px 0 rgba(31, 38, 135, 0.1)';
+                this.querySelector('.hover-prompt').style.opacity = '0';
+            });
+        }
+    });
+    
+    // Button hover text functions
+    function showHoverText(button) {
+        const hoverText = button.parentElement.querySelector('.hover-text');
+        if (hoverText) {
+            hoverText.style.display = 'block';
+            hoverText.style.opacity = '1';
+        }
+    }
+    
+    function hideHoverText(button) {
+        const hoverText = button.parentElement.querySelector('.hover-text');
+        if (hoverText) {
+            hoverText.style.opacity = '0';
+            setTimeout(() => {
+                hoverText.style.display = 'none';
+            }, 300);
+        }
+    }
+    
+    // Email input animation: glow on focus (contact form on page 3)
+    const emailInput = document.getElementById('email');
+    if(emailInput) {
+        emailInput.addEventListener('focus', function() {
+            emailInput.style.boxShadow = '0 0 16px 4px #e0c3fc88';
+            emailInput.style.borderColor = '#e0c3fc';
+        });
+        emailInput.addEventListener('blur', function() {
+            emailInput.style.boxShadow = '';
+            emailInput.style.borderColor = '';
+        });
+    }
+    // Animate music notes (randomize horizontal drift on each animation loop)
+    document.querySelectorAll('.music-notes .note').forEach(note => {
+        note.addEventListener('animationiteration', () => {
+            const left = Math.random() * 80 + 5;
+            note.style.left = left + '%';
+        });
+    });
+    </script>
+</body>
+</html>
