@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - MajorChord</title>
+    <style>
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            --primary: #b8c6db;
+            --secondary: #f5e6fa;
+            --accent: #fbc2eb;
+            --pastel-blue: #a7c7e7;
+            --pastel-purple: #e0c3fc;
+            --pastel-pink: #fbc2eb;
+            --teal: #14b8a6;
+            --coral: #f97316;
+            --mint: #10b981;
+            --warm-orange: #fb923c;
+            --soft-teal: #5eead4;
+            --light-coral: #fdba74;
+            --glass-bg: rgba(255, 255, 255, 0.28);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass-blur: 18px;
+            --text-dark: #222;
+            --text-light: #fff;
+            --error-color: #ef4444;
+            --success-color: #10b981;
+        }
+
+        /* ===== BASE STYLES ===== */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--pastel-blue) 0%, var(--pastel-pink) 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hidden { 
+            display: none !important; 
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: #8b5cf6;
+            color: var(--text-light);
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 32px #0001;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.7rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ===== GLASSMORPHISM EFFECTS ===== */
+        .glass {
+            background: var(--glass-bg);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1.5px solid var(--glass-border);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .auth-container {
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .auth-form {
+            flex: 1;
+            max-width: 400px;
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .auth-form h1 {
+            margin-bottom: 0.5rem;
+            text-align: center;
+            color: var(--text-dark);
+        }
+
+        .auth-form .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 1.1rem 1rem 0.7rem 1rem;
+            border-radius: 12px;
+            border: 1.5px solid #ccc;
+            font-size: 1rem;
+            background: var(--glass-bg);
+            color: var(--text-dark);
+            outline: none;
+            transition: border 0.3s, box-shadow 0.3s;
+            box-sizing: border-box;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border: 1.5px solid var(--teal);
+            box-shadow: 0 0 8px 2px #14b8a688;
+        }
+
+        .input-group input.error, .input-group select.error {
+            border: 1.5px solid var(--error-color);
+            box-shadow: 0 0 8px 2px #ef444488;
+        }
+
+        .input-group label {
+            position: absolute;
+            left: 1rem;
+            top: 1.1rem;
+            color: #888;
+            font-size: 1rem;
+            pointer-events: none;
+            transition: 0.3s cubic-bezier(.4,0,.2,1);
+            background: transparent;
+        }
+
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+            top: -0.7rem;
+            left: 0.8rem;
+            font-size: 0.85rem;
+            color: var(--teal);
+            background: var(--glass-bg);
+            padding: 0 0.3rem;
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .success-message {
+            color: var(--success-color);
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .auth-form button {
+            background: var(--teal);
+            color: var(--text-light);
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 12px #14b8a655;
+            margin-top: 1rem;
+        }
+
+        .auth-form button:hover {
+            background: var(--soft-teal);
+            box-shadow: 0 4px 24px #5eead455;
+        }
+
+        .auth-form button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .auth-links a {
+            color: var(--teal);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== DECORATIVE ELEMENTS ===== */
+        .decoration {
+            flex: 1;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+
+        .music-notes {
+            position: absolute;
+            left: 0; right: 0; top: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .note {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.6;
+            animation: gentleSpin 6s ease-in-out infinite;
+        }
+
+        .note1 { left: 25%; top: 15%; animation-delay: 0s; color: #14b8a6; }
+        .note2 { left: 75%; top: 20%; animation-delay: 1.5s; color: #f97316; }
+        .note3 { left: 20%; top: 85%; animation-delay: 3s; color: #10b981; }
+        .note4 { left: 80%; top: 80%; animation-delay: 4.5s; color: #fb923c; }
+
+        @keyframes gentleSpin {
+            0% { transform: rotate(0deg) scale(1); opacity: 0.6; }
+            25% { transform: rotate(22.5deg) scale(1.05); opacity: 0.8; }
+            50% { transform: rotate(45deg) scale(1); opacity: 0.6; }
+            75% { transform: rotate(67.5deg) scale(1.05); opacity: 0.8; }
+            100% { transform: rotate(90deg) scale(1); opacity: 0.6; }
+        }
+
+        .welcome-text {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .welcome-desc {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: #8b5cf6;
+            color: var(--text-light);
+            padding: 1.5rem 0;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .auth-container {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .decoration {
+                order: -1;
+            }
+
+            .auth-form {
+                max-width: 100%;
+            }
+        }
+
+        /* ===== CONTACT FORM ===== */
+        .contact-form .input-group {
+            position: relative;
+        }
+        .contact-form input, .contact-form textarea {
+            padding: 1.1rem 1rem 0.7rem 1rem;
+            border-radius: 12px;
+            border: 1.5px solid #ccc;
+            font-size: 1rem;
+            background: var(--glass-bg);
+            color: var(--text-dark);
+            outline: none;
+            transition: border 0.3s, box-shadow 0.3s;
+        }
+        .contact-form input:focus, .contact-form textarea:focus {
+            border: 1.5px solid var(--pastel-purple);
+            box-shadow: 0 0 8px 2px #e0c3fc88;
+        }
+        .contact-form label {
+            position: absolute;
+            left: 1rem;
+            top: 1.1rem;
+            color: #888;
+            font-size: 1rem;
+            pointer-events: none;
+            transition: 0.3s cubic-bezier(.4,0,.2,1);
+            background: transparent;
+        }
+        .contact-form input:focus + label,
+        .contact-form input:not(:placeholder-shown) + label {
+            top: -0.7rem;
+            left: 0.8rem;
+            font-size: 0.85rem;
+            color: var(--pastel-purple);
+            background: var(--glass-bg);
+            padding: 0 0.3rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="logo">MajorChord</div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="signin.html">Sign In</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="auth-container">
+                <div class="auth-form glass">
+                    <h1>Join MajorChord <span style="font-size:1.2em;">&#127925;</span></h1>
+                    <p class="subtitle">Create your account and start your wellness journey</p>
+                    
+                    <form class="contact-form" id="signupForm" autocomplete="off">
+                        <div class="input-group">
+                            <input type="text" id="name" placeholder=" " autocomplete="off" required>
+                            <label for="name">Full Name</label>
+                            <div class="error-message" id="nameError"></div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <input type="email" id="email" placeholder=" " autocomplete="off" required>
+                            <label for="email">Email Address</label>
+                            <div class="error-message" id="emailError"></div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <input type="password" id="password" placeholder=" " autocomplete="off" required>
+                            <label for="password">Password</label>
+                            <div class="error-message" id="passwordError"></div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <input type="password" id="confirmPassword" placeholder=" " autocomplete="off" required>
+                            <label for="confirmPassword">Confirm Password</label>
+                            <div class="error-message" id="confirmPasswordError"></div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <input type="date" id="birthday" placeholder=" " autocomplete="off" required>
+                            <label for="birthday">Birthday</label>
+                            <div class="error-message" id="birthdayError"></div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <select id="gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                                <option value="prefer-not-to-say">Prefer not to say</option>
+                            </select>
+                            <div class="error-message" id="genderError"></div>
+                        </div>
+                        
+                        <button type="submit" id="signupBtn">
+                            <span id="btnText">Create Account</span>
+                            <span id="btnSpinner" class="hidden">Creating account...</span>
+                        </button>
+                        
+                        <div class="success-message" id="successMessage"></div>
+                    </form>
+                    
+                    <div class="auth-links">
+                        <p>Already have an account? <a href="signin.html">Sign In</a></p>
+                    </div>
+                </div>
+                
+                <div class="decoration">
+                    <div class="music-notes">
+                        <div class="note note1">&#127925;</div>
+                        <div class="note note2">&#127926;</div>
+                        <div class="note note3">&#127927;</div>
+                        <div class="note note4">&#127928;</div>
+                    </div>
+                    <div class="welcome-text">Start Your Musical Wellness Journey</div>
+                    <div class="welcome-desc">
+                        Join thousands of users who have transformed their well-being through personalized music therapy. Get access to AI-curated playlists, guided sessions, and health tracking.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div>&copy; 2024 MajorChord. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script>
+        // Local Storage Management
+        class LocalStorageManager {
+            static USERS_KEY = 'healthyMusicUsers';
+            static CURRENT_USER_KEY = 'healthyMusicCurrentUser';
+
+            static getUsers() {
+                const users = localStorage.getItem(this.USERS_KEY);
+                return users ? JSON.parse(users) : [];
+            }
+
+            static saveUsers(users) {
+                localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
+            }
+
+            static addUser(user) {
+                const users = this.getUsers();
+                users.push(user);
+                this.saveUsers(users);
+            }
+
+            static findUser(email) {
+                const users = this.getUsers();
+                return users.find(user => user.email.toLowerCase() === email.toLowerCase());
+            }
+
+            static setCurrentUser(user) {
+                localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(user));
+            }
+
+            static getCurrentUser() {
+                const user = localStorage.getItem(this.CURRENT_USER_KEY);
+                return user ? JSON.parse(user) : null;
+            }
+
+            static clearCurrentUser() {
+                localStorage.removeItem(this.CURRENT_USER_KEY);
+            }
+        }
+
+        // Form Validation
+        class FormValidator {
+            static isValidEmail(email) {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailPattern.test(email);
+            }
+
+            static isValidPassword(password) {
+                return password.length >= 6;
+            }
+
+            static isValidName(name) {
+                return name.trim().length >= 2;
+            }
+
+            static isValidBirthday(birthday) {
+                if (!birthday) return false;
+                const today = new Date();
+                const birthDate = new Date(birthday);
+                const age = today.getFullYear() - birthDate.getFullYear();
+                return age >= 13 && age <= 120;
+            }
+
+            static passwordsMatch(password, confirmPassword) {
+                return password === confirmPassword;
+            }
+
+            static showError(elementId, message) {
+                const errorElement = document.getElementById(elementId);
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+                
+                const inputElement = document.getElementById(elementId.replace('Error', ''));
+                inputElement.classList.add('error');
+            }
+
+            static hideError(elementId) {
+                const errorElement = document.getElementById(elementId);
+                errorElement.style.display = 'none';
+                
+                const inputElement = document.getElementById(elementId.replace('Error', ''));
+                inputElement.classList.remove('error');
+            }
+
+            static showSuccess(messageId, message) {
+                const successElement = document.getElementById(messageId);
+                successElement.textContent = message;
+                successElement.style.display = 'block';
+            }
+
+            static hideSuccess(messageId) {
+                const successElement = document.getElementById(messageId);
+                successElement.style.display = 'none';
+            }
+        }
+
+        // UI Management
+        class UIManager {
+            static setLoading(isLoading) {
+                const btnText = document.getElementById('btnText');
+                const btnSpinner = document.getElementById('btnSpinner');
+                const signupBtn = document.getElementById('signupBtn');
+
+                if (isLoading) {
+                    btnText.classList.add('hidden');
+                    btnSpinner.classList.remove('hidden');
+                    signupBtn.disabled = true;
+                } else {
+                    btnText.classList.remove('hidden');
+                    btnSpinner.classList.add('hidden');
+                    signupBtn.disabled = false;
+                }
+            }
+
+            static clearForm() {
+                document.getElementById('signupForm').reset();
+                FormValidator.hideError('nameError');
+                FormValidator.hideError('emailError');
+                FormValidator.hideError('passwordError');
+                FormValidator.hideError('confirmPasswordError');
+                FormValidator.hideError('birthdayError');
+                FormValidator.hideError('genderError');
+                FormValidator.hideSuccess('successMessage');
+            }
+        }
+
+        // Sign Up Handler
+        class SignUpHandler {
+            static async handleSignUp(userData) {
+                // Validate all inputs
+                if (!FormValidator.isValidName(userData.name)) {
+                    FormValidator.showError('nameError', 'Name must be at least 2 characters long');
+                    return false;
+                }
+
+                if (!FormValidator.isValidEmail(userData.email)) {
+                    FormValidator.showError('emailError', 'Please enter a valid email address');
+                    return false;
+                }
+
+                if (!FormValidator.isValidPassword(userData.password)) {
+                    FormValidator.showError('passwordError', 'Password must be at least 6 characters');
+                    return false;
+                }
+
+                if (!FormValidator.passwordsMatch(userData.password, userData.confirmPassword)) {
+                    FormValidator.showError('confirmPasswordError', 'Passwords do not match');
+                    return false;
+                }
+
+                if (!FormValidator.isValidBirthday(userData.birthday)) {
+                    FormValidator.showError('birthdayError', 'Please enter a valid birthday (must be 13+ years old)');
+                    return false;
+                }
+
+                if (!userData.gender) {
+                    FormValidator.showError('genderError', 'Please select your gender');
+                    return false;
+                }
+
+                // Clear previous errors
+                FormValidator.hideError('nameError');
+                FormValidator.hideError('emailError');
+                FormValidator.hideError('passwordError');
+                FormValidator.hideError('confirmPasswordError');
+                FormValidator.hideError('birthdayError');
+                FormValidator.hideError('genderError');
+
+                // Check if user already exists
+                const existingUser = LocalStorageManager.findUser(userData.email);
+                if (existingUser) {
+                    FormValidator.showError('emailError', 'An account with this email already exists');
+                    return false;
+                }
+
+                // Simulate API call delay
+                UIManager.setLoading(true);
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                // Create new user
+                const newUser = {
+                    id: Date.now(),
+                    name: userData.name.trim(),
+                    email: userData.email.toLowerCase(),
+                    password: userData.password,
+                    birthday: userData.birthday,
+                    gender: userData.gender,
+                    createdAt: new Date().toISOString(),
+                    preferences: {
+                        favoriteGenres: [],
+                        healthGoals: [],
+                        meditationPreferences: []
+                    }
+                };
+
+                // Save user to local storage
+                LocalStorageManager.addUser(newUser);
+                LocalStorageManager.setCurrentUser(newUser);
+
+                // Show success message and redirect
+                FormValidator.showSuccess('successMessage', 'Account created successfully! Welcome to MajorChord!');
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+
+                return true;
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const signupForm = document.getElementById('signupForm');
+            const inputs = ['name', 'email', 'password', 'confirmPassword', 'birthday', 'gender'];
+
+            // Form submission
+            signupForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const userData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value,
+                    confirmPassword: document.getElementById('confirmPassword').value,
+                    birthday: document.getElementById('birthday').value,
+                    gender: document.getElementById('gender').value
+                };
+
+                await SignUpHandler.handleSignUp(userData);
+            });
+
+            // Real-time validation
+            inputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.addEventListener('input', function() {
+                        if (this.value.trim()) {
+                            FormValidator.hideError(inputId + 'Error');
+                        }
+                    });
+                }
+            });
+
+            // Check if user is already signed in
+            const currentUser = LocalStorageManager.getCurrentUser();
+            if (currentUser) {
+                window.location.href = 'index.html';
+            }
+
+            // Set max date for birthday (13 years ago)
+            const birthdayInput = document.getElementById('birthday');
+            const today = new Date();
+            const maxDate = new Date(today.getFullYear() - 13, today.getMonth(), today.getDate());
+            birthdayInput.max = maxDate.toISOString().split('T')[0];
+        });
+
+        // Initialize with some demo users if none exist
+        if (LocalStorageManager.getUsers().length === 0) {
+            const demoUsers = [
+                {
+                    id: 1,
+                    name: 'Demo User',
+                    email: 'demo@example.com',
+                    password: 'demo123',
+                    birthday: '1990-01-01',
+                    gender: 'other',
+                    createdAt: new Date().toISOString(),
+                    preferences: {
+                        favoriteGenres: ['classical', 'ambient'],
+                        healthGoals: ['stress-reduction', 'better-sleep'],
+                        meditationPreferences: ['guided', 'nature-sounds']
+                    }
+                }
+            ];
+            LocalStorageManager.saveUsers(demoUsers);
+        }
+    </script>
+</body>
+</html>
