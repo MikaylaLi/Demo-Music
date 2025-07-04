@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Healthy Music - AI Music for Health</title>
+    <title>MajorChord - AI personalized music for your everyday life</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* ===== CSS VARIABLES ===== */
         :root {
@@ -19,32 +21,87 @@
             --warm-orange: #fb923c;
             --soft-teal: #5eead4;
             --light-coral: #fdba74;
-            --glass-bg: rgba(255, 255, 255, 0.28);
-            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass-bg: rgba(255, 255, 255, 0.35);
+            --glass-border: rgba(255, 255, 255, 0.6);
             --glass-blur: 18px;
-            --text-dark: #222;
+            --text-dark: #1a202c;
             --text-light: #fff;
+            --text-muted: #4a5568;
             --footer-bg: #b8c6db;
+            --shadow-soft: 0 8px 32px rgba(31, 38, 135, 0.15);
+            --shadow-medium: 0 12px 40px rgba(31, 38, 135, 0.25);
+            --shadow-strong: 0 20px 60px rgba(31, 38, 135, 0.35);
         }
 
         /* ===== BASE STYLES ===== */
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, var(--pastel-blue) 0%, var(--pastel-pink) 100%);
             color: var(--text-dark);
             overflow-x: hidden;
+            line-height: 1.6;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .hidden { 
             display: none !important; 
         }
 
-        /* ===== LAYOUT COMPONENTS ===== */
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
+        /* ===== ANIMATED BACKGROUND ===== */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: var(--gradient-1);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ===== PARTICLE EFFECTS ===== */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 1s; }
+        .logo {
+            font-size: 1.7rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            font-family: 'Quicksand', sans-serif;
+            color: #2d3748;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         header, footer {
@@ -52,12 +109,6 @@
             color: var(--text-light);
             padding: 1.5rem 0;
             box-shadow: 0 4px 32px #0001;
-        }
-
-        .logo {
-            font-size: 1.7rem;
-            font-weight: bold;
-            letter-spacing: 2px;
         }
 
         /* ===== GLASSMORPHISM EFFECTS ===== */
@@ -90,6 +141,13 @@
             flex-direction: column;
             gap: 1.5rem;
             align-items: center;
+            background: var(--glass-bg);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1.5px solid var(--glass-border);
+            transform: translateX(-20px);
         }
 
         .signin-form h1 {
@@ -107,7 +165,7 @@
             border-radius: 12px;
             border: 1.5px solid #ccc;
             font-size: 1rem;
-            background: var(--glass-bg);
+            background: rgba(255, 255, 255, 0.9);
             color: var(--text-dark);
             outline: none;
             transition: border 0.3s, box-shadow 0.3s;
@@ -122,7 +180,7 @@
             position: absolute;
             left: 1rem;
             top: 1.1rem;
-            color: #888;
+            color: #666;
             font-size: 1rem;
             pointer-events: none;
             transition: 0.3s cubic-bezier(.4,0,.2,1);
@@ -135,8 +193,9 @@
             left: 0.8rem;
             font-size: 0.85rem;
             color: var(--teal);
-            background: var(--glass-bg);
-            padding: 0 0.3rem;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0 0.5rem;
+            border-radius: 4px;
         }
 
         .signin-form button {
@@ -229,7 +288,7 @@
 
         .instrument-left {
             position: absolute;
-            left: 5%;
+            left: -2%;
             bottom: 10px;
             width: 160px;
             height: 160px;
@@ -245,26 +304,6 @@
             height: 180px;
             opacity: 0.85;
             transform: rotate(25deg) perspective(300px) rotateY(15deg);
-        }
-
-        .instrument-center-left {
-            position: absolute;
-            left: 30%;
-            bottom: 8px;
-            width: 140px;
-            height: 140px;
-            opacity: 0.9;
-            transform: rotate(-15deg) perspective(250px) rotateY(-8deg);
-        }
-
-        .instrument-center-right {
-            position: absolute;
-            right: 30%;
-            bottom: 12px;
-            width: 120px;
-            height: 120px;
-            opacity: 0.9;
-            transform: rotate(18deg) perspective(250px) rotateY(12deg);
         }
 
         .instrument-svg {
@@ -535,6 +574,45 @@
             color: var(--pastel-purple);
         }
 
+        /* ===== MODAL STYLES ===== */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--glass-bg);
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 18px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            border: 1.5px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 1rem;
+            top: 0.5rem;
+        }
+
+        .close:hover {
+            color: var(--text-dark);
+        }
+
         /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 800px) {
             .features-list, .testimonials-list, .pricing-table, .footer-content { 
@@ -542,33 +620,581 @@
                 align-items: stretch; 
             }
         }
+
+        /* ===== NEW CREATIVE ANIMATIONS ===== */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ===== FLOATING ELEMENTS ===== */
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-note {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(102, 126, 234, 0.3);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .floating-circle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            opacity: 0.2;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* ===== GRADIENT TEXT ===== */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ===== FEATURE CARDS ===== */
+        .feature-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        /* ===== CTA BUTTONS ===== */
+        .cta-primary {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-primary:hover::before {
+            left: 100%;
+        }
+
+        /* ===== TRUST BADGES ===== */
+        .trust-badge {
+            transition: all 0.3s ease;
+        }
+
+        .trust-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        /* ===== HORIZONTAL LAYOUT STYLES ===== */
+        .horizontal-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            height: 80vh;
+            gap: 3rem;
+        }
+
+        .hero-section {
+            flex: 1;
+            max-width: 500px;
+            text-align: left;
+        }
+
+        .features-section {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .visual-section {
+            flex: 1;
+            max-width: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            height: 100%;
+        }
+
+        .feature-card {
+            padding: 2rem 1.5rem;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .instrument-container {
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+            width: 140px;
+            height: 120px;
+            margin: 0 auto;
+        }
+
+        .instrument-svg {
+            width: 100%;
+            height: auto;
+            max-width: 140px;
+            max-height: 120px;
+            filter: drop-shadow(6px 12px 16px rgba(0,0,0,0.3));
+        }
+
+        /* ===== ENHANCED INTERACTIVE ELEMENTS ===== */
+        .interactive-card {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .interactive-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .interactive-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .interactive-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ===== GLOW EFFECTS ===== */
+        .glow-on-hover {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .glow-on-hover::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .glow-on-hover:hover::after {
+            opacity: 1;
+        }
+
+        /* ===== TYPING ANIMATION ===== */
+        .typing-animation {
+            overflow: hidden;
+            border-right: 2px solid #667eea;
+            white-space: nowrap;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: #667eea; }
+        }
+
+        /* ===== PARALLAX SCROLL EFFECTS ===== */
+        .parallax-element {
+            transition: transform 0.1s ease-out;
+        }
+
+        /* ===== ENHANCED BUTTON ANIMATIONS ===== */
+        .btn-magnetic {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .btn-magnetic:hover {
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .horizontal-container {
+                flex-direction: column;
+                min-height: auto;
+                gap: 3rem;
+                padding: 2rem 1rem;
+            }
+            
+            .hero-section,
+            .features-section,
+            .visual-section {
+                max-width: 100%;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .horizontal-container {
+                padding: 1.5rem 1rem;
+                gap: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .trust-badges {
+                justify-content: center;
+            }
+            
+            .main-title h1 {
+                font-size: 2.8rem !important;
+            }
+            
+            .tagline {
+                font-size: 1.2rem !important;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.3rem !important;
+            }
+            
+            .hero-description {
+                font-size: 1rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: 95%;
+                padding: 0 0.5rem;
+            }
+            
+            .feature-card {
+                padding: 2rem 1.5rem !important;
+            }
+            
+            .main-title h1 {
+                font-size: 2.4rem !important;
+            }
+        }
+
+        .music-note-spin {
+            display: inline-block;
+            animation: simpleSpin 3s linear infinite;
+            margin-left: 0.5rem;
+        }
+
+        .hero-section .main-title h1 {
+            font-family: 'Pacifico', cursive, sans-serif;
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-            <div class="logo">Healthy Music</div>
+            <div class="logo">MajorChord</div>
+            <div class="nav-links" style="display: flex; gap: 2rem; align-items: center;">
+                <a href="signin.html" id="signinLink" style="color: #2d3748; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: background 0.3s; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">Sign In</a>
+                <a href="signup.html" id="signupLink" style="color: #2d3748; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: background 0.3s; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">Sign Up</a>
+                <div id="userSection" style="display: none;">
+                    <span id="userName" style="color: #2d3748; margin-right: 1rem; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1);"></span>
+                    <button id="signoutBtn" style="background: rgba(255,255,255,0.9); color: #2d3748; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; transition: background 0.3s; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">Sign Out</button>
+                </div>
+            </div>
         </div>
     </header>
-    <!-- Page 1: Sign In -->
+    <!-- Page 1: Introduction -->
     <div id="page1" class="page">
         <div class="ground"></div>
-        <form class="signin-form glass" id="signinForm" autocomplete="off" style="position: relative;">
-            <div class="music-note-corner">&#127925;</div>
-            <h1>Welcome to Healthy Music<span class="music-note-spin">&#127925;</span></h1>
-            <div style="margin-bottom: 1rem; color: #888; font-size: 1.05rem; text-align: center;">Please enter your name and email to continue.</div>
-            <div class="input-group" style="width: 100%; margin-bottom: 1.5rem;">
-                <input type="text" id="signinName" placeholder="Name" required style="width: 100%;">
+        
+        <!-- Animated Background Elements -->
+        <div class="floating-elements">
+            <div class="floating-note" style="animation-delay: 0s;">♪</div>
+            <div class="floating-note" style="animation-delay: 2s;">♫</div>
+            <div class="floating-note" style="animation-delay: 4s;">♬</div>
+            <div class="floating-note" style="animation-delay: 6s;">♩</div>
+            <div class="floating-circle" style="animation-delay: 1s;"></div>
+            <div class="floating-circle" style="animation-delay: 3s;"></div>
+            <div class="floating-circle" style="animation-delay: 5s;"></div>
+        </div>
+        
+        <!-- Horizontal Layout Container -->
+        <div class="horizontal-container" style="display: flex; align-items: center; justify-content: space-between; max-width: 1400px; margin: 0 auto; padding: 2rem; height: 80vh; gap: 3rem;">
+            
+            <!-- Left Section: Hero Content -->
+            <div class="hero-section" style="flex: 1; max-width: 500px; text-align: left; padding-top: 4.5rem;">
+                <div class="main-title" style="position: relative; margin-bottom: 3rem;">
+                    <h1 style="font-size: 3.5rem; margin: 0 0 1.5rem 0; color: #2d3748; font-weight: 700; letter-spacing: 1px; line-height: 1.1; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        MajorChord
+                    </h1>
+                    <div class="tagline" style="font-size: 1.4rem; color: #14b8a6; font-weight: 600; margin-bottom: 2rem; letter-spacing: 0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">AI personalized music for your everyday life</div>
+                    <div class="title-accent" style="position: absolute; top: -8px; right: -16px; font-size: 1.8rem; color: var(--teal); animation: pulse 2s infinite;">✨</div>
+                </div>
+                
+                <p class="hero-subtitle" style="font-size: 1.5rem; color: #2d3748; margin-bottom: 1.5rem; font-weight: 600; letter-spacing: 0.5px; font-family: 'Georgia', serif; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                    Where Music Meets Wellness
+                </p>
+                
+                <p class="hero-description" style="font-size: 1.1rem; color: #374151; margin-bottom: 3rem; line-height: 1.8; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                    Welcome to MajorChord—your AI-powered music companion for every day and every skill level. Whether you're just starting out or you're a seasoned musician, MajorChord adapts to your needs: enjoy personalized playlists, compose your own music, write lyrics, and explore creative tools designed for everyone.<br><br>
+                    From lofi beats for studying to uplifting tunes for your mood, MajorChord brings music into every part of your life. No experience required—just your love for music.
+                </p>
+                
+                <!-- CTA Buttons -->
+                <div class="cta-buttons" style="display: flex; gap: 1.5rem; margin-bottom: 3.5rem;">
+                    <button onclick="window.location.href='signin.html'" class="cta-primary btn-magnetic" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 1.2rem 2.2rem; border-radius: 50px; font-size: 1.1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3); font-weight: 700; letter-spacing: 0.5px; position: relative; overflow: hidden; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
+                        Start Your Journey
+                        <span style="position: absolute; top: 50%; right: 1.2rem; transform: translateY(-50%); font-size: 1.1rem;">→</span>
+                    </button>
+                    <button onclick="window.location.href='signup.html'" class="cta-secondary btn-magnetic" style="background: rgba(255,255,255,0.9); color: #2d3748; border: 1px solid rgba(255,255,255,0.3); padding: 1.2rem 2.2rem; border-radius: 50px; font-size: 1.1rem; cursor: pointer; transition: all 0.3s; font-weight: 700; letter-spacing: 0.5px; position: relative; overflow: hidden; backdrop-filter: blur(10px); text-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                        Create Account
+                    </button>
+                </div>
+                
+                <!-- Trust Badges -->
+                <div class="trust-badges" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <div class="trust-badge glow-on-hover" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.2rem; background: rgba(255,255,255,0.9); border-radius: 25px; backdrop-filter: blur(10px); font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.3); transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <span style="color: #10b981; font-size: 1.1rem; font-weight: bold;">✓</span>
+                        <span style="font-weight: 600; color: #2d3748;">Evidence-Based</span>
+                    </div>
+                    <div class="trust-badge glow-on-hover" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.2rem; background: rgba(255,255,255,0.9); border-radius: 25px; backdrop-filter: blur(10px); font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.3); transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <span style="color: #10b981; font-size: 1.1rem; font-weight: bold;">✓</span>
+                        <span style="font-weight: 600; color: #2d3748;">Privacy First</span>
+                    </div>
+                    <div class="trust-badge glow-on-hover" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.2rem; background: rgba(255,255,255,0.9); border-radius: 25px; backdrop-filter: blur(10px); font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.3); transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <span style="color: #10b981; font-size: 1.1rem; font-weight: bold;">✓</span>
+                        <span style="font-weight: 600; color: #2d3748;">All Ages</span>
+                    </div>
+                </div>
             </div>
-            <div class="input-group" style="width: 100%; margin-bottom: 0.5rem;">
-                <input type="email" id="signinEmail" placeholder="Email Address" required style="width: 100%;">
-                <div id="emailError" style="color: #d9534f; font-size: 0.95rem; margin-top: 0.3rem; display: none;">Please enter a valid email address from a supported provider (Gmail, Yahoo, Outlook, etc.).</div>
+            
+            <!-- Center Section: Feature Cards -->
+            <div class="features-section" style="flex: 1; max-width: 600px;">
+                <div class="features-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; height: 100%;">
+                    
+                    <!-- Top Left Card -->
+                    <div class="feature-card interactive-card glow-on-hover" onclick="showSymptomTrackerPreview()" style="padding: 2rem 1.5rem; background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%); border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.1); transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="feature-icon" style="font-size: 2.8rem; margin-bottom: 1.2rem; text-align: center; transition: transform 0.3s ease;">🧠</div>
+                        <h3 style="margin: 0 0 1rem 0; color: #1a202c; font-size: 1.4rem; font-weight: 700; font-family: 'Inter', sans-serif; text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">AI Symptom Tracker</h3>
+                        <p style="margin: 0; color: #374151; font-size: 1rem; line-height: 1.6; font-weight: 500; text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,0.05);">Track your health metrics and get personalized insights</p>
+                        <div class="feature-accent" style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #667eea, #764ba2);"></div>
+                        <div class="feature-hover-effect" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%); transform: translateX(-100%); transition: transform 0.6s; pointer-events: none;"></div>
+                    </div>
+                    
+                    <!-- Top Right Card -->
+                    <div class="feature-card interactive-card glow-on-hover" onclick="showPlaylistPreview()" style="padding: 2rem 1.5rem; background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%); border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.1); transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="feature-icon" style="font-size: 2.8rem; margin-bottom: 1.2rem; text-align: center; transition: transform 0.3s ease;">🎵</div>
+                        <h3 style="margin: 0 0 1rem 0; color: #1a202c; font-size: 1.4rem; font-weight: 700; font-family: 'Inter', sans-serif; text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">Personalized Playlists</h3>
+                        <p style="margin: 0; color: #374151; font-size: 1rem; line-height: 1.6; font-weight: 500; text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,0.05);">AI-generated music based on your symptoms and health</p>
+                        <div class="feature-accent" style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #f093fb, #f5576c);"></div>
+                        <div class="feature-hover-effect" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%); transform: translateX(-100%); transition: transform 0.6s; pointer-events: none;"></div>
+                    </div>
+                    
+                    <!-- Bottom Left Card -->
+                    <div class="feature-card interactive-card glow-on-hover" onclick="showHealthInsightsPreview()" style="padding: 2rem 1.5rem; background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%); border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.1); transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="feature-icon" style="font-size: 2.8rem; margin-bottom: 1.2rem; text-align: center; transition: transform 0.3s ease;">📊</div>
+                        <h3 style="margin: 0 0 1rem 0; color: #1a202c; font-size: 1.4rem; font-weight: 700; font-family: 'Inter', sans-serif; text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">Health Analytics</h3>
+                        <p style="margin: 0; color: #374151; font-size: 1rem; line-height: 1.6; font-weight: 500; text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,0.05);">AI-powered insights and wellness trends</p>
+                        <div class="feature-accent" style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #4facfe, #00f2fe);"></div>
+                        <div class="feature-hover-effect" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%); transform: translateX(-100%); transition: transform 0.6s; pointer-events: none;"></div>
+                    </div>
+                    
+                    <!-- Bottom Right Card -->
+                    <div class="feature-card interactive-card glow-on-hover" onclick="showMusicSearchPreview()" style="padding: 2rem 1.5rem; background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%); border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.1); transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="feature-icon" style="font-size: 2.8rem; margin-bottom: 1.2rem; text-align: center; transition: transform 0.3s ease;">🔍</div>
+                        <h3 style="margin: 0 0 1rem 0; color: #1a202c; font-size: 1.4rem; font-weight: 700; font-family: 'Inter', sans-serif; text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">Music Discovery</h3>
+                        <p style="margin: 0; color: #374151; font-size: 1rem; line-height: 1.6; font-weight: 500; text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,0.05);">Search and discover music by mood and symptoms</p>
+                        <div class="feature-accent" style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #a8edea, #fed6e3);"></div>
+                        <div class="feature-hover-effect" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%); transform: translateX(-100%); transition: transform 0.6s; pointer-events: none;"></div>
+                    </div>
+                </div>
             </div>
-            <button type="submit">Sign In <span style="font-size:1.2em;">&#127925;</span></button>
-        </form>
+            
+            <!-- Right Section: Piano & Visual Element -->
+            <div class="visual-section" style="flex: 1; max-width: 250px; display: flex; align-items: center; justify-content: center;">
+                <div class="instrument-container" style="position: relative; animation: float 6s ease-in-out infinite;">
+                    <svg class="instrument-svg" viewBox="0 0 300 250" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; filter: drop-shadow(6px 12px 16px rgba(0,0,0,0.3));">
+                        <!-- Piano Bottom/Stand (3D perspective) -->
+                        <rect x="40" y="180" width="220" height="40" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+                        <rect x="45" y="185" width="210" height="30" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <!-- Piano Legs (3D perspective) - Moved out more like a bench -->
+                        <rect x="40" y="220" width="15" height="25" fill="#8B4513" stroke="#654321" stroke-width="2"/>
+                        <rect x="245" y="220" width="15" height="25" fill="#8B4513" stroke="#654321" stroke-width="2"/>
+                        <!-- Visible Black Table Legs -->
+                        <rect x="25" y="180" width="10" height="25" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+                        <rect x="25" y="205" width="10" height="25" fill="#1A1A1A" stroke="#000000" stroke-width="2" transform="rotate(30 30 217.5)"/>
+                        <!-- Piano Body (3D perspective) - Rectangular and mirrored -->
+                        <rect x="30" y="60" width="240" height="120" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="3"/>
+                        <!-- Piano Side Panel (3D depth) - Mirrored -->
+                        <rect x="30" y="60" width="20" height="120" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+                        <!-- Piano Rim (3D perspective) - Rectangular -->
+                        <rect x="30" y="60" width="240" height="5" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
+                        <!-- Piano Keys (3D perspective) - Rotated 180 degrees, more realistic -->
+                        <rect x="40" y="118" width="220" height="60" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="2"/>
+                        <!-- 3D Keyboard Surface -->
+                        <rect x="42" y="120" width="216" height="56" fill="url(#keyboardGradient)" stroke="#CCCCCC" stroke-width="1"/>
+                        <!-- Simplified Key Divisions -->
+                        <line x1="54" y1="120" x2="54" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                        <line x1="68" y1="120" x2="68" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                        <line x1="82" y1="120" x2="82" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                        <line x1="96" y1="120" x2="96" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                        <line x1="110" y1="120" x2="110" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                        <line x1="124" y1="120" x2="124" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                        <line x1="138" y1="120" x2="138" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                        <line x1="152" y1="120" x2="152" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                        <line x1="166" y1="120" x2="166" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                        <line x1="180" y1="120" x2="180" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                        <line x1="194" y1="120" x2="194" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                        <line x1="208" y1="120" x2="208" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                        <line x1="222" y1="120" x2="222" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                        <line x1="236" y1="120" x2="236" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                        <line x1="250" y1="120" x2="250" y2="176" stroke="#CCCCCC" stroke-width="1"/>
+                        <!-- Black Keys (3D perspective) - Rotated 180 degrees -->
+                        <rect x="49" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <rect x="63" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <rect x="77" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <rect x="91" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <rect x="105" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <rect x="119" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <rect x="133" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <rect x="147" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <rect x="161" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <rect x="175" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <rect x="189" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <rect x="203" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <rect x="217" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <rect x="231" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <rect x="245" y="118" width="8" height="35" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <!-- Piano Pedals (3D perspective) -->
+                        <rect x="120" y="190" width="10" height="20" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <rect x="140" y="190" width="10" height="20" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <rect x="160" y="190" width="10" height="20" fill="#2C2C2C" stroke="#1A1A1A" stroke-width="1"/>
+                        <!-- Piano Brand -->
+                        <text x="150" y="110" text-anchor="middle" fill="#666666" font-size="8" font-family="Arial">STEINWAY</text>
+                        <!-- 3D Shadow on ground -->
+                        <ellipse cx="150" cy="245" rx="100" ry="15" fill="rgba(0,0,0,0.3)"/>
+                        <!-- Keyboard Gradient Definition -->
+                        <defs>
+                            <linearGradient id="keyboardGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1"/>
+                                <stop offset="50%" style="stop-color:#F8F8F8;stop-opacity:1"/>
+                                <stop offset="100%" style="stop-color:#E8E8E8;stop-opacity:1"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                    </div>
+    </div>
+    
+    <!-- Preview Modals -->
+    <div id="previewModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(5px);">
+        <div class="modal-content" style="background: rgba(255,255,255,0.95); margin: 5% auto; padding: 2rem; border-radius: 20px; width: 80%; max-width: 600px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            <span class="close" onclick="closePreviewModal()" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+    
+    <!-- Enhanced Piano with Animation -->
         <div class="instruments">
-            <!-- Grand Piano -->
-            <div class="instrument-left">
+            <div class="instrument-left" style="animation: float 6s ease-in-out infinite;">
                 <svg class="instrument-svg" viewBox="0 0 300 250" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <!-- Piano Bottom/Stand (3D perspective) -->
                     <rect x="40" y="180" width="220" height="40" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
@@ -644,29 +1270,29 @@
     <!-- Page 2: Features -->
     <div id="page2" class="page hidden">
         <div class="container">
-            <div class="features-title">Your Healthy Music Dashboard</div>
-            <div class="features-desc">Explore your personalized features below.</div>
+            <div class="features-title">Clinical Music Therapy Dashboard</div>
+            <div class="features-desc">Access your personalized therapeutic interventions and wellness tracking.</div>
             <div class="features-list">
                 <div class="feature glass" id="healthBox" style="cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;" onclick="goToHealthPage()">
-                    <h3>Health Tracking <span style="font-size:1.2em;">&#128200;</span></h3>
-                    <p>Monitor your progress and see how music impacts your well-being.</p>
+                    <h3>Wellness Analytics <span style="font-size:1.2em;">&#128200;</span></h3>
+                    <p>Comprehensive tracking of therapeutic outcomes and wellness metrics.</p>
                     <div style="margin-top:1.5rem;">
                         <svg width="100%" height="40" viewBox="0 0 200 40">
                             <polyline points="0,30 20,20 40,25 60,10 80,15 100,5 120,20 140,10 160,25 180,15 200,30" fill="none" stroke="#10b981" stroke-width="3"/>
                         </svg>
                     </div>
-                    <button style="margin-top:1rem; background:var(--mint); color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: background 0.2s;">See My Progress</button>
+                    <button style="margin-top:1rem; background:var(--mint); color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: background 0.2s;">View Analytics</button>
                 </div>
                 <div class="feature glass" id="sessionsBox" style="cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;" onclick="goToSessionsPage()">
-                    <h3>Guided Sessions <span style="font-size:1.2em;">&#119070;</span></h3>
-                    <p>Enjoy meditation, relaxation, and focus sessions with expert guidance.</p>
-                    <button style="margin-top:1rem; background:var(--coral); position: relative;" onmouseover="showHoverText(this)" onmouseout="hideHoverText(this)">Start Session</button>
+                    <h3>Therapeutic Sessions <span style="font-size:1.2em;">&#119070;</span></h3>
+                    <p>Evidence-based music therapy sessions with clinical guidance.</p>
+                    <button style="margin-top:1rem; background:var(--coral); position: relative;" onmouseover="showHoverText(this)" onmouseout="hideHoverText(this)">Begin Session</button>
                     <div class="hover-text" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #87CEEB; font-size: 0.8rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; display: none;">go to page</div>
                 </div>
                 <div class="feature glass" id="playlistBox" style="cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;" onclick="goToPlaylistPage()">
-                    <h3>Personalized Playlists <span style="font-size:1.2em;">&#127925;</span></h3>
-                    <p>AI curates music tailored to your mood and health goals.</p>
-                    <button style="margin-top:1rem; background:var(--coral); position: relative;" onmouseover="showHoverText(this)" onmouseout="hideHoverText(this)">Play Playlist</button>
+                    <h3>Clinical Playlists <span style="font-size:1.2em;">&#127925;</span></h3>
+                    <p>Research-based music selections tailored to therapeutic objectives.</p>
+                    <button style="margin-top:1rem; background:var(--coral); position: relative;" onmouseover="showHoverText(this)" onmouseout="hideHoverText(this)">Access Playlists</button>
                     <div class="hover-text" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #87CEEB; font-size: 0.8rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; display: none;">go to page</div>
                 </div>
             </div>
@@ -679,34 +1305,34 @@
     <!-- Page 3: Pricing, Testimonials, Contact -->
     <div id="page3" class="page hidden">
         <div class="container">
-            <h2 style="text-align:center;">Pricing</h2>
+            <h2 style="text-align:center;">Clinical Platform Pricing</h2>
             <div class="pricing-table">
                 <div class="pricing-plan glass">
-                    <h3>Free <span style="font-size:1.2em;">&#127925;</span></h3>
+                    <h3>Clinical Trial <span style="font-size:1.2em;">&#127925;</span></h3>
                     <p><strong>$0</strong>/month</p>
-                    <p>Access to basic playlists and limited sessions.</p>
-                    <button>Sign Up</button>
+                    <p>Access to basic therapeutic protocols and limited clinical sessions.</p>
+                    <button>Begin Trial</button>
                 </div>
                 <div class="pricing-plan glass">
-                    <h3>Premium <span style="font-size:1.2em;">&#119070;</span></h3>
-                    <p><strong>$9.99</strong>/month</p>
-                    <p>Unlimited playlists, advanced health tracking, and all guided sessions.</p>
-                    <button>Start Free Trial</button>
+                    <h3>Professional <span style="font-size:1.2em;">&#119070;</span></h3>
+                    <p><strong>$19.99</strong>/month</p>
+                    <p>Complete clinical platform with advanced analytics, unlimited sessions, and professional support.</p>
+                    <button>Start Professional Trial</button>
                 </div>
             </div>
-            <h2 style="text-align:center; margin-top:3rem;">What Our Users Say</h2>
+            <h2 style="text-align:center; margin-top:3rem;">Clinical Outcomes & Testimonials</h2>
             <div class="testimonials-list">
                 <div class="testimonial glass">
-                    <p>"Healthy Music helped me manage my stress and sleep better every night!" <span style="font-size:1.2em;">&#127926;</span></p>
-                    <strong>- Alex</strong>
+                    <p>"The evidence-based approach significantly improved my stress management and sleep quality. The clinical protocols are well-designed and effective." <span style="font-size:1.2em;">&#127926;</span></p>
+                    <strong>- Dr. Sarah Johnson, Clinical Psychologist</strong>
                 </div>
                 <div class="testimonial glass">
-                    <p>"The AI playlists are spot on. I feel more energized and focused at work." <span style="font-size:1.2em;">&#127925;</span></p>
-                    <strong>- Jamie</strong>
+                    <p>"As a healthcare provider, I appreciate the research-backed methodology. The platform delivers measurable improvements in patient outcomes." <span style="font-size:1.2em;">&#127925;</span></p>
+                    <strong>- Michael Chen, Licensed Therapist</strong>
                 </div>
                 <div class="testimonial glass">
-                    <p>"I love the guided sessions. They make meditation so much easier for me." <span style="font-size:1.2em;">&#119070;</span></p>
-                    <strong>- Taylor</strong>
+                    <p>"The therapeutic sessions provide structured, professional guidance that makes clinical music therapy accessible and effective." <span style="font-size:1.2em;">&#119070;</span></p>
+                    <strong>- Dr. Emily Rodriguez, Music Therapist</strong>
                 </div>
             </div>
             <h2 style="text-align:center; margin-top:3rem;">Contact Us</h2>
@@ -804,18 +1430,91 @@
     </div>
     <footer>
         <div class="container footer-content">
-            <div class="logo">Healthy Music</div>
-            <div class="footer-social">
-                <a href="#" title="Twitter">&#x1F426;</a>
-                <a href="#" title="Facebook">&#x1F5E8;</a>
-                <a href="#" title="Instagram">&#x1F33F;</a>
-            </div>
+            <div class="logo">MajorChord</div>
             <div style="flex: 1 1 100%; text-align: center; margin-top: 1rem;">
-                &copy; 2024 Healthy Music. All rights reserved.
+                &copy; 2024 MajorChord. All rights reserved.
             </div>
         </div>
     </footer>
     <script>
+    // Local Storage Management
+    class LocalStorageManager {
+        static USERS_KEY = 'healthyMusicUsers';
+        static CURRENT_USER_KEY = 'healthyMusicCurrentUser';
+
+        static getUsers() {
+            const users = localStorage.getItem(this.USERS_KEY);
+            return users ? JSON.parse(users) : [];
+        }
+
+        static saveUsers(users) {
+            localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
+        }
+
+        static addUser(user) {
+            const users = this.getUsers();
+            users.push(user);
+            this.saveUsers(users);
+        }
+
+        static findUser(email) {
+            const users = this.getUsers();
+            return users.find(user => user.email.toLowerCase() === email.toLowerCase());
+        }
+
+        static setCurrentUser(user) {
+            localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(user));
+        }
+
+        static getCurrentUser() {
+            const user = localStorage.getItem(this.CURRENT_USER_KEY);
+            return user ? JSON.parse(user) : null;
+        }
+
+        static clearCurrentUser() {
+            localStorage.removeItem(this.CURRENT_USER_KEY);
+        }
+    }
+
+    // Authentication State Management
+    class AuthManager {
+        static checkAuthState() {
+            const currentUser = LocalStorageManager.getCurrentUser();
+            const signinLink = document.getElementById('signinLink');
+            const signupLink = document.getElementById('signupLink');
+            const userSection = document.getElementById('userSection');
+            const userName = document.getElementById('userName');
+            const signoutBtn = document.getElementById('signoutBtn');
+
+            if (currentUser) {
+                // User is signed in
+                signinLink.style.display = 'none';
+                signupLink.style.display = 'none';
+                userSection.style.display = 'flex';
+                userName.textContent = `Welcome, ${currentUser.name}!`;
+                
+                // Show dashboard instead of signin form
+                document.getElementById('page1').classList.add('hidden');
+                document.getElementById('page2').classList.remove('hidden');
+            } else {
+                // User is not signed in
+                signinLink.style.display = 'inline-block';
+                signupLink.style.display = 'inline-block';
+                userSection.style.display = 'none';
+                
+                // Show signin form
+                document.getElementById('page1').classList.remove('hidden');
+                document.getElementById('page2').classList.add('hidden');
+            }
+        }
+
+        static signOut() {
+            LocalStorageManager.clearCurrentUser();
+            this.checkAuthState();
+            window.location.reload();
+        }
+    }
+
     // Email validation function
     function isValidEmail(email) {
         // Basic email format check
@@ -842,29 +1541,6 @@
     const page4 = document.getElementById('page4');
     const page5 = document.getElementById('page5');
     const page6 = document.getElementById('page6');
-    
-    document.getElementById('signinForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        // Email validation
-        const nameInput = document.getElementById('signinName');
-        const emailInput = document.getElementById('signinEmail');
-        const emailError = document.getElementById('emailError');
-        
-        if (!isValidEmail(emailInput.value)) {
-            emailError.textContent = 'Please enter a valid email address from a supported provider (Gmail, Yahoo, Outlook, etc.).';
-            emailError.style.display = 'block';
-            emailInput.focus();
-            return;
-        } else {
-            emailError.style.display = 'none';
-        }
-        
-        // Clear input fields and hide their content
-        nameInput.value = '';
-        emailInput.value = '';
-        page1.classList.add('hidden');
-        page2.classList.remove('hidden');
-    });
     
     document.getElementById('toPage3').addEventListener('click', function() {
         page2.classList.add('hidden');
@@ -911,6 +1587,17 @@
     
     // Hover effects for feature boxes
     document.addEventListener('DOMContentLoaded', function() {
+        // Check authentication state on page load
+        AuthManager.checkAuthState();
+        
+        // Add sign out button event listener
+        const signoutBtn = document.getElementById('signoutBtn');
+        if (signoutBtn) {
+            signoutBtn.addEventListener('click', function() {
+                AuthManager.signOut();
+            });
+        }
+        
         const healthBox = document.getElementById('healthBox');
         
         if (healthBox) {
@@ -965,6 +1652,945 @@
             const left = Math.random() * 80 + 5;
             note.style.left = left + '%';
         });
+    });
+    
+    // Initialize with demo user if none exist
+    if (LocalStorageManager.getUsers().length === 0) {
+        const demoUsers = [
+            {
+                id: 1,
+                name: 'Demo User',
+                email: 'demo@example.com',
+                password: 'demo123',
+                birthday: '1990-01-01',
+                gender: 'other',
+                createdAt: new Date().toISOString(),
+                preferences: {
+                    favoriteGenres: ['classical', 'ambient'],
+                    healthGoals: ['stress-reduction', 'better-sleep'],
+                    meditationPreferences: ['guided', 'nature-sounds']
+                }
+            }
+        ];
+        LocalStorageManager.saveUsers(demoUsers);
+    }
+
+    // Enhanced interactive features
+    function initEnhancedInteractions() {
+        // Parallax scroll effects
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallaxElements = document.querySelectorAll('.parallax-element');
+            
+            parallaxElements.forEach(element => {
+                const speed = element.dataset.speed || 0.5;
+                element.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+
+        // Magnetic button effect
+        const buttons = document.querySelectorAll('.btn-magnetic, .cta-primary, .cta-secondary');
+        buttons.forEach(button => {
+            button.addEventListener('mousemove', (e) => {
+                const rect = button.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                button.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
+            });
+            
+            button.addEventListener('mouseleave', () => {
+                button.style.transform = 'translate(0, 0)';
+            });
+        });
+
+        // Interactive card effects
+        const cards = document.querySelectorAll('.feature-card, .interactive-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-12px) scale(1.03)';
+                card.style.boxShadow = '0 25px 50px rgba(0, 0, 0, 0.2)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+                card.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+            });
+        });
+
+        // Glow effects on hover
+        const glowElements = document.querySelectorAll('.glow-on-hover');
+        glowElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                element.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.5)';
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                element.style.boxShadow = 'none';
+            });
+        });
+
+        // Enhanced input effects
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+                this.parentElement.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.3)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+                this.parentElement.style.boxShadow = 'none';
+            });
+        });
+
+        // Ripple effect for buttons
+        const allButtons = document.querySelectorAll('button');
+        allButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Notification system
+        window.showNotification = function(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span class="notification-icon">${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span>
+                    <span class="notification-message">${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => notification.classList.add('show'), 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        };
+
+        // Add enhanced CSS for new effects
+        const enhancedStyle = document.createElement('style');
+        enhancedStyle.textContent = `
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.3);
+                transform: scale(0);
+                animation: ripple-animation 0.6s linear;
+                pointer-events: none;
+            }
+            
+            @keyframes ripple-animation {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+            
+            .notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border-radius: 12px;
+                padding: 1rem 1.5rem;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                z-index: 1000;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+            
+            .notification.show {
+                transform: translateX(0);
+            }
+            
+            .notification-content {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            
+            .notification-icon {
+                font-size: 1.2rem;
+                font-weight: bold;
+            }
+            
+            .notification-success .notification-icon {
+                color: #10b981;
+            }
+            
+            .notification-error .notification-icon {
+                color: #ef4444;
+            }
+            
+            .notification-info .notification-icon {
+                color: #3b82f6;
+            }
+            
+            .notification-message {
+                color: #374151;
+                font-weight: 500;
+            }
+
+            .feature-card {
+                opacity: 0;
+                transform: translateY(30px);
+                animation: fadeInUp 0.6s ease forwards;
+            }
+            
+            @keyframes fadeInUp {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .typing-animation {
+                overflow: hidden;
+                border-right: 2px solid #667eea;
+                white-space: nowrap;
+                animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+            }
+
+            @keyframes typing {
+                from { width: 0; }
+                to { width: 100%; }
+            }
+
+            @keyframes blink-caret {
+                from, to { border-color: transparent; }
+                50% { border-color: #667eea; }
+            }
+        `;
+        document.head.appendChild(enhancedStyle);
+    }
+
+    // Initialize enhanced interactions
+    document.addEventListener('DOMContentLoaded', function() {
+        initEnhancedInteractions();
+        
+        // Add staggered animation to feature cards
+        const featureCards = document.querySelectorAll('.feature-card');
+        featureCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+
+        // Preview Modal Functions
+        function showPreviewModal(title, content) {
+            const modal = document.getElementById('previewModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <h2 style="color: #2d3748; margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: 700;">${title}</h2>
+                ${content}
+                <div style="margin-top: 2rem; text-align: center;">
+                    <button onclick="closePreviewModal()" style="background: #667eea; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 25px; cursor: pointer; font-weight: 600; margin-right: 1rem;">Close Preview</button>
+                    <button onclick="window.location.href='signup.html'" style="background: #14b8a6; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 25px; cursor: pointer; font-weight: 600;">Create Account</button>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        function closePreviewModal() {
+            document.getElementById('previewModal').style.display = 'none';
+        }
+
+        function showSymptomTrackerPreview() {
+            const content = `
+                <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 1.5rem; border-radius: 15px; margin-bottom: 1.5rem;">
+                    <h3 style="color: #1e40af; margin-bottom: 1rem;">🧠 AI Symptom Tracker Preview</h3>
+                    <p style="color: #374151; margin-bottom: 1rem;">Try tracking your health metrics and get personalized insights:</p>
+                    
+                    <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
+                        <div style="font-weight: 600; color: #1a202c; margin-bottom: 1rem;">How are you feeling today?</div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem;">
+                            <div>
+                                <label style="font-weight: 600; color: #374151; display: block; margin-bottom: 0.5rem;">Stress Level (1-10)</label>
+                                <input type="range" id="stressSlider" min="1" max="10" value="7" style="width: 100%;" oninput="updateStressValue()">
+                                <div id="stressValue" style="text-align: center; color: #667eea; font-weight: 700; margin-top: 0.5rem;">7/10</div>
+                            </div>
+                            <div>
+                                <label style="font-weight: 600; color: #374151; display: block; margin-bottom: 0.5rem;">Sleep Quality (1-10)</label>
+                                <input type="range" id="sleepSlider" min="1" max="10" value="4" style="width: 100%;" oninput="updateSleepValue()">
+                                <div id="sleepValue" style="text-align: center; color: #667eea; font-weight: 700; margin-top: 0.5rem;">4/10</div>
+                            </div>
+                            <div>
+                                <label style="font-weight: 600; color: #374151; display: block; margin-bottom: 0.5rem;">Mood Score (1-10)</label>
+                                <input type="range" id="moodSlider" min="1" max="10" value="6" style="width: 100%;" oninput="updateMoodValue()">
+                                <div id="moodValue" style="text-align: center; color: #667eea; font-weight: 700; margin-top: 0.5rem;">6/10</div>
+                            </div>
+                            <div>
+                                <label style="font-weight: 600; color: #374151; display: block; margin-bottom: 0.5rem;">Energy Level (1-10)</label>
+                                <input type="range" id="energySlider" min="1" max="10" value="5" style="width: 100%;" oninput="updateEnergyValue()">
+                                <div id="energyValue" style="text-align: center; color: #667eea; font-weight: 700; margin-top: 0.5rem;">5/10</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <label style="font-weight: 600; color: #374151; display: block; margin-bottom: 0.5rem;">Select Symptoms:</label>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                                    <input type="checkbox" id="anxiety" onchange="updateSymptoms()" checked>
+                                    <span style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">Anxiety</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                                    <input type="checkbox" id="stress" onchange="updateSymptoms()" checked>
+                                    <span style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">Stress</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                                    <input type="checkbox" id="insomnia" onchange="updateSymptoms()" checked>
+                                    <span style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">Insomnia</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                                    <input type="checkbox" id="depression" onchange="updateSymptoms()">
+                                    <span style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">Depression</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button onclick="analyzeHealth()" style="background: #3b82f6; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 25px; cursor: pointer; font-weight: 600; width: 100%;">Analyze My Health</button>
+                    </div>
+                    
+                    <div id="healthAnalysis" style="display: none;">
+                        <div style="background: #dbeafe; padding: 1rem; border-radius: 10px; border-left: 4px solid #3b82f6;">
+                            <div style="font-weight: 600; color: #1e40af; margin-bottom: 0.5rem;">AI Analysis:</div>
+                            <div id="analysisText" style="color: #374151;"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showPreviewModal('AI Symptom Tracker', content);
+        }
+
+        function showPlaylistPreview() {
+            const content = `
+                <div style="background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%); padding: 1.5rem; border-radius: 15px; margin-bottom: 1.5rem;">
+                    <h3 style="color: #be185d; margin-bottom: 1rem;">🎵 Personalized Playlist Preview</h3>
+                    <p style="color: #374151; margin-bottom: 1rem;">Try generating a personalized playlist based on your symptoms:</p>
+                    
+                    <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
+                        <div style="font-weight: 600; color: #1a202c; margin-bottom: 1rem;">What are you experiencing?</div>
+                        
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                            <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                                <input type="checkbox" id="playlistAnxiety" onchange="generatePlaylist()" checked>
+                                <span style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">Anxiety</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                                <input type="checkbox" id="playlistStress" onchange="generatePlaylist()" checked>
+                                <span style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">Stress</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                                <input type="checkbox" id="playlistInsomnia" onchange="generatePlaylist()" checked>
+                                <span style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">Insomnia</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                                <input type="checkbox" id="playlistDepression" onchange="generatePlaylist()">
+                                <span style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">Depression</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                                <input type="checkbox" id="playlistFocus" onchange="generatePlaylist()">
+                                <span style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">Focus Issues</span>
+                            </label>
+                        </div>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <label style="font-weight: 600; color: #374151; display: block; margin-bottom: 0.5rem;">Preferred Mood:</label>
+                            <select id="moodSelect" onchange="generatePlaylist()" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 8px; background: white;">
+                                <option value="calm">Calm & Relaxing</option>
+                                <option value="energetic">Energetic & Uplifting</option>
+                                <option value="focused">Focused & Concentrated</option>
+                                <option value="sleep">Sleep & Rest</option>
+                            </select>
+                        </div>
+                        
+                        <button onclick="generatePlaylist()" style="background: #be185d; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 25px; cursor: pointer; font-weight: 600; width: 100%;">Generate My Playlist</button>
+                    </div>
+                    
+                    <div id="playlistResults" style="display: none;">
+                        <div style="background: white; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+                            <div style="font-weight: 600; color: #1a202c; margin-bottom: 0.5rem;">Your Personalized Playlist:</div>
+                            <div id="playlistTracks" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+                        </div>
+                        
+                        <div style="background: #ecfdf5; padding: 1rem; border-radius: 10px; border-left: 4px solid #10b981;">
+                            <div style="font-weight: 600; color: #065f46; margin-bottom: 0.5rem;">AI Recommendation:</div>
+                            <div id="playlistRecommendation" style="color: #374151;"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showPreviewModal('Personalized Playlists', content);
+        }
+
+        function showHealthInsightsPreview() {
+            const content = `
+                <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 1.5rem; border-radius: 15px; margin-bottom: 1.5rem;">
+                    <h3 style="color: #166534; margin-bottom: 1rem;">📊 Health Analytics Preview</h3>
+                    <p style="color: #374151; margin-bottom: 1rem;">Try exploring your health insights and trends:</p>
+                    
+                    <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
+                        <div style="font-weight: 600; color: #1a202c; margin-bottom: 1rem;">Select Time Period:</div>
+                        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                            <button onclick="updateHealthData('week')" id="weekBtn" style="background: #10b981; color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: 600;">Week</button>
+                            <button onclick="updateHealthData('month')" id="monthBtn" style="background: #d1d5db; color: #374151; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: 600;">Month</button>
+                            <button onclick="updateHealthData('year')" id="yearBtn" style="background: #d1d5db; color: #374151; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: 600;">Year</button>
+                        </div>
+                        
+                        <div id="healthMetrics" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem;">
+                            <div style="background: #f8fafc; padding: 1rem; border-radius: 10px; text-align: center;">
+                                <div style="font-weight: 600; color: #1a202c; margin-bottom: 0.5rem;">Weekly Average</div>
+                                <div style="font-size: 1.2rem; font-weight: 700; color: #dc2626;">Stress: 7.2/10</div>
+                                <div style="font-size: 0.9rem; color: #64748b;">↑ 15% from last week</div>
+                            </div>
+                            <div style="background: #f8fafc; padding: 1rem; border-radius: 10px; text-align: center;">
+                                <div style="font-weight: 600; color: #1a202c; margin-bottom: 0.5rem;">Weekly Average</div>
+                                <div style="font-size: 1.2rem; font-weight: 700; color: #dc2626;">Sleep: 4.1/10</div>
+                                <div style="font-size: 0.9rem; color: #64748b;">↓ 20% from last week</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <div style="font-weight: 600; color: #1a202c; margin-bottom: 0.5rem;">Track Specific Metrics:</div>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                                    <input type="checkbox" id="trackStress" onchange="toggleTracking()" checked>
+                                    <span style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">Stress</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                                    <input type="checkbox" id="trackSleep" onchange="toggleTracking()" checked>
+                                    <span style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">Sleep</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                                    <input type="checkbox" id="trackMood" onchange="toggleTracking()">
+                                    <span style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">Mood</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                                    <input type="checkbox" id="trackEnergy" onchange="toggleTracking()">
+                                    <span style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">Energy</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button onclick="generateInsights()" style="background: #10b981; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 25px; cursor: pointer; font-weight: 600; width: 100%;">Generate Insights</button>
+                    </div>
+                    
+                    <div id="insightsResults" style="display: none;">
+                        <div style="background: white; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+                            <div style="font-weight: 600; color: #1a202c; margin-bottom: 0.5rem;">AI Insights:</div>
+                            <div id="insightsList" style="color: #374151;"></div>
+                        </div>
+                        
+                        <div style="background: #fef3c7; padding: 1rem; border-radius: 10px; border-left: 4px solid #f59e0b;">
+                            <div style="font-weight: 600; color: #92400e; margin-bottom: 0.5rem;">Recommendation:</div>
+                            <div id="healthRecommendation" style="color: #374151;"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showPreviewModal('Health Analytics', content);
+        }
+
+        function showMusicSearchPreview() {
+            const content = `
+                <div style="background: linear-gradient(135deg, #fef3f2 0%, #fee4e2 100%); padding: 1.5rem; border-radius: 15px; margin-bottom: 1.5rem;">
+                    <h3 style="color: #991b1b; margin-bottom: 1rem;">🔍 Music Discovery Preview</h3>
+                    <p style="color: #374151; margin-bottom: 1rem;">Try searching for music by mood and symptoms:</p>
+                    
+                    <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
+                        <div style="font-weight: 600; color: #1a202c; margin-bottom: 1rem;">Search by Symptom:</div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                            <span onclick="searchMusic('anxiety')" style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#fde68a'" onmouseout="this.style.background='#fef3c7'">Anxiety</span>
+                            <span onclick="searchMusic('insomnia')" style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#fde68a'" onmouseout="this.style.background='#fef3c7'">Insomnia</span>
+                            <span onclick="searchMusic('stress')" style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#fde68a'" onmouseout="this.style.background='#fef3c7'">Stress</span>
+                            <span onclick="searchMusic('depression')" style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#fde68a'" onmouseout="this.style.background='#fef3c7'">Depression</span>
+                        </div>
+                        
+                        <div style="font-weight: 600; color: #1a202c; margin-bottom: 0.5rem;">Search by Mood:</div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                            <span onclick="searchMusic('calm')" style="background: #dbeafe; color: #1e40af; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#bfdbfe'" onmouseout="this.style.background='#dbeafe'">Calm</span>
+                            <span onclick="searchMusic('energetic')" style="background: #dbeafe; color: #1e40af; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#bfdbfe'" onmouseout="this.style.background='#dbeafe'">Energetic</span>
+                            <span onclick="searchMusic('focused')" style="background: #dbeafe; color: #1e40af; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#bfdbfe'" onmouseout="this.style.background='#dbeafe'">Focused</span>
+                            <span onclick="searchMusic('uplifting')" style="background: #dbeafe; color: #1e40af; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#bfdbfe'" onmouseout="this.style.background='#dbeafe'">Uplifting</span>
+                        </div>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <label style="font-weight: 600; color: #374151; display: block; margin-bottom: 0.5rem;">Custom Search:</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="text" id="customSearch" placeholder="e.g., 'calm anxiety', 'sleep music'" style="flex: 1; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 8px; background: white;">
+                                <button onclick="performCustomSearch()" style="background: #dc2626; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600;">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="searchResults" style="display: none;">
+                        <div style="background: white; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+                            <div style="font-weight: 600; color: #1a202c; margin-bottom: 0.5rem;">Search Results:</div>
+                            <div id="searchResultsList" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+                        </div>
+                        
+                        <div style="background: #ecfdf5; padding: 1rem; border-radius: 10px; border-left: 4px solid #10b981;">
+                            <div style="font-weight: 600; color: #065f46; margin-bottom: 0.5rem;">Smart Search:</div>
+                            <div id="searchInsight" style="color: #374151;"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showPreviewModal('Music Discovery', content);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('previewModal');
+            if (event.target === modal) {
+                closePreviewModal();
+            }
+        }
+
+        // Interactive functions for symptom tracker
+        function updateStressValue() {
+            const slider = document.getElementById('stressSlider');
+            const value = document.getElementById('stressValue');
+            if (slider && value) {
+                value.textContent = slider.value + '/10';
+            }
+        }
+
+        function updateSleepValue() {
+            const slider = document.getElementById('sleepSlider');
+            const value = document.getElementById('sleepValue');
+            if (slider && value) {
+                value.textContent = slider.value + '/10';
+            }
+        }
+
+        function updateMoodValue() {
+            const slider = document.getElementById('moodSlider');
+            const value = document.getElementById('moodValue');
+            if (slider && value) {
+                value.textContent = slider.value + '/10';
+            }
+        }
+
+        function updateEnergyValue() {
+            const slider = document.getElementById('energySlider');
+            const value = document.getElementById('energyValue');
+            if (slider && value) {
+                value.textContent = slider.value + '/10';
+            }
+        }
+
+        function updateSymptoms() {
+            // This function can be used to update symptom-related UI
+            console.log('Symptoms updated');
+        }
+
+        function analyzeHealth() {
+            const stressLevel = document.getElementById('stressSlider')?.value || 7;
+            const sleepQuality = document.getElementById('sleepSlider')?.value || 4;
+            const moodScore = document.getElementById('moodSlider')?.value || 6;
+            const energyLevel = document.getElementById('energySlider')?.value || 5;
+            
+            const anxiety = document.getElementById('anxiety')?.checked || false;
+            const stress = document.getElementById('stress')?.checked || false;
+            const insomnia = document.getElementById('insomnia')?.checked || false;
+            const depression = document.getElementById('depression')?.checked || false;
+
+            let analysis = '';
+            let recommendations = [];
+
+            // Analyze stress levels
+            if (stressLevel > 7) {
+                recommendations.push('Your stress levels are high. Consider daily relaxation sessions.');
+            } else if (stressLevel > 5) {
+                recommendations.push('Moderate stress detected. Try calming activities.');
+            }
+
+            // Analyze sleep
+            if (sleepQuality < 5) {
+                recommendations.push('Sleep quality needs improvement. Establish a bedtime routine.');
+            }
+
+            // Analyze mood
+            if (moodScore < 5) {
+                recommendations.push('Your mood could use a boost. Try uplifting music.');
+            }
+
+            // Analyze energy
+            if (energyLevel < 5) {
+                recommendations.push('Low energy detected. Consider energizing music.');
+            }
+
+            // Symptom-specific recommendations
+            if (anxiety) {
+                recommendations.push('For anxiety: Try deep breathing exercises with ambient music.');
+            }
+            if (insomnia) {
+                recommendations.push('For insomnia: Listen to calming music 30 minutes before bed.');
+            }
+            if (depression) {
+                recommendations.push('For depression: Uplifting music can help improve mood.');
+            }
+
+            analysis = recommendations.join(' ');
+            if (!analysis) {
+                analysis = 'Your health metrics look good! Continue with your current wellness routine.';
+            }
+
+            const analysisDiv = document.getElementById('healthAnalysis');
+            const analysisText = document.getElementById('analysisText');
+            
+            if (analysisDiv && analysisText) {
+                analysisText.textContent = analysis;
+                analysisDiv.style.display = 'block';
+            }
+        }
+
+        // Interactive functions for playlist generation
+        function generatePlaylist() {
+            const anxiety = document.getElementById('playlistAnxiety')?.checked || false;
+            const stress = document.getElementById('playlistStress')?.checked || false;
+            const insomnia = document.getElementById('playlistInsomnia')?.checked || false;
+            const depression = document.getElementById('playlistDepression')?.checked || false;
+            const focus = document.getElementById('playlistFocus')?.checked || false;
+            const mood = document.getElementById('moodSelect')?.value || 'calm';
+
+            const tracks = [];
+            let recommendation = '';
+
+            // Generate tracks based on symptoms and mood
+            if (anxiety || stress) {
+                tracks.push({
+                    title: 'Weightless',
+                    artist: 'Marconi Union',
+                    genre: 'Ambient',
+                    score: 'Stress: 9/10'
+                });
+                tracks.push({
+                    title: 'Claire de Lune',
+                    artist: 'Debussy',
+                    genre: 'Classical',
+                    score: 'Calm: 8/10'
+                });
+            }
+
+            if (insomnia) {
+                tracks.push({
+                    title: 'Sleep Well',
+                    artist: 'Sleep Sounds',
+                    genre: 'Ambient',
+                    score: 'Sleep: 9/10'
+                });
+                tracks.push({
+                    title: 'Moonlight Sonata',
+                    artist: 'Beethoven',
+                    genre: 'Classical',
+                    score: 'Relaxation: 8/10'
+                });
+            }
+
+            if (depression) {
+                tracks.push({
+                    title: 'Here Comes the Sun',
+                    artist: 'The Beatles',
+                    genre: 'Pop',
+                    score: 'Uplifting: 9/10'
+                });
+            }
+
+            if (focus) {
+                tracks.push({
+                    title: 'Concentration',
+                    artist: 'Brain.fm',
+                    genre: 'Focus',
+                    score: 'Focus: 9/10'
+                });
+            }
+
+            // Add mood-based tracks
+            if (mood === 'energetic') {
+                tracks.push({
+                    title: 'Happy',
+                    artist: 'Pharrell Williams',
+                    genre: 'Pop',
+                    score: 'Energy: 9/10'
+                });
+            } else if (mood === 'focused') {
+                tracks.push({
+                    title: 'Study Music',
+                    artist: 'Lo-Fi Beats',
+                    genre: 'Lo-Fi',
+                    score: 'Focus: 8/10'
+                });
+            }
+
+            // Generate recommendation
+            if (tracks.length > 0) {
+                recommendation = `This ${tracks.length}-track playlist is optimized for your symptoms. Listen for 15-20 minutes for best results.`;
+            } else {
+                recommendation = 'Select symptoms to generate a personalized playlist.';
+            }
+
+            // Display results
+            const resultsDiv = document.getElementById('playlistResults');
+            const tracksDiv = document.getElementById('playlistTracks');
+            const recommendationDiv = document.getElementById('playlistRecommendation');
+
+            if (resultsDiv && tracksDiv && recommendationDiv) {
+                tracksDiv.innerHTML = '';
+                
+                tracks.forEach(track => {
+                    tracksDiv.innerHTML += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: #f8fafc; border-radius: 8px;">
+                            <div>
+                                <div style="font-weight: 600; color: #1a202c;">${track.title}</div>
+                                <div style="color: #64748b; font-size: 0.9rem;">${track.artist} • ${track.genre}</div>
+                            </div>
+                            <div style="color: #10b981; font-weight: 600;">${track.score}</div>
+                        </div>
+                    `;
+                });
+
+                recommendationDiv.textContent = recommendation;
+                resultsDiv.style.display = 'block';
+            }
+        }
+
+        // Interactive functions for health analytics
+        function updateHealthData(period) {
+            // Update button styles
+            document.getElementById('weekBtn').style.background = period === 'week' ? '#10b981' : '#d1d5db';
+            document.getElementById('weekBtn').style.color = period === 'week' ? 'white' : '#374151';
+            document.getElementById('monthBtn').style.background = period === 'month' ? '#10b981' : '#d1d5db';
+            document.getElementById('monthBtn').style.color = period === 'month' ? 'white' : '#374151';
+            document.getElementById('yearBtn').style.background = period === 'year' ? '#10b981' : '#d1d5db';
+            document.getElementById('yearBtn').style.color = period === 'year' ? 'white' : '#374151';
+
+            // Update metrics based on period
+            const metricsDiv = document.getElementById('healthMetrics');
+            if (metricsDiv) {
+                let stressData, sleepData;
+                
+                if (period === 'week') {
+                    stressData = { value: '7.2/10', change: '↑ 15% from last week', color: '#dc2626' };
+                    sleepData = { value: '4.1/10', change: '↓ 20% from last week', color: '#dc2626' };
+                } else if (period === 'month') {
+                    stressData = { value: '6.8/10', change: '↑ 8% from last month', color: '#f59e0b' };
+                    sleepData = { value: '5.2/10', change: '↓ 12% from last month', color: '#f59e0b' };
+                } else {
+                    stressData = { value: '6.1/10', change: '↓ 5% from last year', color: '#10b981' };
+                    sleepData = { value: '6.8/10', change: '↑ 15% from last year', color: '#10b981' };
+                }
+
+                metricsDiv.innerHTML = `
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 10px; text-align: center;">
+                        <div style="font-weight: 600; color: #1a202c; margin-bottom: 0.5rem;">${period.charAt(0).toUpperCase() + period.slice(1)}ly Average</div>
+                        <div style="font-size: 1.2rem; font-weight: 700; color: ${stressData.color};">Stress: ${stressData.value}</div>
+                        <div style="font-size: 0.9rem; color: #64748b;">${stressData.change}</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 10px; text-align: center;">
+                        <div style="font-weight: 600; color: #1a202c; margin-bottom: 0.5rem;">${period.charAt(0).toUpperCase() + period.slice(1)}ly Average</div>
+                        <div style="font-size: 1.2rem; font-weight: 700; color: ${sleepData.color};">Sleep: ${sleepData.value}</div>
+                        <div style="font-size: 0.9rem; color: #64748b;">${sleepData.change}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function toggleTracking() {
+            // This function can be used to update tracking preferences
+            console.log('Tracking preferences updated');
+        }
+
+        function generateInsights() {
+            const trackStress = document.getElementById('trackStress')?.checked || false;
+            const trackSleep = document.getElementById('trackSleep')?.checked || false;
+            const trackMood = document.getElementById('trackMood')?.checked || false;
+            const trackEnergy = document.getElementById('trackEnergy')?.checked || false;
+
+            let insights = [];
+            let recommendation = '';
+
+            if (trackStress) {
+                insights.push('• Your stress levels are elevated - consider daily relaxation sessions');
+            }
+            if (trackSleep) {
+                insights.push('• Sleep quality has declined - try calming music before bed');
+            }
+            if (trackMood) {
+                insights.push('• Mood shows improvement when listening to classical music');
+            }
+            if (trackEnergy) {
+                insights.push('• Energy levels correlate with upbeat music consumption');
+            }
+
+            if (insights.length === 0) {
+                insights.push('• Select metrics to track for personalized insights');
+            }
+
+            recommendation = 'Focus on stress reduction techniques and establish a consistent sleep routine with calming music.';
+
+            const resultsDiv = document.getElementById('insightsResults');
+            const insightsList = document.getElementById('insightsList');
+            const healthRecommendation = document.getElementById('healthRecommendation');
+
+            if (resultsDiv && insightsList && healthRecommendation) {
+                insightsList.innerHTML = insights.join('<br>');
+                healthRecommendation.textContent = recommendation;
+                resultsDiv.style.display = 'block';
+            }
+        }
+
+        // Interactive functions for music search
+        function searchMusic(query) {
+            const tracks = [];
+            let insight = '';
+
+            // Generate search results based on query
+            if (query === 'anxiety') {
+                tracks.push(
+                    { title: 'Weightless', artist: 'Marconi Union', genre: 'Ambient', score: 'Anxiety: 9/10' },
+                    { title: 'Claire de Lune', artist: 'Debussy', genre: 'Classical', score: 'Calm: 8/10' },
+                    { title: 'Deep Breathing', artist: 'Meditation Sounds', genre: 'Ambient', score: 'Relaxation: 9/10' }
+                );
+                insight = 'Found 3 tracks perfect for anxiety relief. These calming sounds can help reduce stress and promote relaxation.';
+            } else if (query === 'insomnia') {
+                tracks.push(
+                    { title: 'Sleep Well', artist: 'Sleep Sounds', genre: 'Ambient', score: 'Sleep: 9/10' },
+                    { title: 'Moonlight Sonata', artist: 'Beethoven', genre: 'Classical', score: 'Relaxation: 8/10' },
+                    { title: 'White Noise', artist: 'Nature Sounds', genre: 'Ambient', score: 'Sleep: 8/10' }
+                );
+                insight = 'Found 3 tracks ideal for sleep. Listen 30 minutes before bedtime for best results.';
+            } else if (query === 'stress') {
+                tracks.push(
+                    { title: 'Weightless', artist: 'Marconi Union', genre: 'Ambient', score: 'Stress: 9/10' },
+                    { title: 'River Flows', artist: 'Yiruma', genre: 'Piano', score: 'Calm: 8/10' }
+                );
+                insight = 'Found 2 tracks for stress relief. These gentle melodies can help lower cortisol levels.';
+            } else if (query === 'depression') {
+                tracks.push(
+                    { title: 'Here Comes the Sun', artist: 'The Beatles', genre: 'Pop', score: 'Uplifting: 9/10' },
+                    { title: 'Happy', artist: 'Pharrell Williams', genre: 'Pop', score: 'Energy: 9/10' }
+                );
+                insight = 'Found 2 uplifting tracks. Upbeat music can help improve mood and energy levels.';
+            } else if (query === 'calm') {
+                tracks.push(
+                    { title: 'Claire de Lune', artist: 'Debussy', genre: 'Classical', score: 'Calm: 8/10' },
+                    { title: 'River Flows', artist: 'Yiruma', genre: 'Piano', score: 'Relaxation: 9/10' }
+                );
+                insight = 'Found 2 calming tracks. Perfect for relaxation and stress reduction.';
+            } else if (query === 'energetic') {
+                tracks.push(
+                    { title: 'Happy', artist: 'Pharrell Williams', genre: 'Pop', score: 'Energy: 9/10' },
+                    { title: 'Walking on Sunshine', artist: 'Katrina & The Waves', genre: 'Pop', score: 'Uplifting: 8/10' }
+                );
+                insight = 'Found 2 energetic tracks. Great for boosting mood and motivation.';
+            } else if (query === 'focused') {
+                tracks.push(
+                    { title: 'Concentration', artist: 'Brain.fm', genre: 'Focus', score: 'Focus: 9/10' },
+                    { title: 'Study Music', artist: 'Lo-Fi Beats', genre: 'Lo-Fi', score: 'Focus: 8/10' }
+                );
+                insight = 'Found 2 focus-enhancing tracks. Ideal for work and study sessions.';
+            } else if (query === 'uplifting') {
+                tracks.push(
+                    { title: 'Here Comes the Sun', artist: 'The Beatles', genre: 'Pop', score: 'Uplifting: 9/10' },
+                    { title: 'Walking on Sunshine', artist: 'Katrina & The Waves', genre: 'Pop', score: 'Energy: 8/10' }
+                );
+                insight = 'Found 2 uplifting tracks. Perfect for improving mood and motivation.';
+            }
+
+            displaySearchResults(tracks, insight);
+        }
+
+        function performCustomSearch() {
+            const searchInput = document.getElementById('customSearch');
+            const query = searchInput?.value?.toLowerCase() || '';
+
+            if (!query) {
+                alert('Please enter a search term');
+                return;
+            }
+
+            const tracks = [];
+            let insight = '';
+
+            // Simulate custom search results
+            if (query.includes('calm') && query.includes('anxiety')) {
+                tracks.push(
+                    { title: 'Weightless', artist: 'Marconi Union', genre: 'Ambient', score: 'Anxiety: 9/10' },
+                    { title: 'Claire de Lune', artist: 'Debussy', genre: 'Classical', score: 'Calm: 8/10' }
+                );
+                insight = 'Found 2 tracks perfect for calming anxiety. These gentle sounds can help reduce stress.';
+            } else if (query.includes('sleep')) {
+                tracks.push(
+                    { title: 'Sleep Well', artist: 'Sleep Sounds', genre: 'Ambient', score: 'Sleep: 9/10' },
+                    { title: 'Moonlight Sonata', artist: 'Beethoven', genre: 'Classical', score: 'Relaxation: 8/10' }
+                );
+                insight = 'Found 2 tracks ideal for sleep. Listen 30 minutes before bedtime.';
+            } else {
+                tracks.push(
+                    { title: 'Search Result', artist: 'Various Artists', genre: 'Mixed', score: 'Relevance: 7/10' }
+                );
+                insight = 'Found 1 track matching your search. Try more specific terms for better results.';
+            }
+
+            displaySearchResults(tracks, insight);
+        }
+
+        function displaySearchResults(tracks, insight) {
+            const resultsDiv = document.getElementById('searchResults');
+            const tracksList = document.getElementById('searchResultsList');
+            const searchInsight = document.getElementById('searchInsight');
+
+            if (resultsDiv && tracksList && searchInsight) {
+                tracksList.innerHTML = '';
+                
+                tracks.forEach(track => {
+                    tracksList.innerHTML += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: #f8fafc; border-radius: 8px;">
+                            <div>
+                                <div style="font-weight: 600; color: #1a202c;">${track.title}</div>
+                                <div style="color: #64748b; font-size: 0.9rem;">${track.artist} • ${track.genre}</div>
+                            </div>
+                            <div style="color: #10b981; font-weight: 600;">${track.score}</div>
+                        </div>
+                    `;
+                });
+
+                searchInsight.textContent = insight;
+                resultsDiv.style.display = 'block';
+            }
+        }
     });
     </script>
 </body>
