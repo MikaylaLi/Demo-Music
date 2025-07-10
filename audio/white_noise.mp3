@@ -1,0 +1,6 @@
+Placeholder audio file for white_noise.mp3
+Description: White noise for focus
+Frequency: 440Hz
+Duration: 3600 seconds
+This is a placeholder file for testing the audio player.
+In a real application, this would be an actual MP3 file.

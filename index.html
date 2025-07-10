@@ -985,6 +985,332 @@
         .hero-section .main-title h1 {
             font-family: 'Pacifico', cursive, sans-serif;
         }
+
+        /* ===== AUDIO PLAYER STYLES ===== */
+        .audio-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.3);
+            padding: 1rem;
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+        }
+
+        .audio-player.show {
+            transform: translateY(0);
+        }
+
+        .player-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .track-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .track-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-artist {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+        }
+
+        .control-btn:hover {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--teal);
+            transform: scale(1.1);
+        }
+
+        .play-btn {
+            background: var(--teal);
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .play-btn:hover {
+            background: var(--teal);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .progress-container {
+            flex: 2;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--teal), var(--coral));
+            border-radius: 3px;
+            transition: width 0.1s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: var(--teal);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .time-display {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 4px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .volume-fill {
+            height: 100%;
+            background: var(--teal);
+            border-radius: 2px;
+            transition: width 0.1s ease;
+        }
+
+        .playlist-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .playlist-btn:hover {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--teal);
+        }
+
+        .playlist-panel {
+            position: fixed;
+            bottom: 100px;
+            right: 1rem;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 1rem;
+            max-width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .playlist-panel.show {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .playlist-item:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .playlist-item.active {
+            background: rgba(20, 184, 166, 0.2);
+            color: var(--teal);
+        }
+
+        .playlist-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .playlist-item-title {
+            font-weight: 500;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .playlist-item-artist {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .music-track {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .music-track:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .music-track.playing {
+            background: rgba(20, 184, 166, 0.2);
+            border-color: var(--teal);
+        }
+
+        .track-artwork {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--teal), var(--coral));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .track-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .track-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+
+        .action-btn:hover {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--teal);
+        }
+
+        @media (max-width: 768px) {
+            .audio-player {
+                padding: 0.5rem;
+            }
+
+            .player-content {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .progress-container {
+                width: 100%;
+            }
+
+            .volume-control {
+                display: none;
+            }
+
+            .playlist-panel {
+                right: 0.5rem;
+                left: 0.5rem;
+                max-width: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1413,15 +1739,63 @@
                 <div style="display: grid; gap: 1rem; margin: 1rem 0;">
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px;">
                         <span>🎵 Energizing Morning Mix</span>
-                        <button style="background: var(--coral); color: white; border: none; padding: 0.5rem 1rem; border-radius: 15px;">Play</button>
+                        <button onclick="playPlaylist('energizing')" style="background: var(--coral); color: white; border: none; padding: 0.5rem 1rem; border-radius: 15px; cursor: pointer;">Play</button>
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px;">
                         <span>🎵 Calm Evening Vibes</span>
-                        <button style="background: var(--coral); color: white; border: none; padding: 0.5rem 1rem; border-radius: 15px;">Play</button>
+                        <button onclick="playPlaylist('calm')" style="background: var(--coral); color: white; border: none; padding: 0.5rem 1rem; border-radius: 15px; cursor: pointer;">Play</button>
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px;">
                         <span>🎵 Focus & Productivity</span>
-                        <button style="background: var(--coral); color: white; border: none; padding: 0.5rem 1rem; border-radius: 15px;">Play</button>
+                        <button onclick="playPlaylist('focus')" style="background: var(--coral); color: white; border: none; padding: 0.5rem 1rem; border-radius: 15px; cursor: pointer;">Play</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Symptom-Based Recommendations -->
+            <div class="glass" style="padding: 2rem; margin-bottom: 2rem;">
+                <h3>🎯 Symptom-Based Recommendations</h3>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Select your symptoms to get personalized music recommendations</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px; cursor: pointer; transition: all 0.3s ease;" onclick="playPlaylist('anxiety')">
+                        <div style="font-weight: 600; color: var(--text-dark); margin-bottom: 0.5rem;">😰 Anxiety Relief</div>
+                        <div style="font-size: 0.9rem; color: var(--text-muted);">Calming ambient sounds</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px; cursor: pointer; transition: all 0.3s ease;" onclick="playPlaylist('depression')">
+                        <div style="font-weight: 600; color: var(--text-dark); margin-bottom: 0.5rem;">😔 Depression Support</div>
+                        <div style="font-size: 0.9rem; color: var(--text-muted);">Uplifting pop music</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px; cursor: pointer; transition: all 0.3s ease;" onclick="playPlaylist('insomnia')">
+                        <div style="font-weight: 600; color: var(--text-dark); margin-bottom: 0.5rem;">😴 Sleep Aid</div>
+                        <div style="font-size: 0.9rem; color: var(--text-muted);">Soothing sleep sounds</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px; cursor: pointer; transition: all 0.3s ease;" onclick="playPlaylist('stress')">
+                        <div style="font-weight: 600; color: var(--text-dark); margin-bottom: 0.5rem;">😤 Stress Relief</div>
+                        <div style="font-size: 0.9rem; color: var(--text-muted);">Relaxation music</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px; cursor: pointer; transition: all 0.3s ease;" onclick="playPlaylist('focus')">
+                        <div style="font-weight: 600; color: var(--text-dark); margin-bottom: 0.5rem;">🎯 Focus & Concentration</div>
+                        <div style="font-size: 0.9rem; color: var(--text-muted);">Study and work music</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px; cursor: pointer; transition: all 0.3s ease;" onclick="playPlaylist('energy')">
+                        <div style="font-weight: 600; color: var(--text-dark); margin-bottom: 0.5rem;">⚡ Energy Boost</div>
+                        <div style="font-size: 0.9rem; color: var(--text-muted);">Motivational music</div>
+                    </div>
+                </div>
+
+                <!-- Quick Search by Symptom -->
+                <div style="margin-top: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-dark);">🔍 Quick Search by Symptom</h4>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button onclick="searchMusic('anxiety')" style="background: var(--teal); color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.9rem;">Anxiety</button>
+                        <button onclick="searchMusic('depression')" style="background: var(--teal); color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.9rem;">Depression</button>
+                        <button onclick="searchMusic('insomnia')" style="background: var(--teal); color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.9rem;">Insomnia</button>
+                        <button onclick="searchMusic('stress')" style="background: var(--teal); color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.9rem;">Stress</button>
+                        <button onclick="searchMusic('focus')" style="background: var(--teal); color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.9rem;">Focus</button>
+                        <button onclick="searchMusic('energy')" style="background: var(--teal); color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.9rem;">Energy</button>
+                        <button onclick="searchMusic('calm')" style="background: var(--teal); color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.9rem;">Calm</button>
+                        <button onclick="searchMusic('sleep')" style="background: var(--teal); color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.9rem;">Sleep</button>
                     </div>
                 </div>
             </div>
@@ -1669,6 +2043,20 @@
                     favoriteGenres: ['classical', 'ambient'],
                     healthGoals: ['stress-reduction', 'better-sleep'],
                     meditationPreferences: ['guided', 'nature-sounds']
+                }
+            },
+            {
+                id: 2,
+                name: 'Test User',
+                email: 'test@example.com',
+                password: 'test123',
+                birthday: '1985-05-15',
+                gender: 'other',
+                createdAt: new Date().toISOString(),
+                preferences: {
+                    favoriteGenres: ['pop', 'jazz'],
+                    healthGoals: ['anxiety-relief', 'focus-improvement'],
+                    meditationPreferences: ['music-guided', 'silent']
                 }
             }
         ];
@@ -1954,7 +2342,7 @@
                         
                         <div style="margin-bottom: 1rem;">
                             <label style="font-weight: 600; color: #374151; display: block; margin-bottom: 0.5rem;">Select Symptoms:</label>
-                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <div style="display: flex; gap: 0.5rem; flex-wrap;">
                                 <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
                                     <input type="checkbox" id="anxiety" onchange="updateSymptoms()" checked>
                                     <span style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.9rem;">Anxiety</span>
@@ -2476,57 +2864,79 @@
             const tracks = [];
             let insight = '';
 
-            // Generate search results based on query
+            // Enhanced search results based on symptoms and moods
             if (query === 'anxiety') {
                 tracks.push(
                     { title: 'Weightless', artist: 'Marconi Union', genre: 'Ambient', score: 'Anxiety: 9/10' },
-                    { title: 'Claire de Lune', artist: 'Debussy', genre: 'Classical', score: 'Calm: 8/10' },
-                    { title: 'Deep Breathing', artist: 'Meditation Sounds', genre: 'Ambient', score: 'Relaxation: 9/10' }
+                    { title: 'Anxiety Calm', artist: 'Calm Sounds', genre: 'Ambient', score: 'Calm: 9/10' },
+                    { title: 'Heal Anxiety', artist: 'Healing Sounds', genre: 'Ambient', score: 'Healing: 9/10' },
+                    { title: 'Meditation Sounds', artist: 'Mindful Music', genre: 'Ambient', score: 'Mindfulness: 8/10' },
+                    { title: 'Deep Breathing', artist: 'Breath Guide', genre: 'Ambient', score: 'Breathing: 9/10' }
                 );
-                insight = 'Found 3 tracks perfect for anxiety relief. These calming sounds can help reduce stress and promote relaxation.';
+                insight = 'Found 5 tracks perfect for anxiety relief. These calming sounds can help reduce stress and promote relaxation.';
             } else if (query === 'insomnia') {
                 tracks.push(
                     { title: 'Sleep Well', artist: 'Sleep Sounds', genre: 'Ambient', score: 'Sleep: 9/10' },
-                    { title: 'Moonlight Sonata', artist: 'Beethoven', genre: 'Classical', score: 'Relaxation: 8/10' },
-                    { title: 'White Noise', artist: 'Nature Sounds', genre: 'Ambient', score: 'Sleep: 8/10' }
+                    { title: 'Ocean Waves', artist: 'Nature', genre: 'Ambient', score: 'Relaxation: 9/10' },
+                    { title: 'Rain Sounds', artist: 'Nature', genre: 'Ambient', score: 'Sleep: 8/10' },
+                    { title: 'Deep Sleep', artist: 'Sleep Music', genre: 'Ambient', score: 'Deep Sleep: 9/10' },
+                    { title: 'Insomnia Cure', artist: 'Sleep Therapy', genre: 'Ambient', score: 'Cure: 9/10' }
                 );
-                insight = 'Found 3 tracks ideal for sleep. Listen 30 minutes before bedtime for best results.';
+                insight = 'Found 5 tracks ideal for sleep. Listen 30 minutes before bedtime for best results.';
             } else if (query === 'stress') {
                 tracks.push(
                     { title: 'Weightless', artist: 'Marconi Union', genre: 'Ambient', score: 'Stress: 9/10' },
-                    { title: 'River Flows', artist: 'Yiruma', genre: 'Piano', score: 'Calm: 8/10' }
+                    { title: 'Stress Relief', artist: 'Healing Music', genre: 'Ambient', score: 'Relief: 9/10' },
+                    { title: 'Relaxation Guide', artist: 'Meditation Sounds', genre: 'Ambient', score: 'Relaxation: 9/10' },
+                    { title: 'Calm Heart', artist: 'Peaceful Sounds', genre: 'Ambient', score: 'Calm: 8/10' },
+                    { title: 'Relax Body', artist: 'Wellness Music', genre: 'Ambient', score: 'Wellness: 8/10' }
                 );
-                insight = 'Found 2 tracks for stress relief. These gentle melodies can help lower cortisol levels.';
+                insight = 'Found 5 tracks for stress relief. These gentle melodies can help lower cortisol levels.';
             } else if (query === 'depression') {
                 tracks.push(
-                    { title: 'Here Comes the Sun', artist: 'The Beatles', genre: 'Pop', score: 'Uplifting: 9/10' },
-                    { title: 'Happy', artist: 'Pharrell Williams', genre: 'Pop', score: 'Energy: 9/10' }
+                    { title: 'Happy', artist: 'Pharrell Williams', genre: 'Pop', score: 'Uplifting: 9/10' },
+                    { title: 'Depression Lift', artist: 'Uplifting Music', genre: 'Pop', score: 'Lifting: 9/10' },
+                    { title: 'Lift Spirits', artist: 'Spirit Music', genre: 'Pop', score: 'Spirit: 9/10' },
+                    { title: 'Mood Boost', artist: 'Boost Music', genre: 'Pop', score: 'Boost: 8/10' },
+                    { title: 'Uplift Soul', artist: 'Soul Music', genre: 'Pop', score: 'Soul: 8/10' }
                 );
-                insight = 'Found 2 uplifting tracks. Upbeat music can help improve mood and energy levels.';
+                insight = 'Found 5 uplifting tracks. Upbeat music can help improve mood and energy levels.';
+            } else if (query === 'focus') {
+                tracks.push(
+                    { title: 'Lofi Study Beats', artist: 'Various Artists', genre: 'Lo-Fi', score: 'Focus: 9/10' },
+                    { title: 'Classical Study Music', artist: 'Mozart', genre: 'Classical', score: 'Concentration: 9/10' },
+                    { title: 'Brain.fm Focus', artist: 'Brain.fm', genre: 'Electronic', score: 'Focus: 9/10' },
+                    { title: 'Concentration', artist: 'Focus Music', genre: 'Electronic', score: 'Concentration: 8/10' },
+                    { title: 'Study Music', artist: 'Academic Sounds', genre: 'Lo-Fi', score: 'Study: 8/10' }
+                );
+                insight = 'Found 5 focus-enhancing tracks. Ideal for work and study sessions.';
+            } else if (query === 'energy') {
+                tracks.push(
+                    { title: 'Happy', artist: 'Pharrell Williams', genre: 'Pop', score: 'Energy: 9/10' },
+                    { title: 'Eye of the Tiger', artist: 'Survivor', genre: 'Rock', score: 'Motivation: 9/10' },
+                    { title: 'Walking on Sunshine', artist: 'Katrina & The Waves', genre: 'Pop', score: 'Uplifting: 8/10' },
+                    { title: 'Energy Boost', artist: 'Motivation Music', genre: 'Pop', score: 'Boost: 9/10' },
+                    { title: 'Energize Life', artist: 'Life Music', genre: 'Pop', score: 'Life: 8/10' }
+                );
+                insight = 'Found 5 energetic tracks. Great for boosting mood and motivation.';
             } else if (query === 'calm') {
                 tracks.push(
                     { title: 'Claire de Lune', artist: 'Debussy', genre: 'Classical', score: 'Calm: 8/10' },
-                    { title: 'River Flows', artist: 'Yiruma', genre: 'Piano', score: 'Relaxation: 9/10' }
+                    { title: 'River Flows in You', artist: 'Yiruma', genre: 'Piano', score: 'Relaxation: 9/10' },
+                    { title: 'Calm Melodies', artist: 'Piano Collection', genre: 'Piano', score: 'Melody: 8/10' },
+                    { title: 'Chill Vibes', artist: 'Relaxed Beats', genre: 'Lo-Fi', score: 'Chill: 8/10' },
+                    { title: 'Calm Mind', artist: 'Mind Music', genre: 'Ambient', score: 'Mind: 8/10' }
                 );
-                insight = 'Found 2 calming tracks. Perfect for relaxation and stress reduction.';
-            } else if (query === 'energetic') {
+                insight = 'Found 5 calming tracks. Perfect for relaxation and stress reduction.';
+            } else if (query === 'sleep') {
                 tracks.push(
-                    { title: 'Happy', artist: 'Pharrell Williams', genre: 'Pop', score: 'Energy: 9/10' },
-                    { title: 'Walking on Sunshine', artist: 'Katrina & The Waves', genre: 'Pop', score: 'Uplifting: 8/10' }
+                    { title: 'Sleep Well', artist: 'Sleep Sounds', genre: 'Ambient', score: 'Sleep: 9/10' },
+                    { title: 'Ocean Waves', artist: 'Nature', genre: 'Ambient', score: 'Nature: 9/10' },
+                    { title: 'Rain Sounds', artist: 'Nature', genre: 'Ambient', score: 'Rain: 8/10' },
+                    { title: 'Deep Sleep', artist: 'Sleep Music', genre: 'Ambient', score: 'Deep: 9/10' },
+                    { title: 'Sleep Aid', artist: 'Rest Music', genre: 'Ambient', score: 'Aid: 9/10' }
                 );
-                insight = 'Found 2 energetic tracks. Great for boosting mood and motivation.';
-            } else if (query === 'focused') {
-                tracks.push(
-                    { title: 'Concentration', artist: 'Brain.fm', genre: 'Focus', score: 'Focus: 9/10' },
-                    { title: 'Study Music', artist: 'Lo-Fi Beats', genre: 'Lo-Fi', score: 'Focus: 8/10' }
-                );
-                insight = 'Found 2 focus-enhancing tracks. Ideal for work and study sessions.';
-            } else if (query === 'uplifting') {
-                tracks.push(
-                    { title: 'Here Comes the Sun', artist: 'The Beatles', genre: 'Pop', score: 'Uplifting: 9/10' },
-                    { title: 'Walking on Sunshine', artist: 'Katrina & The Waves', genre: 'Pop', score: 'Energy: 8/10' }
-                );
-                insight = 'Found 2 uplifting tracks. Perfect for improving mood and motivation.';
+                insight = 'Found 5 sleep-inducing tracks. Listen 30 minutes before bedtime for best results.';
             }
 
             displaySearchResults(tracks, insight);
@@ -2591,7 +3001,475 @@
                 resultsDiv.style.display = 'block';
             }
         }
+
+        // Audio Player Variables
+        let currentTrackIndex = 0;
+        let playlist = [];
+        let isPlaying = false;
+        let currentVolume = 0.7;
+        let audioContext = null;
+
+        // Initialize audio player
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAudioPlayer();
+            loadSamplePlaylist();
+        });
+
+        function initializeAudioPlayer() {
+            const audio = document.getElementById('audioElement');
+            const playBtn = document.getElementById('playBtn');
+            const progressBar = document.getElementById('progressBar');
+            const volumeSlider = document.getElementById('volumeSlider');
+
+            // Audio event listeners
+            audio.addEventListener('loadedmetadata', function() {
+                updateTotalTime();
+            });
+
+            audio.addEventListener('timeupdate', function() {
+                updateProgress();
+                updateCurrentTime();
+            });
+
+            audio.addEventListener('ended', function() {
+                nextTrack();
+            });
+
+            audio.addEventListener('play', function() {
+                isPlaying = true;
+                updatePlayButton();
+            });
+
+            audio.addEventListener('pause', function() {
+                isPlaying = false;
+                updatePlayButton();
+            });
+
+            // Set initial volume
+            audio.volume = currentVolume;
+            updateVolumeDisplay();
+        }
+
+        function loadSamplePlaylist() {
+            // Sample playlist data - in a real app, this would come from the API
+            playlist = [
+                {
+                    id: 1,
+                    title: "Weightless",
+                    artist: "Marconi Union",
+                    genre: "Ambient",
+                    audio_file: "weightless.mp3",
+                    duration: 480
+                },
+                {
+                    id: 2,
+                    title: "Claire de Lune",
+                    artist: "Debussy",
+                    genre: "Classical",
+                    audio_file: "claire_de_lune.mp3",
+                    duration: 300
+                },
+                {
+                    id: 3,
+                    title: "River Flows in You",
+                    artist: "Yiruma",
+                    genre: "Piano",
+                    audio_file: "river_flows.mp3",
+                    duration: 240
+                },
+                {
+                    id: 4,
+                    title: "Happy",
+                    artist: "Pharrell Williams",
+                    genre: "Pop",
+                    audio_file: "happy.mp3",
+                    duration: 233
+                },
+                {
+                    id: 5,
+                    title: "Eye of the Tiger",
+                    artist: "Survivor",
+                    genre: "Rock",
+                    audio_file: "eye_of_tiger.mp3",
+                    duration: 264
+                }
+            ];
+
+            updatePlaylistDisplay();
+        }
+
+        function togglePlay() {
+            const audio = document.getElementById('audioElement');
+            
+            if (playlist.length === 0) {
+                alert('No tracks in playlist');
+                return;
+            }
+
+            if (isPlaying) {
+                audio.pause();
+            } else {
+                if (audio.src === '') {
+                    loadTrack(currentTrackIndex);
+                }
+                audio.play();
+            }
+        }
+
+        function loadTrack(index) {
+            if (index < 0 || index >= playlist.length) return;
+
+            const track = playlist[index];
+            const audio = document.getElementById('audioElement');
+            
+            // For demo purposes, we'll use placeholder audio
+            // In a real app, you'd use the actual audio file path
+            audio.src = `/api/audio/${track.audio_file}`;
+            
+            currentTrackIndex = index;
+            updateTrackInfo();
+            updatePlaylistDisplay();
+            
+            // Auto-play if it was playing before
+            if (isPlaying) {
+                audio.play();
+            }
+        }
+
+        function nextTrack() {
+            if (playlist.length === 0) return;
+            
+            currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+            loadTrack(currentTrackIndex);
+        }
+
+        function previousTrack() {
+            if (playlist.length === 0) return;
+            
+            currentTrackIndex = currentTrackIndex === 0 ? playlist.length - 1 : currentTrackIndex - 1;
+            loadTrack(currentTrackIndex);
+        }
+
+        function updateTrackInfo() {
+            if (playlist.length === 0) return;
+            
+            const track = playlist[currentTrackIndex];
+            document.getElementById('currentTrackTitle').textContent = track.title;
+            document.getElementById('currentTrackArtist').textContent = track.artist;
+        }
+
+        function updatePlayButton() {
+            const playIcon = document.getElementById('playIcon');
+            if (isPlaying) {
+                playIcon.className = 'fas fa-pause';
+            } else {
+                playIcon.className = 'fas fa-play';
+            }
+        }
+
+        function updateProgress() {
+            const audio = document.getElementById('audioElement');
+            const progressFill = document.getElementById('progressFill');
+            
+            if (audio.duration) {
+                const progress = (audio.currentTime / audio.duration) * 100;
+                progressFill.style.width = progress + '%';
+            }
+        }
+
+        function seekTo(event) {
+            const audio = document.getElementById('audioElement');
+            const progressBar = document.getElementById('progressBar');
+            const rect = progressBar.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const width = rect.width;
+            const percentage = clickX / width;
+            
+            audio.currentTime = percentage * audio.duration;
+        }
+
+        function updateCurrentTime() {
+            const audio = document.getElementById('audioElement');
+            const currentTimeDisplay = document.getElementById('currentTime');
+            
+            const minutes = Math.floor(audio.currentTime / 60);
+            const seconds = Math.floor(audio.currentTime % 60);
+            currentTimeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateTotalTime() {
+            const audio = document.getElementById('audioElement');
+            const totalTimeDisplay = document.getElementById('totalTime');
+            
+            const minutes = Math.floor(audio.duration / 60);
+            const seconds = Math.floor(audio.duration % 60);
+            totalTimeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function setVolume(event) {
+            const volumeSlider = document.getElementById('volumeSlider');
+            const rect = volumeSlider.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const width = rect.width;
+            const percentage = Math.max(0, Math.min(1, clickX / width));
+            
+            currentVolume = percentage;
+            const audio = document.getElementById('audioElement');
+            audio.volume = currentVolume;
+            updateVolumeDisplay();
+        }
+
+        function updateVolumeDisplay() {
+            const volumeFill = document.getElementById('volumeFill');
+            volumeFill.style.width = (currentVolume * 100) + '%';
+        }
+
+        function togglePlaylist() {
+            const playlistPanel = document.getElementById('playlistPanel');
+            playlistPanel.classList.toggle('show');
+        }
+
+        function updatePlaylistDisplay() {
+            const playlistItems = document.getElementById('playlistItems');
+            playlistItems.innerHTML = '';
+            
+            playlist.forEach((track, index) => {
+                const item = document.createElement('div');
+                item.className = `playlist-item ${index === currentTrackIndex ? 'active' : ''}`;
+                item.onclick = () => {
+                    currentTrackIndex = index;
+                    loadTrack(index);
+                    if (isPlaying) {
+                        document.getElementById('audioElement').play();
+                    }
+                };
+                
+                item.innerHTML = `
+                    <div class="playlist-item-info">
+                        <div class="playlist-item-title">${track.title}</div>
+                        <div class="playlist-item-artist">${track.artist}</div>
+                    </div>
+                    <div class="track-artwork">
+                        <i class="fas fa-music"></i>
+                    </div>
+                `;
+                
+                playlistItems.appendChild(item);
+            });
+        }
+
+        // Show audio player when a track is selected
+        function showAudioPlayer() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.classList.add('show');
+        }
+
+        // Function to play a specific track (can be called from other parts of the app)
+        function playTrack(trackId) {
+            const trackIndex = playlist.findIndex(track => track.id === trackId);
+            if (trackIndex !== -1) {
+                currentTrackIndex = trackIndex;
+                loadTrack(trackIndex);
+                showAudioPlayer();
+                document.getElementById('audioElement').play();
+            }
+        }
+
+        // Function to play different playlists
+        function playPlaylist(type) {
+            let newPlaylist = [];
+            
+            switch(type) {
+                case 'energizing':
+                    newPlaylist = [
+                        { id: 4, title: "Happy", artist: "Pharrell Williams", genre: "Pop", audio_file: "happy.mp3", duration: 233 },
+                        { id: 5, title: "Eye of the Tiger", artist: "Survivor", genre: "Rock", audio_file: "eye_of_tiger.mp3", duration: 264 },
+                        { id: 6, title: "Can't Stop the Feeling!", artist: "Justin Timberlake", genre: "Pop", audio_file: "cant_stop_feeling.mp3", duration: 235 },
+                        { id: 7, title: "Here Comes the Sun", artist: "The Beatles", genre: "Pop", audio_file: "here_comes_sun.mp3", duration: 185 },
+                        { id: 8, title: "Walking on Sunshine", artist: "Katrina & The Waves", genre: "Pop", audio_file: "walking_sunshine.mp3", duration: 235 }
+                    ];
+                    break;
+                case 'calm':
+                    newPlaylist = [
+                        { id: 1, title: "Weightless", artist: "Marconi Union", genre: "Ambient", audio_file: "weightless.mp3", duration: 480 },
+                        { id: 2, title: "Claire de Lune", artist: "Debussy", genre: "Classical", audio_file: "claire_de_lune.mp3", duration: 300 },
+                        { id: 3, title: "River Flows in You", artist: "Yiruma", genre: "Piano", audio_file: "river_flows.mp3", duration: 240 },
+                        { id: 9, title: "Moonlight Sonata", artist: "Beethoven", genre: "Classical", audio_file: "moonlight_sonata.mp3", duration: 900 },
+                        { id: 10, title: "Calm Melodies", artist: "Piano Collection", genre: "Piano", audio_file: "calm_melodies.mp3", duration: 600 }
+                    ];
+                    break;
+                case 'focus':
+                    newPlaylist = [
+                        { id: 11, title: "Lofi Study Beats", artist: "Various Artists", genre: "Lo-Fi", audio_file: "lofi_study.mp3", duration: 1800 },
+                        { id: 12, title: "Classical Study Music", artist: "Mozart", genre: "Classical", audio_file: "classical_study.mp3", duration: 1200 },
+                        { id: 13, title: "Brain.fm Focus", artist: "Brain.fm", genre: "Electronic", audio_file: "brain_fm_focus.mp3", duration: 1800 },
+                        { id: 14, title: "Concentration", artist: "Focus Music", genre: "Electronic", audio_file: "concentration.mp3", duration: 1800 },
+                        { id: 15, title: "Study Music", artist: "Academic Sounds", genre: "Lo-Fi", audio_file: "study_music.mp3", duration: 1200 }
+                    ];
+                    break;
+                case 'anxiety':
+                    newPlaylist = [
+                        { id: 1, title: "Weightless", artist: "Marconi Union", genre: "Ambient", audio_file: "weightless.mp3", duration: 480 },
+                        { id: 16, title: "Anxiety Calm", artist: "Calm Sounds", genre: "Ambient", audio_file: "anxiety_calm.mp3", duration: 1800 },
+                        { id: 17, title: "Calm Anxiety", artist: "Anxiety Relief", genre: "Ambient", audio_file: "calm_anxiety.mp3", duration: 1800 },
+                        { id: 18, title: "Heal Anxiety", artist: "Healing Sounds", genre: "Ambient", audio_file: "heal_anxiety.mp3", duration: 1800 },
+                        { id: 19, title: "Meditation Sounds", artist: "Mindful Music", genre: "Ambient", audio_file: "meditation_sounds.mp3", duration: 3600 }
+                    ];
+                    break;
+                case 'depression':
+                    newPlaylist = [
+                        { id: 4, title: "Happy", artist: "Pharrell Williams", genre: "Pop", audio_file: "happy.mp3", duration: 233 },
+                        { id: 20, title: "Depression Lift", artist: "Uplifting Music", genre: "Pop", audio_file: "depression_lift.mp3", duration: 300 },
+                        { id: 21, title: "Lift Spirits", artist: "Spirit Music", genre: "Pop", audio_file: "lift_spirits.mp3", duration: 300 },
+                        { id: 22, title: "Uplift Depression", artist: "Mood Music", genre: "Pop", audio_file: "uplift_depression.mp3", duration: 300 },
+                        { id: 23, title: "Mood Boost", artist: "Boost Music", genre: "Pop", audio_file: "mood_boost.mp3", duration: 240 }
+                    ];
+                    break;
+                case 'insomnia':
+                    newPlaylist = [
+                        { id: 24, title: "Sleep Well", artist: "Sleep Sounds", genre: "Ambient", audio_file: "sleep_well.mp3", duration: 3600 },
+                        { id: 25, title: "Ocean Waves", artist: "Nature", genre: "Ambient", audio_file: "ocean_waves.mp3", duration: 3600 },
+                        { id: 26, title: "Rain Sounds", artist: "Nature", genre: "Ambient", audio_file: "rain_sounds.mp3", duration: 3600 },
+                        { id: 27, title: "Deep Sleep", artist: "Sleep Music", genre: "Ambient", audio_file: "deep_sleep.mp3", duration: 3600 },
+                        { id: 28, title: "Insomnia Cure", artist: "Sleep Therapy", genre: "Ambient", audio_file: "insomnia_cure.mp3", duration: 3600 }
+                    ];
+                    break;
+                case 'stress':
+                    newPlaylist = [
+                        { id: 1, title: "Weightless", artist: "Marconi Union", genre: "Ambient", audio_file: "weightless.mp3", duration: 480 },
+                        { id: 29, title: "Stress Relief", artist: "Healing Music", genre: "Ambient", audio_file: "stress_relief.mp3", duration: 1200 },
+                        { id: 30, title: "Relaxation Guide", artist: "Meditation Sounds", genre: "Ambient", audio_file: "relaxation_guide.mp3", duration: 1800 },
+                        { id: 31, title: "Calm Heart", artist: "Peaceful Sounds", genre: "Ambient", audio_file: "calm_heart.mp3", duration: 1800 },
+                        { id: 32, title: "Relax Body", artist: "Wellness Music", genre: "Ambient", audio_file: "relax_body.mp3", duration: 1200 }
+                    ];
+                    break;
+                case 'chill':
+                    newPlaylist = [
+                        { id: 33, title: "Chill Vibes", artist: "Relaxed Beats", genre: "Lo-Fi", audio_file: "chill_vibes.mp3", duration: 300 },
+                        { id: 34, title: "Calm Mind", artist: "Mind Music", genre: "Ambient", audio_file: "calm_mind.mp3", duration: 1800 },
+                        { id: 35, title: "Relax Muscles", artist: "Muscle Music", genre: "Ambient", audio_file: "relax_muscles.mp3", duration: 1200 },
+                        { id: 36, title: "Relax Stress", artist: "Stress Relief", genre: "Ambient", audio_file: "relax_stress.mp3", duration: 1200 },
+                        { id: 2, title: "Claire de Lune", artist: "Debussy", genre: "Classical", audio_file: "claire_de_lune.mp3", duration: 300 }
+                    ];
+                    break;
+            }
+            
+            if (newPlaylist.length > 0) {
+                playlist = newPlaylist;
+                currentTrackIndex = 0;
+                loadTrack(0);
+                showAudioPlayer();
+                document.getElementById('audioElement').play();
+            }
+        }
+
+        // Update search results to be playable
+        function displaySearchResults(tracks, insight) {
+            const resultsDiv = document.getElementById('searchResults');
+            const tracksList = document.getElementById('searchResultsList');
+            const searchInsight = document.getElementById('searchInsight');
+
+            if (resultsDiv && tracksList && searchInsight) {
+                tracksList.innerHTML = '';
+                
+                tracks.forEach((track, index) => {
+                    tracksList.innerHTML += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: #f8fafc; border-radius: 8px; margin-bottom: 0.5rem;">
+                            <div>
+                                <div style="font-weight: 600; color: #1a202c;">${track.title}</div>
+                                <div style="color: #64748b; font-size: 0.9rem;">${track.artist} • ${track.genre}</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div style="color: #10b981; font-weight: 600;">${track.score}</div>
+                                <button onclick="playSearchTrack('${track.title}', '${track.artist}')" style="background: var(--teal); color: white; border: none; padding: 0.3rem 0.8rem; border-radius: 8px; cursor: pointer; font-size: 0.8rem;">Play</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                searchInsight.textContent = insight;
+                resultsDiv.style.display = 'block';
+            }
+        }
+
+        function playSearchTrack(title, artist) {
+            // Find the track in our playlist or create a new one
+            let track = playlist.find(t => t.title === title && t.artist === artist);
+            
+            if (!track) {
+                // Create a new track entry
+                track = {
+                    id: Date.now(),
+                    title: title,
+                    artist: artist,
+                    genre: "Mixed",
+                    audio_file: title.toLowerCase().replace(/\s+/g, '_') + ".mp3",
+                    duration: 240
+                };
+                
+                // Add to playlist
+                playlist.push(track);
+            }
+            
+            const trackIndex = playlist.findIndex(t => t.id === track.id);
+            if (trackIndex !== -1) {
+                currentTrackIndex = trackIndex;
+                loadTrack(trackIndex);
+                showAudioPlayer();
+                document.getElementById('audioElement').play();
+            }
+        }
     });
     </script>
+
+    <!-- Audio Player -->
+    <div class="audio-player" id="audioPlayer">
+        <div class="player-content">
+            <div class="track-info">
+                <div class="track-title" id="currentTrackTitle">No track selected</div>
+                <div class="track-artist" id="currentTrackArtist">-</div>
+            </div>
+            
+            <div class="player-controls">
+                <button class="control-btn" id="prevBtn" onclick="previousTrack()">
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button class="control-btn play-btn" id="playBtn" onclick="togglePlay()">
+                    <i class="fas fa-play" id="playIcon"></i>
+                </button>
+                <button class="control-btn" id="nextBtn" onclick="nextTrack()">
+                    <i class="fas fa-step-forward"></i>
+                </button>
+            </div>
+            
+            <div class="progress-container">
+                <div class="time-display" id="currentTime">0:00</div>
+                <div class="progress-bar" id="progressBar" onclick="seekTo(event)">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="time-display" id="totalTime">0:00</div>
+            </div>
+            
+            <div class="volume-control">
+                <i class="fas fa-volume-up" style="color: var(--text-muted);"></i>
+                <div class="volume-slider" id="volumeSlider" onclick="setVolume(event)">
+                    <div class="volume-fill" id="volumeFill"></div>
+                </div>
+            </div>
+            
+            <button class="playlist-btn" id="playlistBtn" onclick="togglePlaylist()">
+                <i class="fas fa-list"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Playlist Panel -->
+    <div class="playlist-panel" id="playlistPanel">
+        <div style="font-weight: 600; margin-bottom: 1rem; color: var(--text-dark);">Now Playing</div>
+        <div id="playlistItems"></div>
+    </div>
+
+    <!-- Hidden Audio Element -->
+    <audio id="audioElement" preload="metadata"></audio>
 </body>
 </html>

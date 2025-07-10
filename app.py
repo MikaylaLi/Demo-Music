@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, session, render_template
+from flask import Flask, request, jsonify, session, render_template, send_from_directory
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
@@ -55,7 +55,9 @@ def init_db():
             stress_reduction_score INTEGER,
             sleep_aid_score INTEGER,
             mood_boost_score INTEGER,
-            focus_score INTEGER
+            focus_score INTEGER,
+            audio_file TEXT,
+            duration INTEGER
         )
     ''')
     
@@ -95,34 +97,73 @@ def populate_sample_data():
     # Sample music library
     sample_tracks = [
         # Stress Relief & Relaxation
-        ("Weightless", "Marconi Union", "Ambient", "calm", 60, 2, 9, 8, 7, 6),
-        ("Claire de Lune", "Debussy", "Classical", "peaceful", 65, 3, 8, 9, 6, 7),
-        ("River Flows in You", "Yiruma", "Piano", "serene", 70, 3, 7, 8, 7, 6),
-        ("The Sound of Silence", "Disturbed", "Rock", "contemplative", 75, 4, 6, 7, 5, 8),
+        ("Weightless", "Marconi Union", "Ambient", "calm", 60, 2, 9, 8, 7, 6, "weightless.mp3", 480),
+        ("Claire de Lune", "Debussy", "Classical", "peaceful", 65, 3, 8, 9, 6, 7, "claire_de_lune.mp3", 300),
+        ("River Flows in You", "Yiruma", "Piano", "serene", 70, 3, 7, 8, 7, 6, "river_flows.mp3", 240),
+        ("The Sound of Silence", "Disturbed", "Rock", "contemplative", 75, 4, 6, 7, 5, 8, "sound_of_silence.mp3", 270),
+        ("Moonlight Sonata", "Beethoven", "Classical", "tranquil", 60, 2, 9, 9, 6, 7, "moonlight_sonata.mp3", 900),
+        ("Calm Melodies", "Piano Collection", "Piano", "soothing", 65, 2, 8, 8, 7, 6, "calm_melodies.mp3", 600),
+        ("Relaxation Guide", "Meditation Sounds", "Ambient", "relaxing", 55, 2, 9, 8, 8, 5, "relaxation_guide.mp3", 1800),
+        ("Stress Relief", "Healing Music", "Ambient", "calming", 60, 2, 9, 7, 7, 6, "stress_relief.mp3", 1200),
+        ("Calm Heart", "Peaceful Sounds", "Ambient", "serene", 65, 2, 8, 8, 7, 6, "calm_heart.mp3", 1800),
+        ("Relax Body", "Wellness Music", "Ambient", "gentle", 60, 2, 8, 8, 7, 6, "relax_body.mp3", 1200),
         
         # Energy & Motivation
-        ("Eye of the Tiger", "Survivor", "Rock", "energetic", 120, 8, 4, 3, 9, 8),
-        ("Happy", "Pharrell Williams", "Pop", "joyful", 160, 9, 3, 2, 9, 7),
-        ("Can't Stop the Feeling!", "Justin Timberlake", "Pop", "upbeat", 140, 8, 3, 2, 9, 6),
-        ("Shake It Off", "Taylor Swift", "Pop", "cheerful", 150, 9, 2, 1, 9, 5),
+        ("Eye of the Tiger", "Survivor", "Rock", "energetic", 120, 8, 4, 3, 9, 8, "eye_of_tiger.mp3", 264),
+        ("Happy", "Pharrell Williams", "Pop", "joyful", 160, 9, 3, 2, 9, 7, "happy.mp3", 233),
+        ("Can't Stop the Feeling!", "Justin Timberlake", "Pop", "upbeat", 140, 8, 3, 2, 9, 6, "cant_stop_feeling.mp3", 235),
+        ("Shake It Off", "Taylor Swift", "Pop", "cheerful", 150, 9, 2, 1, 9, 5, "shake_it_off.mp3", 219),
+        ("Here Comes the Sun", "The Beatles", "Pop", "uplifting", 130, 7, 4, 3, 9, 6, "here_comes_sun.mp3", 185),
+        ("Walking on Sunshine", "Katrina & The Waves", "Pop", "bright", 140, 8, 3, 2, 9, 5, "walking_sunshine.mp3", 235),
+        ("Good Vibes", "Positive Energy", "Pop", "uplifting", 130, 7, 4, 3, 8, 6, "good_vibes.mp3", 240),
+        ("Sunshine", "Happy Tunes", "Pop", "bright", 140, 8, 3, 2, 9, 5, "sunshine.mp3", 210),
+        ("Dance Party", "Energetic Beats", "Electronic", "exciting", 150, 9, 2, 1, 9, 4, "dance_party.mp3", 180),
+        ("Uplifting Beats", "Energy Music", "Electronic", "energizing", 145, 8, 3, 2, 9, 5, "uplifting_beats.mp3", 240),
+        ("Energy Boost", "Motivation Music", "Pop", "energetic", 155, 9, 2, 1, 9, 4, "energy_boost.mp3", 180),
+        ("Energize Life", "Life Music", "Pop", "vibrant", 150, 8, 3, 2, 9, 5, "energize_life.mp3", 180),
         
         # Focus & Concentration
-        ("Lofi Study Beats", "Various Artists", "Lo-Fi", "focused", 85, 4, 6, 5, 8, 9),
-        ("Classical Study Music", "Mozart", "Classical", "concentrated", 90, 5, 5, 6, 7, 9),
-        ("White Noise", "Nature Sounds", "Ambient", "neutral", 70, 3, 7, 6, 8, 8),
-        ("Brain.fm Focus", "Brain.fm", "Electronic", "focused", 80, 4, 6, 5, 8, 9),
+        ("Lofi Study Beats", "Various Artists", "Lo-Fi", "focused", 85, 4, 6, 5, 8, 9, "lofi_study.mp3", 1800),
+        ("Classical Study Music", "Mozart", "Classical", "concentrated", 90, 5, 5, 6, 7, 9, "classical_study.mp3", 1200),
+        ("White Noise", "Nature Sounds", "Ambient", "neutral", 70, 3, 7, 6, 8, 8, "white_noise.mp3", 3600),
+        ("Brain.fm Focus", "Brain.fm", "Electronic", "focused", 80, 4, 6, 5, 8, 9, "brain_fm_focus.mp3", 1800),
+        ("Concentration", "Focus Music", "Electronic", "concentrated", 85, 4, 6, 5, 8, 9, "concentration.mp3", 1800),
+        ("Study Music", "Academic Sounds", "Lo-Fi", "focused", 80, 4, 6, 5, 8, 9, "study_music.mp3", 1200),
+        ("Focus Enhancement", "Productivity Music", "Electronic", "concentrated", 85, 4, 6, 5, 8, 9, "focus_enhance.mp3", 1800),
+        ("Focus Mind", "Mind Music", "Electronic", "focused", 80, 4, 6, 5, 8, 9, "focus_mind.mp3", 1800),
+        ("Concentrate Focus", "Focus Sounds", "Electronic", "concentrated", 85, 4, 6, 5, 8, 9, "concentrate_focus.mp3", 1800),
         
         # Sleep & Rest
-        ("Sleep Well", "Sleep Sounds", "Ambient", "soothing", 50, 2, 9, 9, 8, 4),
-        ("Ocean Waves", "Nature", "Ambient", "calming", 55, 2, 9, 9, 9, 3),
-        ("Rain Sounds", "Nature", "Ambient", "relaxing", 60, 2, 8, 9, 9, 4),
-        ("Deep Sleep", "Sleep Music", "Ambient", "tranquil", 45, 1, 9, 9, 9, 2),
+        ("Sleep Well", "Sleep Sounds", "Ambient", "soothing", 50, 2, 9, 9, 8, 4, "sleep_well.mp3", 3600),
+        ("Ocean Waves", "Nature", "Ambient", "calming", 55, 2, 9, 9, 9, 3, "ocean_waves.mp3", 3600),
+        ("Rain Sounds", "Nature", "Ambient", "relaxing", 60, 2, 8, 9, 9, 4, "rain_sounds.mp3", 3600),
+        ("Deep Sleep", "Sleep Music", "Ambient", "tranquil", 45, 1, 9, 9, 9, 2, "deep_sleep.mp3", 3600),
+        ("Insomnia Cure", "Sleep Therapy", "Ambient", "soothing", 50, 2, 9, 9, 8, 3, "insomnia_cure.mp3", 3600),
+        ("Sleep Aid", "Rest Music", "Ambient", "tranquil", 45, 1, 9, 9, 9, 2, "sleep_aid.mp3", 3600),
+        ("Sleep Deep", "Deep Rest", "Ambient", "soothing", 50, 2, 9, 9, 8, 3, "sleep_deep.mp3", 3600),
+        ("Sleep Peace", "Peaceful Rest", "Ambient", "tranquil", 45, 1, 9, 9, 9, 2, "sleep_peace.mp3", 3600),
         
-        # Mood Enhancement
-        ("Good Vibes", "Positive Energy", "Pop", "uplifting", 130, 7, 4, 3, 8, 6),
-        ("Sunshine", "Happy Tunes", "Pop", "bright", 140, 8, 3, 2, 9, 5),
-        ("Dance Party", "Energetic Beats", "Electronic", "exciting", 150, 9, 2, 1, 9, 4),
-        ("Chill Vibes", "Relaxed Beats", "Lo-Fi", "mellow", 80, 4, 6, 5, 7, 6)
+        # Anxiety Relief
+        ("Anxiety Calm", "Calm Sounds", "Ambient", "soothing", 60, 2, 9, 7, 8, 6, "anxiety_calm.mp3", 1800),
+        ("Calm Anxiety", "Anxiety Relief", "Ambient", "gentle", 65, 2, 8, 7, 8, 6, "calm_anxiety.mp3", 1800),
+        ("Heal Anxiety", "Healing Sounds", "Ambient", "soothing", 60, 2, 9, 7, 8, 6, "heal_anxiety.mp3", 1800),
+        ("Meditation Sounds", "Mindful Music", "Ambient", "peaceful", 55, 2, 9, 8, 8, 5, "meditation_sounds.mp3", 3600),
+        ("Deep Breathing", "Breath Guide", "Ambient", "calming", 50, 2, 9, 8, 8, 5, "deep_breathing.mp3", 1800),
+        ("Nature Sounds", "Natural Calm", "Ambient", "soothing", 60, 2, 8, 7, 8, 6, "nature_sounds.mp3", 3600),
+        
+        # Depression & Mood Enhancement
+        ("Depression Lift", "Uplifting Music", "Pop", "bright", 140, 8, 3, 2, 9, 5, "depression_lift.mp3", 300),
+        ("Lift Spirits", "Spirit Music", "Pop", "uplifting", 145, 8, 3, 2, 9, 5, "lift_spirits.mp3", 300),
+        ("Uplift Depression", "Mood Music", "Pop", "bright", 140, 8, 3, 2, 9, 5, "uplift_depression.mp3", 300),
+        ("Mood Boost", "Boost Music", "Pop", "uplifting", 145, 8, 3, 2, 9, 5, "mood_boost.mp3", 240),
+        ("Boost Mood", "Mood Enhancement", "Pop", "bright", 140, 8, 3, 2, 9, 5, "boost_mood.mp3", 240),
+        ("Uplift Soul", "Soul Music", "Pop", "uplifting", 145, 8, 3, 2, 9, 5, "uplift_soul.mp3", 300),
+        
+        # Chill & Relaxation
+        ("Chill Vibes", "Relaxed Beats", "Lo-Fi", "mellow", 80, 4, 6, 5, 7, 6, "chill_vibes.mp3", 300),
+        ("Calm Mind", "Mind Music", "Ambient", "peaceful", 65, 2, 8, 7, 8, 6, "calm_mind.mp3", 1800),
+        ("Relax Muscles", "Muscle Music", "Ambient", "soothing", 60, 2, 8, 7, 8, 6, "relax_muscles.mp3", 1200),
+        ("Relax Stress", "Stress Relief", "Ambient", "calming", 65, 2, 8, 7, 8, 6, "relax_stress.mp3", 1200),
     ]
     
     # Check if music library is empty
@@ -132,8 +173,8 @@ def populate_sample_data():
             cursor.execute('''
                 INSERT INTO music_library 
                 (title, artist, genre, mood, tempo, energy_level, stress_reduction_score, 
-                 sleep_aid_score, mood_boost_score, focus_score)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 sleep_aid_score, mood_boost_score, focus_score, audio_file, duration)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', track)
     
     conn.commit()
@@ -280,13 +321,13 @@ def get_recommendations(user_id, limit=10):
     if not profile:
         # Return general recommendations if no profile
         cursor.execute('''
-            SELECT id, title, artist, genre, mood, tempo, energy_level
+            SELECT id, title, artist, genre, mood, tempo, energy_level, audio_file
             FROM music_library ORDER BY RANDOM() LIMIT ?
         ''', (limit,))
         tracks = cursor.fetchall()
         conn.close()
         return [{'id': t[0], 'title': t[1], 'artist': t[2], 'genre': t[3], 
-                'mood': t[4], 'tempo': t[5], 'energy_level': t[6]} for t in tracks]
+                'mood': t[4], 'tempo': t[5], 'energy_level': t[6], 'audio_file': t[7]} for t in tracks]
     
     stress_level, sleep_quality, mood_score, energy_level, symptoms = profile
     symptoms_list = json.loads(symptoms) if symptoms else []
@@ -296,14 +337,14 @@ def get_recommendations(user_id, limit=10):
     
     # Get all tracks with their scores
     cursor.execute('''
-        SELECT id, title, artist, genre, mood, tempo, energy_level,
+        SELECT id, title, artist, genre, mood, tempo, energy_level, audio_file,
                stress_reduction_score, sleep_aid_score, mood_boost_score, focus_score
         FROM music_library
     ''')
     tracks = cursor.fetchall()
     
     for track in tracks:
-        track_id, title, artist, genre, mood, tempo, energy_level, \
+        track_id, title, artist, genre, mood, tempo, energy_level, audio_file, \
         stress_score, sleep_score, mood_score_track, focus_score = track
         
         # Calculate weighted score based on health profile
@@ -351,6 +392,7 @@ def get_recommendations(user_id, limit=10):
             'mood': mood,
             'tempo': tempo,
             'energy_level': energy_level,
+            'audio_file': audio_file,
             'score': score
         })
     
@@ -529,7 +571,7 @@ def search_music():
     
     # Build search query
     sql = '''
-        SELECT id, title, artist, genre, mood, tempo, energy_level
+        SELECT id, title, artist, genre, mood, tempo, energy_level, audio_file
         FROM music_library WHERE 1=1
     '''
     params = []
@@ -562,7 +604,8 @@ def search_music():
             'genre': track[3],
             'mood': track[4],
             'tempo': track[5],
-            'energy_level': track[6]
+            'energy_level': track[6],
+            'audio_file': track[7]
         })
     
     return jsonify({'tracks': result, 'total': len(result)})
@@ -645,6 +688,14 @@ def signin():
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
+
+@app.route('/api/audio/<filename>')
+def serve_audio(filename):
+    """Serve audio files from the audio directory"""
+    try:
+        return send_from_directory('audio', filename)
+    except FileNotFoundError:
+        return jsonify({'error': 'Audio file not found'}), 404
 
 if __name__ == '__main__':
     init_db()
