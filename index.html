@@ -1311,6 +1311,161 @@
                 max-width: none;
             }
         }
+
+        .trust-badges {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-search-row {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* ===== PROFILE DROPDOWN STYLES ===== */
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .profile-trigger:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .profile-pic {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .profile-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            min-width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .profile-dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .profile-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .profile-pic-large {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .profile-email {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .profile-actions {
+            padding: 1rem;
+        }
+
+        .profile-action {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: none;
+            background: transparent;
+            color: #4a5568;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .profile-action:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .profile-action.signout {
+            color: #e53e3e;
+        }
+
+        .profile-action.signout:hover {
+            background: rgba(229, 62, 62, 0.1);
+            color: #e53e3e;
+        }
+
+        .profile-divider {
+            height: 1px;
+            background: rgba(0, 0, 0, 0.1);
+            margin: 0.5rem 0;
+        }
+
+        .profile-action i {
+            width: 16px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -1320,9 +1475,46 @@
             <div class="nav-links" style="display: flex; gap: 2rem; align-items: center;">
                 <a href="signin.html" id="signinLink" style="color: #2d3748; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: background 0.3s; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">Sign In</a>
                 <a href="signup.html" id="signupLink" style="color: #2d3748; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: background 0.3s; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">Sign Up</a>
-                <div id="userSection" style="display: none;">
-                    <span id="userName" style="color: #2d3748; margin-right: 1rem; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1);"></span>
-                    <button id="signoutBtn" style="background: rgba(255,255,255,0.9); color: #2d3748; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; transition: background 0.3s; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">Sign Out</button>
+                <div id="userSection" style="display: none; align-items: center; gap: 1rem;">
+                    <div class="profile-dropdown">
+                        <div class="profile-trigger" onclick="toggleProfileDropdown()">
+                            <div class="profile-pic">
+                                <span id="profileInitials"></span>
+                            </div>
+                            <span id="userName"></span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="profile-dropdown-menu" id="profileDropdown">
+                            <div class="profile-header">
+                                <div class="profile-pic-large">
+                                    <span id="profileInitialsLarge"></span>
+                                </div>
+                                <div class="profile-info">
+                                    <div class="profile-name" id="profileName"></div>
+                                    <div class="profile-email" id="profileEmail"></div>
+                                </div>
+                            </div>
+                            <div class="profile-actions">
+                                <button class="profile-action" onclick="editProfile()">
+                                    <i class="fas fa-user-edit"></i>
+                                    Edit Profile
+                                </button>
+                                <button class="profile-action" onclick="retakeMoodQuiz()">
+                                    <i class="fas fa-redo"></i>
+                                    Retake Mood Quiz
+                                </button>
+                                <button class="profile-action" onclick="viewSettings()">
+                                    <i class="fas fa-cog"></i>
+                                    Settings
+                                </button>
+                                <div class="profile-divider"></div>
+                                <button class="profile-action signout" onclick="AuthManager.signOut()">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Sign Out
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1376,7 +1568,7 @@
                 </div>
                 
                 <!-- Trust Badges -->
-                <div class="trust-badges" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <div class="trust-badges">
                     <div class="trust-badge glow-on-hover" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.2rem; background: rgba(255,255,255,0.9); border-radius: 25px; backdrop-filter: blur(10px); font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.3); transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                         <span style="color: #10b981; font-size: 1.1rem; font-weight: bold;">✓</span>
                         <span style="font-weight: 600; color: #2d3748;">Evidence-Based</span>
@@ -1394,7 +1586,7 @@
             
             <!-- Center Section: Feature Cards -->
             <div class="features-section" style="flex: 1; max-width: 600px;">
-                <div class="features-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; height: 100%;">
+                <div class="features-grid">
                     
                     <!-- Top Left Card -->
                     <div class="feature-card interactive-card glow-on-hover" onclick="showSymptomTrackerPreview()" style="padding: 2rem 1.5rem; background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%); border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.1); transition: all 0.4s ease; cursor: pointer; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center;">
@@ -1436,7 +1628,7 @@
             
             <!-- Right Section: Piano & Visual Element -->
             <div class="visual-section" style="flex: 1; max-width: 250px; display: flex; align-items: center; justify-content: center;">
-                <div class="instrument-container" style="position: relative; animation: float 6s ease-in-out infinite;">
+                <div class="instrument-container">
                     <svg class="instrument-svg" viewBox="0 0 300 250" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; filter: drop-shadow(6px 12px 16px rgba(0,0,0,0.3));">
                         <!-- Piano Bottom/Stand (3D perspective) -->
                         <rect x="40" y="180" width="220" height="40" fill="#1A1A1A" stroke="#000000" stroke-width="2"/>
@@ -1507,7 +1699,7 @@
                         </defs>
                     </svg>
                 </div>
-                    </div>
+            </div>
     </div>
     
     <!-- Preview Modals -->
@@ -1787,7 +1979,7 @@
                 <!-- Quick Search by Symptom -->
                 <div style="margin-top: 2rem;">
                     <h4 style="margin-bottom: 1rem; color: var(--text-dark);">🔍 Quick Search by Symptom</h4>
-                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <div class="quick-search-row">
                         <button onclick="searchMusic('anxiety')" style="background: var(--teal); color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.9rem;">Anxiety</button>
                         <button onclick="searchMusic('depression')" style="background: var(--teal); color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.9rem;">Depression</button>
                         <button onclick="searchMusic('insomnia')" style="background: var(--teal); color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.9rem;">Insomnia</button>
@@ -1799,7 +1991,9 @@
                     </div>
                 </div>
             </div>
-            <button class="next-btn" onclick="goBackToPage2()" style="background:var(--coral);">&#8592; Back to Dashboard</button>
+            <div style="display: flex; justify-content: space-between; margin-top: 3rem;">
+                <button class="next-btn" id="backToPage2" style="background:var(--mint);">&#8592; Back to Dashboard</button>
+            </div>
         </div>
     </div>
     <footer>
@@ -1815,6 +2009,7 @@
     class LocalStorageManager {
         static USERS_KEY = 'healthyMusicUsers';
         static CURRENT_USER_KEY = 'healthyMusicCurrentUser';
+        static MOOD_ASSESSMENT_KEY = 'healthyMusicMoodAssessment';
 
         static getUsers() {
             const users = localStorage.getItem(this.USERS_KEY);
@@ -1848,39 +2043,68 @@
         static clearCurrentUser() {
             localStorage.removeItem(this.CURRENT_USER_KEY);
         }
+
+        static getMoodAssessmentKey() {
+            const user = this.getCurrentUser();
+            return user ? `healthyMusicMoodAssessment_${user.email}` : 'healthyMusicMoodAssessment';
+        }
+
+        static saveMoodAssessment(assessment) {
+            localStorage.setItem(this.getMoodAssessmentKey(), JSON.stringify(assessment));
+        }
+
+        static getMoodAssessment() {
+            const key = this.getMoodAssessmentKey();
+            const assessment = localStorage.getItem(key);
+            return assessment ? JSON.parse(assessment) : null;
+        }
     }
 
-    // Authentication State Management
-    class AuthManager {
-        static checkAuthState() {
-            const currentUser = LocalStorageManager.getCurrentUser();
-            const signinLink = document.getElementById('signinLink');
-            const signupLink = document.getElementById('signupLink');
-            const userSection = document.getElementById('userSection');
-            const userName = document.getElementById('userName');
-            const signoutBtn = document.getElementById('signoutBtn');
+            // Authentication State Management
+        class AuthManager {
+            static checkAuthState() {
+                const currentUser = LocalStorageManager.getCurrentUser();
+                const signinLink = document.getElementById('signinLink');
+                const signupLink = document.getElementById('signupLink');
+                const userSection = document.getElementById('userSection');
+                const userName = document.getElementById('userName');
+                const signoutBtn = document.getElementById('signoutBtn');
 
-            if (currentUser) {
-                // User is signed in
-                signinLink.style.display = 'none';
-                signupLink.style.display = 'none';
-                userSection.style.display = 'flex';
-                userName.textContent = `Welcome, ${currentUser.name}!`;
-                
-                // Show dashboard instead of signin form
-                document.getElementById('page1').classList.add('hidden');
-                document.getElementById('page2').classList.remove('hidden');
-            } else {
-                // User is not signed in
-                signinLink.style.display = 'inline-block';
-                signupLink.style.display = 'inline-block';
-                userSection.style.display = 'none';
-                
-                // Show signin form
-                document.getElementById('page1').classList.remove('hidden');
-                document.getElementById('page2').classList.add('hidden');
+                if (currentUser) {
+                    // User is signed in
+                    signinLink.style.display = 'none';
+                    signupLink.style.display = 'none';
+                    userSection.style.display = 'flex';
+                    
+                    // Update profile information
+                    updateProfileInfo();
+                    
+                    // Check if user has completed mood assessment
+                    const moodAssessment = LocalStorageManager.getMoodAssessment();
+                    if (!moodAssessment) {
+                        // Show mood quiz modal immediately
+                        showMoodQuiz();
+                        // Hide dashboard until quiz is done
+                        document.getElementById('page1').classList.add('hidden');
+                        document.getElementById('page2').classList.add('hidden');
+                        return;
+                    }
+                    // Show dashboard instead of signin form
+                    document.getElementById('page1').classList.add('hidden');
+                    document.getElementById('page2').classList.remove('hidden');
+                    // Optionally, personalize dashboard
+                    generateDashboard(moodAssessment);
+                } else {
+                    // User is not signed in
+                    signinLink.style.display = 'inline-block';
+                    signupLink.style.display = 'inline-block';
+                    userSection.style.display = 'none';
+                    
+                    // Show signin form
+                    document.getElementById('page1').classList.remove('hidden');
+                    document.getElementById('page2').classList.add('hidden');
+                }
             }
-        }
 
         static signOut() {
             LocalStorageManager.clearCurrentUser();
@@ -3420,6 +3644,273 @@
             }
         }
     });
+
+    // === Mood Assessment Quiz System ===
+    function showMoodQuiz() {
+        if (document.querySelector('.mood-quiz-modal')) return;
+        // Try to get user info for prefill
+        const currentUser = LocalStorageManager.getCurrentUser() || {};
+        const moodOptions = [
+            'Happy', 'Excited', 'Grateful', 'Motivated', 'Inspired', 'Content', 'Playful', 'Hopeful', 'Loved', 'Proud', 'Confident',
+            'Angry', 'Upset', 'Unfocused', 'Depressed', 'Stressed', 'Tired', 'Sleepy', 'Energetic', 'Calm', 'Anxious', 'Overwhelmed', 'Lonely', 'Unmotivated', 'Distracted', 'Pain'
+        ];
+        const goalOptions = [
+            'Reduce stress', 'Improve sleep', 'Boost mood', 'Increase focus', 'Relax', 'Feel happier', 'Other'
+        ];
+        const quizQuestions = [
+            { id: 'current_mood', question: 'How are you feeling today?', type: 'multiple_choice', options: moodOptions },
+            { id: 'music_needs', question: 'What do you want from music right now?', type: 'multiple_choice', options: ['Focus', 'Relaxation', 'Energy Boost', 'Sleep Aid'] },
+            { id: 'symptoms', question: 'Any symptoms or states you want help with?', type: 'checkbox', options: moodOptions },
+            { id: 'sleep_quality', question: 'How was your sleep last night? (1=poor, 10=great)', type: 'scale', min: 1, max: 10 },
+            { id: 'stress_level', question: 'How stressed are you? (1=none, 10=very)', type: 'scale', min: 1, max: 10 },
+            { id: 'energy_level', question: 'How is your energy? (1=low, 10=high)', type: 'scale', min: 1, max: 10 },
+            { id: 'goal', question: 'What is your main goal for using MajorChord?', type: 'multiple_choice', options: goalOptions }
+        ];
+        let currentStep = 0;
+        const answers = {};
+        function renderQuizStep() {
+            const q = quizQuestions[currentStep];
+            let html = `<h3 style='margin-bottom:1rem;'>${q.question}</h3>`;
+            if (q.type === 'multiple_choice') {
+                html += q.options.map(opt => `<button class='quiz-btn' style='margin:0.5rem 0.5rem 0 0;' onclick="selectQuizAnswer('${q.id}', '${opt}')">${opt}</button>`).join('');
+            } else if (q.type === 'scale') {
+                html += `<input type='range' min='${q.min}' max='${q.max}' value='5' id='quiz-range' oninput="document.getElementById('quiz-range-value').textContent=this.value" style='width:70%;'> <span id='quiz-range-value'>5</span>/10`;
+                html += `<br><button class='quiz-btn' style='margin-top:1rem;' onclick="selectQuizAnswer('${q.id}', document.getElementById('quiz-range').value)">Next</button>`;
+            } else if (q.type === 'checkbox') {
+                html += q.options.map(opt => `<label style='display:block;margin:0.3rem 0;'><input type='checkbox' value='${opt}' class='quiz-checkbox'> ${opt}</label>`).join('');
+                html += `<button class='quiz-btn' style='margin-top:1rem;' onclick="selectQuizAnswer('${q.id}', Array.from(document.querySelectorAll('.quiz-checkbox:checked')).map(cb=>cb.value))">Next</button>`;
+            }
+            html += `<div class='quiz-progress' style='margin-top:1.5rem;height:8px;background:#eee;border-radius:4px;overflow:hidden;'><div class='progress-bar' style='height:100%;background:var(--teal);width:${((currentStep+1)/quizQuestions.length)*100}%'></div></div>`;
+            document.getElementById('quiz-content').innerHTML = html;
+        }
+        window.selectQuizAnswer = function(id, value) {
+            answers[id] = value;
+            currentStep++;
+            if (currentStep < quizQuestions.length) {
+                renderQuizStep();
+            } else {
+                completeMoodQuiz(answers);
+            }
+        };
+        const quizModal = document.createElement('div');
+        quizModal.className = 'mood-quiz-modal';
+        quizModal.innerHTML = `
+          <div class='quiz-container glass' style='max-width:400px;margin:5% auto;padding:2rem;border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,0.2);'>
+            <h2 style='margin-bottom:1.5rem;'>Let's personalize your dashboard!</h2>
+            <div id='quiz-content'></div>
+          </div>
+          <style>
+            .mood-quiz-modal { position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:2000;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center; }
+            .quiz-btn { margin:0.5rem 0.5rem 0 0; padding:0.7rem 1.2rem; border-radius:20px; border:none; background:var(--teal); color:white; font-weight:600; cursor:pointer; transition:background 0.2s; }
+            .quiz-btn:hover { background:var(--soft-teal);}
+          </style>
+        `;
+        document.body.appendChild(quizModal);
+        renderQuizStep();
+    }
+
+    function completeMoodQuiz(responses) {
+        // Merge with user info for dashboard personalization
+        const user = LocalStorageManager.getCurrentUser() || {};
+        const profile = {
+            name: user.name || '',
+            ...responses
+        };
+        LocalStorageManager.saveMoodAssessment(profile);
+        document.querySelector('.mood-quiz-modal').remove();
+        generateDashboard(profile);
+    }
+
+    function generateDashboard(profile) {
+        // Show dashboard
+        document.getElementById('page1').classList.add('hidden');
+        document.getElementById('page2').classList.remove('hidden');
+        // Friendly, personalized greeting
+        if (document.querySelector('.features-desc')) {
+            document.querySelector('.features-desc').textContent =
+                `Hi ${profile.name ? profile.name : 'there'}! ` +
+                (profile.goal ? `Goal: ${profile.goal}. ` : '') +
+                `Mood: ${profile.current_mood}. Music for: ${profile.music_needs}. Sleep: ${profile.sleep_quality}/10, Stress: ${profile.stress_level}/10.`;
+        }
+        // Example: highlight playlist or widget
+        if (profile.stress_level > 7 && document.getElementById('playlistBox')) {
+            document.getElementById('playlistBox').style.boxShadow = '0 0 20px #f97316';
+        }
+        // Add more logic for widgets, color scheme, etc.
+    }
+
+    // === Floating AI Mood Chat Button ===
+    function addMoodChatButton() {
+        if (document.querySelector('.mood-chat-btn')) return;
+        const chatBtn = document.createElement('button');
+        chatBtn.className = 'mood-chat-btn';
+        chatBtn.innerHTML = `<i class="fas fa-comment-medical"></i> <span style='margin-left:0.5rem;'>Talk about your mood</span>`;
+        chatBtn.onclick = openMoodChat;
+        document.body.appendChild(chatBtn);
+        // Minimal CSS for demo
+        const style = document.createElement('style');
+        style.textContent = `
+          .mood-chat-btn {
+            position: fixed; bottom: 32px; right: 32px; z-index: 1500;
+            background: var(--teal); color: white; border: none; border-radius: 50px;
+            padding: 1rem 1.5rem; font-size: 1.1rem; font-weight: 600; box-shadow: 0 4px 24px #14b8a655;
+            display: flex; align-items: center; gap: 0.5rem; cursor: pointer; transition: background 0.2s, box-shadow 0.2s;
+            animation: pulse 2s infinite;
+          }
+          .mood-chat-btn:hover { background: var(--soft-teal); box-shadow: 0 8px 32px #5eead455; }
+          @keyframes pulse { 0% { box-shadow: 0 0 0 0 #14b8a655; } 70% { box-shadow: 0 0 0 12px rgba(20,184,166,0); } 100% { box-shadow: 0 0 0 0 rgba(20,184,166,0); } }
+          .mood-chat-container {
+            position: fixed; bottom: 100px; right: 32px; z-index: 2000; width: 340px; max-width: 95vw;
+            background: var(--glass-bg,rgba(255,255,255,0.95)); border-radius: 18px; box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            padding: 0; overflow: hidden; display: flex; flex-direction: column;
+          }
+          .mood-chat-container .chat-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--teal); color: white; }
+          .mood-chat-container .close-chat { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+          .mood-chat-container .chat-messages { padding: 1rem; height: 180px; overflow-y: auto; background: transparent; }
+          .mood-chat-container .ai-message, .mood-chat-container .user-message { margin-bottom: 1rem; }
+          .mood-chat-container .ai-message p { background: #e0f2fe; color: #1e293b; border-radius: 10px; padding: 0.7rem 1rem; margin: 0; }
+          .mood-chat-container .user-message p { background: #fbc2eb; color: #2d3748; border-radius: 10px; padding: 0.7rem 1rem; margin: 0; text-align: right; }
+          .mood-chat-container .chat-input-container { display: flex; gap: 0.5rem; padding: 1rem; border-top: 1px solid #eee; background: transparent; }
+          .mood-chat-container textarea { flex: 1; border-radius: 8px; border: 1px solid #d1d5db; padding: 0.5rem; resize: none; }
+          .mood-chat-container button { border-radius: 8px; border: none; background: var(--teal); color: white; font-weight: 600; padding: 0.5rem 1rem; cursor: pointer; }
+        `;
+        document.head.appendChild(style);
+    }
+
+    function openMoodChat() {
+        if (document.querySelector('.mood-chat-container')) return;
+        const chatDiv = document.createElement('div');
+        chatDiv.className = 'mood-chat-container glass';
+        chatDiv.innerHTML = `
+          <div class='chat-header'>
+            <h3 style='margin:0;font-size:1.1rem;'>MajorChord Mood Assistant</h3>
+            <button class='close-chat' onclick='this.closest(".mood-chat-container").remove()'>×</button>
+          </div>
+          <div class='chat-messages' id='chat-messages'>
+            <div class='ai-message'><p>Hi! I'm here to help you find the perfect music for your mood. How are you feeling today?</p></div>
+          </div>
+          <div class='chat-input-container'>
+            <textarea id='mood-input' placeholder='Tell me about your mood...' rows='2'></textarea>
+            <button onclick='sendMoodMessage()'>Send</button>
+          </div>
+        `;
+        document.body.appendChild(chatDiv);
+    }
+
+    async function sendMoodMessage() {
+        const input = document.getElementById('mood-input');
+        const msg = input.value.trim();
+        if (!msg) return;
+        const chatMessages = document.getElementById('chat-messages');
+        chatMessages.innerHTML += `<div class='user-message'><p>${msg}</p></div>`;
+        input.value = '';
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        // Simulate AI response (replace with fetch to backend in production)
+        setTimeout(() => {
+            const aiMsg = `<div class='ai-message'><p>Thank you for sharing. Based on your mood, I recommend listening to <b>Weightless</b> by Marconi Union for relaxation. Would you like to add it to your playlist?</p></div>`;
+            chatMessages.innerHTML += aiMsg;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 1200);
+    }
+
+    // === Feature Card Interactive Modals ===
+    function showFeatureModal(feature) {
+        if (document.querySelector('.feature-modal')) return;
+        let title = '', desc = '', demo = '';
+        if (feature === 'symptom') {
+            title = 'AI Symptom Tracker';
+            desc = 'Track your mood, stress, sleep, and symptoms. Get instant, AI-powered insights and music recommendations for your well-being.';
+            demo = `<div style='margin:1rem 0;'><b>Example:</b> "Today I feel stressed and tired."<br>→ "Try our Calm Focus playlist and a 5-minute breathing session."</div>`;
+        } else if (feature === 'playlist') {
+            title = 'Personalized Playlists';
+            desc = 'Get music playlists tailored to your mood, needs, and health goals. Whether you want to focus, relax, or boost your energy, we have a playlist for you!';
+            demo = `<div style='margin:1rem 0;'><b>Example:</b> "I need to concentrate for study."<br>→ "Here is your Focused Study playlist."</div>`;
+        } else if (feature === 'analytics') {
+            title = 'Health Analytics';
+            desc = 'See your mood and wellness trends over time. Visualize your progress and discover what music helps you most.';
+            demo = `<div style='margin:1rem 0;'><b>Example:</b> "Your stress has decreased 20% this week!"</div>`;
+        } else if (feature === 'discovery') {
+            title = 'Music Discovery';
+            desc = 'Search and discover music by mood, symptom, or activity. Find new favorites and explore music that matches how you feel.';
+            demo = `<div style='margin:1rem 0;'><b>Example:</b> "Show me uplifting music for mornings."<br>→ "Try our Morning Boost playlist!"</div>`;
+        }
+        const modal = document.createElement('div');
+        modal.className = 'feature-modal';
+        modal.innerHTML = `
+          <div class='glass' style='max-width:400px;margin:5% auto;padding:2rem;border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,0.2);position:relative;'>
+            <button onclick='this.closest(".feature-modal").remove()' style='position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#aaa;'>×</button>
+            <h2 style='margin-bottom:1rem;'>${title}</h2>
+            <div style='margin-bottom:1rem;'>${desc}</div>
+            ${demo}
+            <button onclick='window.location.href="signup.html"' style='margin-top:1rem;background:var(--teal);color:white;border:none;padding:0.8rem 1.5rem;border-radius:25px;cursor:pointer;font-weight:600;'>Create Account to Try</button>
+          </div>
+          <style>
+            .feature-modal { position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:3000;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center; }
+          </style>
+        `;
+        document.body.appendChild(modal);
+    }
+    // Update feature card onclicks
+    // AI Symptom Tracker
+    const symptomCard = document.querySelector('.feature-card[onclick*="showSymptomTrackerPreview"]');
+    if (symptomCard) symptomCard.onclick = () => showFeatureModal('symptom');
+    // Personalized Playlists
+    const playlistCard = document.querySelector('.feature-card[onclick*="showPlaylistPreview"]');
+    if (playlistCard) playlistCard.onclick = () => showFeatureModal('playlist');
+    // Health Analytics
+    const analyticsCard = document.querySelector('.feature-card[onclick*="showHealthInsightsPreview"]');
+    if (analyticsCard) analyticsCard.onclick = () => showFeatureModal('analytics');
+    // Music Discovery
+    const discoveryCard = document.querySelector('.feature-card[onclick*="showMusicSearchPreview"]');
+    if (discoveryCard) discoveryCard.onclick = () => showFeatureModal('discovery');
+
+    // === Profile Dropdown Functions ===
+    function toggleProfileDropdown() {
+        const dropdown = document.getElementById('profileDropdown');
+        dropdown.classList.toggle('show');
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function closeDropdown(e) {
+            if (!e.target.closest('.profile-dropdown')) {
+                dropdown.classList.remove('show');
+                document.removeEventListener('click', closeDropdown);
+            }
+        });
+    }
+
+    function updateProfileInfo() {
+        const currentUser = LocalStorageManager.getCurrentUser();
+        if (currentUser) {
+            // Get initials from name
+            const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            
+            // Update profile elements
+            document.getElementById('profileInitials').textContent = initials;
+            document.getElementById('profileInitialsLarge').textContent = initials;
+            document.getElementById('profileName').textContent = currentUser.name;
+            document.getElementById('profileEmail').textContent = currentUser.email;
+            document.getElementById('userName').textContent = currentUser.name;
+        }
+    }
+
+    function editProfile() {
+        alert('Edit Profile feature coming soon! This would open a profile editing modal.');
+    }
+
+    function retakeMoodQuiz() {
+        if (confirm('Would you like to retake the mood assessment? This will update your personalized recommendations.')) {
+            // Clear current mood assessment
+            LocalStorageManager.saveMoodAssessment(null);
+            // Show the mood quiz
+            showMoodQuiz();
+            // Close dropdown
+            document.getElementById('profileDropdown').classList.remove('show');
+        }
+    }
+
+    function viewSettings() {
+        alert('Settings feature coming soon! This would open a settings modal.');
+    }
     </script>
 
     <!-- Audio Player -->

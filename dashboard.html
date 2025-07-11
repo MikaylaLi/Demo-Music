@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MajorChord</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #b8c6db;
+            --secondary: #f5e6fa;
+            --accent: #fbc2eb;
+            --pastel-blue: #a7c7e7;
+            --pastel-purple: #e0c3fc;
+            --pastel-pink: #fbc2eb;
+            --teal: #14b8a6;
+            --coral: #f97316;
+            --mint: #10b981;
+            --warm-orange: #fb923c;
+            --soft-teal: #5eead4;
+            --light-coral: #fdba74;
+            --glass-bg: rgba(255, 255, 255, 0.35);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-blur: 18px;
+            --text-dark: #1a202c;
+            --text-light: #fff;
+            --text-muted: #4a5568;
+            --shadow-soft: 0 8px 32px rgba(31, 38, 135, 0.15);
+            --shadow-medium: 0 12px 40px rgba(31, 38, 135, 0.25);
+            --shadow-strong: 0 20px 60px rgba(31, 38, 135, 0.35);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--pastel-blue) 0%, var(--pastel-pink) 100%);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+        }
+
+        .hidden { 
+            display: none !important; 
+        }
+
+        header {
+            background: #8b5cf6;
+            color: var(--text-light);
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 32px #0001;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.7rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .glass {
+            background: var(--glass-bg);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1.5px solid var(--glass-border);
+        }
+
+        .dashboard-container {
+            padding: 2rem 0;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .mood-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--glass-bg);
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            margin-bottom: 2rem;
+        }
+
+        .mood-emoji {
+            font-size: 2rem;
+        }
+
+        .mood-text {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border-radius: 18px;
+            padding: 2rem;
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            color: var(--teal);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .playlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .playlist-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .playlist-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .playlist-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .playlist-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .playlist-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .chat-container {
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 0.8rem 1rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .message.user .message-content {
+            background: var(--teal);
+            color: white;
+        }
+
+        .message.ai .message-content {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--text-dark);
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-dark);
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: var(--teal);
+        }
+
+        .send-btn {
+            padding: 0.8rem 1.2rem;
+            background: var(--teal);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            background: var(--soft-teal);
+            transform: translateY(-2px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--teal);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--teal);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--soft-teal);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-dark);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+            
+            .playlist-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="logo">MajorChord</div>
+            <div class="nav-links" style="display: flex; gap: 2rem; align-items: center;">
+                <span id="userName" style="color: #2d3748; font-weight: 600;"></span>
+                <button id="signoutBtn" style="background: rgba(255,255,255,0.9); color: #2d3748; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; transition: background 0.3s; font-weight: 600;">Sign Out</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="container">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <h1 id="welcomeTitle" style="margin-bottom: 1rem; color: var(--text-dark);">Welcome to Your Dashboard</h1>
+                <div class="mood-indicator" id="moodIndicator">
+                    <span class="mood-emoji">🎵</span>
+                    <span class="mood-text">Loading your mood profile...</span>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Main Content -->
+                <div class="main-content">
+                    <!-- Personalized Playlists -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-music card-icon"></i>
+                            <h2 class="card-title">Your Personalized Playlists</h2>
+                        </div>
+                        <div class="playlist-grid" id="playlistGrid">
+                            <!-- Playlists will be generated here -->
+                        </div>
+                    </div>
+
+                    <!-- Music Stats -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line card-icon"></i>
+                            <h2 class="card-title">Your Music Journey</h2>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="sessionsCompleted">0</div>
+                                <div class="stat-label">Sessions Completed</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="totalMinutes">0</div>
+                                <div class="stat-label">Minutes Listened</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="moodScore">-</div>
+                                <div class="stat-label">Current Mood Score</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="streakDays">0</div>
+                                <div class="stat-label">Day Streak</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="sidebar">
+                    <!-- AI Chat Assistant -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-robot card-icon"></i>
+                            <h2 class="card-title">AI Music Assistant</h2>
+                        </div>
+                        <div class="chat-container">
+                            <div class="chat-messages" id="chatMessages">
+                                <!-- Chat messages will appear here -->
+                            </div>
+                            <div class="chat-input-container">
+                                <input type="text" class="chat-input" id="chatInput" placeholder="Ask for music recommendations...">
+                                <button class="send-btn" id="sendBtn">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-bolt card-icon"></i>
+                            <h2 class="card-title">Quick Actions</h2>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <button class="btn btn-primary" onclick="startNewSession()">
+                                <i class="fas fa-play"></i>
+                                Start New Session
+                            </button>
+                            <button class="btn btn-secondary" onclick="retakeAssessment()">
+                                <i class="fas fa-redo"></i>
+                                Retake Mood Assessment
+                            </button>
+                            <button class="btn btn-secondary" onclick="viewHistory()">
+                                <i class="fas fa-history"></i>
+                                View History
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Local Storage Management
+        class LocalStorageManager {
+            static CURRENT_USER_KEY = 'healthyMusicCurrentUser';
+            static MOOD_ASSESSMENT_KEY = 'moodAssessmentResults';
+            static USER_STATS_KEY = 'userStats';
+
+            static getCurrentUser() {
+                const user = localStorage.getItem(this.CURRENT_USER_KEY);
+                return user ? JSON.parse(user) : null;
+            }
+
+            static getMoodAssessment() {
+                const assessment = localStorage.getItem(this.MOOD_ASSESSMENT_KEY);
+                return assessment ? JSON.parse(assessment) : null;
+            }
+
+            static getUserStats() {
+                const stats = localStorage.getItem(this.USER_STATS_KEY);
+                return stats ? JSON.parse(stats) : this.getDefaultStats();
+            }
+
+            static saveUserStats(stats) {
+                localStorage.setItem(this.USER_STATS_KEY, JSON.stringify(stats));
+            }
+
+            static getDefaultStats() {
+                return {
+                    sessionsCompleted: 0,
+                    totalMinutes: 0,
+                    currentMoodScore: 5,
+                    streakDays: 0,
+                    lastSessionDate: null
+                };
+            }
+        }
+
+        // AI Chat Assistant
+        class AIChatAssistant {
+            constructor() {
+                this.messages = [];
+                this.chatMessages = document.getElementById('chatMessages');
+                this.chatInput = document.getElementById('chatInput');
+                this.sendBtn = document.getElementById('sendBtn');
+                
+                this.setupEventListeners();
+                this.addWelcomeMessage();
+            }
+
+            setupEventListeners() {
+                this.sendBtn.addEventListener('click', () => this.sendMessage());
+                this.chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.sendMessage();
+                    }
+                });
+            }
+
+            addWelcomeMessage() {
+                const moodAssessment = LocalStorageManager.getMoodAssessment();
+                if (moodAssessment) {
+                    const profile = moodAssessment.moodProfile;
+                    const welcomeMessage = `Hello! I'm your AI music assistant. I see you're feeling ${profile.primaryMood} today. How can I help you with music recommendations?`;
+                    this.addMessage('ai', welcomeMessage);
+                } else {
+                    this.addMessage('ai', 'Hello! I\'m your AI music assistant. How can I help you with music recommendations today?');
+                }
+            }
+
+            sendMessage() {
+                const message = this.chatInput.value.trim();
+                if (!message) return;
+
+                this.addMessage('user', message);
+                this.chatInput.value = '';
+
+                // Simulate AI response
+                setTimeout(() => {
+                    this.generateAIResponse(message);
+                }, 1000);
+            }
+
+            addMessage(sender, content) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+                messageDiv.innerHTML = `
+                    <div class="message-content">${content}</div>
+                `;
+                
+                this.chatMessages.appendChild(messageDiv);
+                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+            }
+
+            generateAIResponse(userMessage) {
+                const moodAssessment = LocalStorageManager.getMoodAssessment();
+                const userStats = LocalStorageManager.getUserStats();
+                
+                const lowerMessage = userMessage.toLowerCase();
+                let response = '';
+
+                if (lowerMessage.includes('recommend') || lowerMessage.includes('suggest')) {
+                    if (lowerMessage.includes('relax') || lowerMessage.includes('calm')) {
+                        response = "For relaxation, I recommend:\n• 'Weightless' by Marconi Union\n• 'Claire de Lune' by Debussy\n• Ambient nature sounds\n\nThese tracks are scientifically proven to reduce stress and anxiety.";
+                    } else if (lowerMessage.includes('energy') || lowerMessage.includes('motivate')) {
+                        response = "To boost your energy:\n• 'Happy' by Pharrell Williams\n• Upbeat pop music\n• High-tempo electronic tracks\n\nThese will help increase your dopamine levels and motivation.";
+                    } else if (lowerMessage.includes('focus') || lowerMessage.includes('study')) {
+                        response = "For focus and concentration:\n• Lo-fi beats\n• Classical music (Mozart, Bach)\n• White noise or rain sounds\n\nThese help create a distraction-free environment.";
+                    } else if (lowerMessage.includes('sleep')) {
+                        response = "For better sleep:\n• 'Sleep Well' ambient tracks\n• 'Moonlight Sonata' by Beethoven\n• White noise or ocean sounds\n\nListen 30 minutes before bedtime for best results.";
+                    } else {
+                        response = "Based on your mood profile, I'd recommend:\n• Classical music for stress relief\n• Upbeat pop for energy\n• Ambient sounds for focus\n\nWhat specific mood are you looking to achieve?";
+                    }
+                } else if (lowerMessage.includes('mood') || lowerMessage.includes('feeling')) {
+                    response = `I can see from your assessment that you're currently feeling ${moodAssessment?.moodProfile?.primaryMood || 'balanced'}. Would you like me to suggest music to help improve your mood or maintain your current positive state?`;
+                } else if (lowerMessage.includes('stats') || lowerMessage.includes('progress')) {
+                    response = `Your music journey stats:\n• Sessions completed: ${userStats.sessionsCompleted}\n• Total minutes: ${userStats.totalMinutes}\n• Current streak: ${userStats.streakDays} days\n\nKeep up the great work!`;
+                } else if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
+                    response = "Hello! I'm here to help you find the perfect music for your mood and needs. What would you like to explore today?";
+                } else {
+                    response = "I'm here to help with music recommendations! You can ask me for:\n• Relaxation music\n• Energy-boosting tracks\n• Focus music\n• Sleep sounds\n• Or just chat about your mood!";
+                }
+
+                this.addMessage('ai', response);
+            }
+        }
+
+        // Playlist Generator
+        class PlaylistGenerator {
+            static generatePlaylists(moodProfile) {
+                const playlists = [];
+
+                switch (moodProfile.category) {
+                    case 'energetic':
+                        playlists.push(
+                            { icon: '⚡', title: 'Energy Boost', desc: 'High-energy tracks to keep you motivated' },
+                            { icon: '💪', title: 'Workout Mix', desc: 'Perfect for exercise and physical activity' },
+                            { icon: '🎵', title: 'Upbeat Pop', desc: 'Feel-good songs to lift your spirits' }
+                        );
+                        break;
+                    case 'tired':
+                        playlists.push(
+                            { icon: '🌙', title: 'Sleep Sounds', desc: 'Gentle ambient sounds for better sleep' },
+                            { icon: '🧘', title: 'Meditation', desc: 'Guided relaxation for rest and recovery' },
+                            { icon: '🌿', title: 'Nature Calm', desc: 'Soothing nature sounds to unwind' }
+                        );
+                        break;
+                    case 'stressed':
+                        playlists.push(
+                            { icon: '🌿', title: 'Stress Relief', desc: 'Calming tracks to reduce anxiety' },
+                            { icon: '🎼', title: 'Classical Peace', desc: 'Soothing classical pieces' },
+                            { icon: '🌊', title: 'Ocean Waves', desc: 'Relaxing ocean sounds' }
+                        );
+                        break;
+                    case 'focused':
+                        playlists.push(
+                            { icon: '📚', title: 'Study Focus', desc: 'Concentration-enhancing tracks' },
+                            { icon: '🎛️', title: 'Lo-Fi Beats', desc: 'Background music for deep work' },
+                            { icon: '🎯', title: 'Productivity', desc: 'Music to boost your efficiency' }
+                        );
+                        break;
+                    default:
+                        playlists.push(
+                            { icon: '🎵', title: 'Balanced Mix', desc: 'A variety of tracks for your mood' },
+                            { icon: '🎧', title: 'Personal Radio', desc: 'AI-curated music just for you' },
+                            { icon: '🎼', title: 'Classical Collection', desc: 'Timeless classical pieces' }
+                        );
+                }
+
+                return playlists;
+            }
+
+            static renderPlaylists(playlists) {
+                const grid = document.getElementById('playlistGrid');
+                grid.innerHTML = '';
+
+                playlists.forEach(playlist => {
+                    const card = document.createElement('div');
+                    card.className = 'playlist-card';
+                    card.onclick = () => this.playPlaylist(playlist);
+                    card.innerHTML = `
+                        <span class="playlist-icon">${playlist.icon}</span>
+                        <div class="playlist-title">${playlist.title}</div>
+                        <div class="playlist-desc">${playlist.desc}</div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+
+            static playPlaylist(playlist) {
+                // Simulate playing a playlist
+                alert(`🎵 Now playing: ${playlist.title}\n\nThis would integrate with your music streaming service.`);
+                
+                // Update stats
+                const stats = LocalStorageManager.getUserStats();
+                stats.sessionsCompleted++;
+                stats.totalMinutes += 15;
+                stats.lastSessionDate = new Date().toISOString();
+                LocalStorageManager.saveUserStats(stats);
+                
+                updateStats();
+            }
+        }
+
+        // Dashboard Initialization
+        function initializeDashboard() {
+            const currentUser = LocalStorageManager.getCurrentUser();
+            if (!currentUser) {
+                window.location.href = 'signin.html';
+                return;
+            }
+
+            const moodAssessment = LocalStorageManager.getMoodAssessment();
+            if (!moodAssessment) {
+                window.location.href = 'mood-assessment.html';
+                return;
+            }
+
+            // Update welcome section
+            document.getElementById('userName').textContent = `Welcome, ${currentUser.name}!`;
+            document.getElementById('welcomeTitle').textContent = `Welcome back, ${currentUser.name}!`;
+
+            // Update mood indicator
+            const profile = moodAssessment.moodProfile;
+            const moodIndicator = document.getElementById('moodIndicator');
+            moodIndicator.innerHTML = `
+                <span class="mood-emoji">${profile.emoji}</span>
+                <span class="mood-text">${profile.title}</span>
+            `;
+
+            // Generate playlists
+            const playlists = PlaylistGenerator.generatePlaylists(profile);
+            PlaylistGenerator.renderPlaylists(playlists);
+
+            // Initialize AI chat
+            new AIChatAssistant();
+
+            // Update stats
+            updateStats();
+
+            // Setup sign out
+            document.getElementById('signoutBtn').addEventListener('click', function() {
+                localStorage.removeItem(LocalStorageManager.CURRENT_USER_KEY);
+                localStorage.removeItem(LocalStorageManager.MOOD_ASSESSMENT_KEY);
+                localStorage.removeItem(LocalStorageManager.USER_STATS_KEY);
+                window.location.href = 'index.html';
+            });
+        }
+
+        function updateStats() {
+            const stats = LocalStorageManager.getUserStats();
+            document.getElementById('sessionsCompleted').textContent = stats.sessionsCompleted;
+            document.getElementById('totalMinutes').textContent = stats.totalMinutes;
+            document.getElementById('moodScore').textContent = stats.currentMoodScore;
+            document.getElementById('streakDays').textContent = stats.streakDays;
+        }
+
+        function startNewSession() {
+            const moodAssessment = LocalStorageManager.getMoodAssessment();
+            if (moodAssessment) {
+                const profile = moodAssessment.moodProfile;
+                alert(`🎵 Starting a new ${profile.sessionDuration} session for ${profile.primaryGoal}...\n\nThis would open your music player with personalized tracks.`);
+                
+                // Update stats
+                const stats = LocalStorageManager.getUserStats();
+                stats.sessionsCompleted++;
+                stats.totalMinutes += profile.sessionDuration === 'short' ? 10 : profile.sessionDuration === 'medium' ? 20 : 45;
+                stats.lastSessionDate = new Date().toISOString();
+                LocalStorageManager.saveUserStats(stats);
+                
+                updateStats();
+            }
+        }
+
+        function retakeAssessment() {
+            if (confirm('Would you like to retake the mood assessment? This will update your personalized recommendations.')) {
+                localStorage.removeItem(LocalStorageManager.MOOD_ASSESSMENT_KEY);
+                window.location.href = 'mood-assessment.html';
+            }
+        }
+
+        function viewHistory() {
+            const stats = LocalStorageManager.getUserStats();
+            const moodAssessment = LocalStorageManager.getMoodAssessment();
+            
+            let historyText = `📊 Your Music Journey History:\n\n`;
+            historyText += `• Total Sessions: ${stats.sessionsCompleted}\n`;
+            historyText += `• Total Minutes: ${stats.totalMinutes}\n`;
+            historyText += `• Current Streak: ${stats.streakDays} days\n`;
+            historyText += `• Last Session: ${stats.lastSessionDate ? new Date(stats.lastSessionDate).toLocaleDateString() : 'Never'}\n\n`;
+            
+            if (moodAssessment) {
+                historyText += `🎭 Mood Profile:\n`;
+                historyText += `• Primary Mood: ${moodAssessment.moodProfile.primaryMood}\n`;
+                historyText += `• Energy Level: ${moodAssessment.moodProfile.energyLevel}/10\n`;
+                historyText += `• Primary Goal: ${moodAssessment.moodProfile.primaryGoal}\n`;
+                historyText += `• Preferred Music: ${moodAssessment.moodProfile.preferredMusic}\n`;
+            }
+            
+            alert(historyText);
+        }
+
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+    </script>
+</body>
+</html> 

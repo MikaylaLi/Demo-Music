@@ -550,7 +550,13 @@
                 FormValidator.showSuccess('successMessage', 'Sign in successful! Redirecting...');
                 
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    // Check if user has completed mood assessment
+                    const moodAssessment = LocalStorageManager.getMoodAssessment();
+                    if (!moodAssessment) {
+                        window.location.href = 'mood-assessment.html';
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
                 }, 1500);
 
                 return true;
@@ -592,6 +598,51 @@
                 window.location.href = 'index.html';
             }
         });
+
+        // Local Storage Management
+        class LocalStorageManager {
+            static USERS_KEY = 'healthyMusicUsers';
+            static CURRENT_USER_KEY = 'healthyMusicCurrentUser';
+            static MOOD_ASSESSMENT_KEY = 'moodAssessmentResults';
+
+            static getUsers() {
+                const users = localStorage.getItem(this.USERS_KEY);
+                return users ? JSON.parse(users) : [];
+            }
+
+            static saveUsers(users) {
+                localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
+            }
+
+            static addUser(user) {
+                const users = this.getUsers();
+                users.push(user);
+                this.saveUsers(users);
+            }
+
+            static findUser(email) {
+                const users = this.getUsers();
+                return users.find(user => user.email.toLowerCase() === email.toLowerCase());
+            }
+
+            static setCurrentUser(user) {
+                localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(user));
+            }
+
+            static getCurrentUser() {
+                const user = localStorage.getItem(this.CURRENT_USER_KEY);
+                return user ? JSON.parse(user) : null;
+            }
+
+            static clearCurrentUser() {
+                localStorage.removeItem(this.CURRENT_USER_KEY);
+            }
+
+            static getMoodAssessment() {
+                const assessment = localStorage.getItem(this.MOOD_ASSESSMENT_KEY);
+                return assessment ? JSON.parse(assessment) : null;
+            }
+        }
 
         // Initialize with some demo users if none exist
         if (LocalStorageManager.getUsers().length === 0) {

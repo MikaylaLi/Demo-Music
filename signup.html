@@ -479,6 +479,19 @@
             static clearCurrentUser() {
                 localStorage.removeItem(this.CURRENT_USER_KEY);
             }
+
+            static getMoodAssessmentKey() {
+                const user = this.getCurrentUser();
+                return user ? `healthyMusicMoodAssessment_${user.email}` : 'healthyMusicMoodAssessment';
+            }
+            static saveMoodAssessment(assessment) {
+                localStorage.setItem(this.getMoodAssessmentKey(), JSON.stringify(assessment));
+            }
+            static getMoodAssessment() {
+                const key = this.getMoodAssessmentKey();
+                const assessment = localStorage.getItem(key);
+                return assessment ? JSON.parse(assessment) : null;
+            }
         }
 
         // Form Validation
@@ -644,6 +657,7 @@
                 FormValidator.showSuccess('successMessage', 'Account created successfully! Welcome to MajorChord!');
                 
                 setTimeout(() => {
+                    // Redirect to main page for mood quiz
                     window.location.href = 'index.html';
                 }, 2000);
 
