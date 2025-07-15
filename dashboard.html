@@ -246,35 +246,198 @@
         .chat-input-container {
             display: flex;
             gap: 0.5rem;
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
         }
 
         .chat-input {
             flex: 1;
-            padding: 0.8rem 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 25px;
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-dark);
-            outline: none;
-        }
-
-        .chat-input:focus {
-            border-color: var(--teal);
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
         }
 
         .send-btn {
-            padding: 0.8rem 1.2rem;
+            padding: 0.5rem 1rem;
             background: var(--teal);
             color: white;
             border: none;
-            border-radius: 25px;
+            border-radius: 0.5rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background 0.2s;
         }
 
         .send-btn:hover {
             background: var(--soft-teal);
-            transform: translateY(-2px);
+        }
+
+        /* Community Statistics Styles */
+        .community-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mood-distribution {
+            margin-top: 1.5rem;
+        }
+
+        .mood-distribution h4 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+            font-size: 1rem;
+        }
+
+        .mood-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .mood-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .mood-bar span:first-child {
+            min-width: 80px;
+            font-weight: 600;
+        }
+
+        .mood-bar span:last-child {
+            min-width: 30px;
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .bar-container {
+            flex: 1;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--teal), var(--soft-teal));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Personalized Recommendations Styles */
+        .personalized-info {
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-item .label {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .info-item .value {
+            color: var(--teal);
+            font-weight: 600;
+        }
+
+        .recommendations-list h4 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+            font-size: 1rem;
+        }
+
+        .recommendation-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .track-info {
+            flex: 1;
+        }
+
+        .track-title {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.875rem;
+        }
+
+        .track-artist {
+            color: #64748b;
+            font-size: 0.75rem;
+        }
+
+        .track-genre {
+            color: var(--teal);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .track-score {
+            font-weight: 600;
+            color: var(--coral);
+            font-size: 0.875rem;
+        }
+
+        /* Community Activity Styles */
+        .activity-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-mood {
+            font-size: 1.5rem;
+            min-width: 30px;
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-goal {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.875rem;
+        }
+
+        .activity-music {
+            color: #64748b;
+            font-size: 0.75rem;
+        }
+
+        .activity-time {
+            color: var(--teal);
+            font-size: 0.75rem;
+            font-weight: 600;
         }
 
         .stats-grid {
@@ -361,9 +524,17 @@
     <header>
         <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
             <div class="logo">MajorChord</div>
-            <div class="nav-links" style="display: flex; gap: 2rem; align-items: center;">
-                <span id="userName" style="color: #2d3748; font-weight: 600;"></span>
-                <button id="signoutBtn" style="background: rgba(255,255,255,0.9); color: #2d3748; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; transition: background 0.3s; font-weight: 600;">Sign Out</button>
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <span id="userName" style="font-weight: 600;"></span>
+                <div class="settings-dropdown" style="position: relative;">
+                    <button id="settingsBtn" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <div id="dropdownMenu" class="hidden" style="position: absolute; right: 0; top: 2.5rem; background: white; color: #222; border-radius: 10px; box-shadow: 0 4px 16px #0002; min-width: 160px; z-index: 10;">
+                        <a href="#" id="profileOption" style="display: block; padding: 1rem 1.5rem; text-decoration: none; color: #222; border-bottom: 1px solid #eee;">Profile</a>
+                        <a href="#" id="signoutOption" style="display: block; padding: 1rem 1.5rem; text-decoration: none; color: #222;">Sign Out</a>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -380,43 +551,31 @@
             </div>
 
             <!-- Dashboard Grid -->
-            <div class="dashboard-grid">
+            <div class="dashboard-grid" style="margin-bottom: 2rem;">
                 <!-- Main Content -->
                 <div class="main-content">
-                    <!-- Personalized Playlists -->
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="fas fa-music card-icon"></i>
-                            <h2 class="card-title">Your Personalized Playlists</h2>
-                        </div>
-                        <div class="playlist-grid" id="playlistGrid">
-                            <!-- Playlists will be generated here -->
-                        </div>
-                    </div>
-
                     <!-- Music Stats -->
                     <div class="card">
                         <div class="card-header">
                             <i class="fas fa-chart-line card-icon"></i>
                             <h2 class="card-title">Your Music Journey</h2>
                         </div>
-                        <div class="stats-grid">
+                        <div class="stats-grid" style="margin-bottom: 1.5rem;">
                             <div class="stat-card">
                                 <div class="stat-value" id="sessionsCompleted">0</div>
                                 <div class="stat-label">Sessions Completed</div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-value" id="totalMinutes">0</div>
-                                <div class="stat-label">Minutes Listened</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value" id="moodScore">-</div>
-                                <div class="stat-label">Current Mood Score</div>
+                                <div class="stat-label">Total Minutes</div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-value" id="streakDays">0</div>
-                                <div class="stat-label">Day Streak</div>
+                                <div class="stat-label">Current Streak (days)</div>
                             </div>
+                        </div>
+                        <div style="text-align: right; margin-bottom: 2rem;">
+                            <button class="btn btn-primary" onclick="window.location.href='goals.html'">View & Update Goals</button>
                         </div>
                     </div>
                 </div>
@@ -463,8 +622,52 @@
                             </button>
                         </div>
                     </div>
+                    <div class="card" id="goalsCard" style="margin-top: 1.5rem;">
+                        <div class="card-header">
+                            <i class="fas fa-bullseye card-icon"></i>
+                            <h2 class="card-title">Your Goals</h2>
+                        </div>
+                        <div style="margin-bottom: 1rem; color: #555;">Track your progress and see what you can achieve next!</div>
+                        <button class="btn btn-primary" onclick="window.location.href='goals.html'" style="width: 100%;">View & Update Goals</button>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; z-index: 100;">
+        <div style="background: white; border-radius: 18px; padding: 2.5rem 2rem; min-width: 340px; max-width: 95vw; box-shadow: 0 8px 32px #0002; position: relative;">
+            <button id="closeProfileModal" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.3rem; color: #888; cursor: pointer;"><i class="fas fa-times"></i></button>
+            <h2 style="margin-bottom: 1.2rem;">Edit Profile</h2>
+            <form id="profileForm">
+                <div style="margin-bottom: 1rem; text-align: center;">
+                    <div id="avatarGrid" style="display: flex; flex-wrap: wrap; gap: 0.7rem; justify-content: center; margin-bottom: 0.7rem;"></div>
+                    <small style="color: #888;">Choose your profile picture</small>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label>Name</label>
+                    <input type="text" id="profileName" style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid #ccc;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label>Email</label>
+                    <input type="email" id="profileEmail" style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid #ccc;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label>Birthday</label>
+                    <input type="date" id="profileBirthday" style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid #ccc;">
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label>Gender</label>
+                    <select id="profileGender" style="width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid #ccc;">
+                        <option value="">Select</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Save Changes</button>
+            </form>
         </div>
     </div>
 
@@ -594,85 +797,10 @@
             }
         }
 
-        // Playlist Generator
-        class PlaylistGenerator {
-            static generatePlaylists(moodProfile) {
-                const playlists = [];
 
-                switch (moodProfile.category) {
-                    case 'energetic':
-                        playlists.push(
-                            { icon: '⚡', title: 'Energy Boost', desc: 'High-energy tracks to keep you motivated' },
-                            { icon: '💪', title: 'Workout Mix', desc: 'Perfect for exercise and physical activity' },
-                            { icon: '🎵', title: 'Upbeat Pop', desc: 'Feel-good songs to lift your spirits' }
-                        );
-                        break;
-                    case 'tired':
-                        playlists.push(
-                            { icon: '🌙', title: 'Sleep Sounds', desc: 'Gentle ambient sounds for better sleep' },
-                            { icon: '🧘', title: 'Meditation', desc: 'Guided relaxation for rest and recovery' },
-                            { icon: '🌿', title: 'Nature Calm', desc: 'Soothing nature sounds to unwind' }
-                        );
-                        break;
-                    case 'stressed':
-                        playlists.push(
-                            { icon: '🌿', title: 'Stress Relief', desc: 'Calming tracks to reduce anxiety' },
-                            { icon: '🎼', title: 'Classical Peace', desc: 'Soothing classical pieces' },
-                            { icon: '🌊', title: 'Ocean Waves', desc: 'Relaxing ocean sounds' }
-                        );
-                        break;
-                    case 'focused':
-                        playlists.push(
-                            { icon: '📚', title: 'Study Focus', desc: 'Concentration-enhancing tracks' },
-                            { icon: '🎛️', title: 'Lo-Fi Beats', desc: 'Background music for deep work' },
-                            { icon: '🎯', title: 'Productivity', desc: 'Music to boost your efficiency' }
-                        );
-                        break;
-                    default:
-                        playlists.push(
-                            { icon: '🎵', title: 'Balanced Mix', desc: 'A variety of tracks for your mood' },
-                            { icon: '🎧', title: 'Personal Radio', desc: 'AI-curated music just for you' },
-                            { icon: '🎼', title: 'Classical Collection', desc: 'Timeless classical pieces' }
-                        );
-                }
-
-                return playlists;
-            }
-
-            static renderPlaylists(playlists) {
-                const grid = document.getElementById('playlistGrid');
-                grid.innerHTML = '';
-
-                playlists.forEach(playlist => {
-                    const card = document.createElement('div');
-                    card.className = 'playlist-card';
-                    card.onclick = () => this.playPlaylist(playlist);
-                    card.innerHTML = `
-                        <span class="playlist-icon">${playlist.icon}</span>
-                        <div class="playlist-title">${playlist.title}</div>
-                        <div class="playlist-desc">${playlist.desc}</div>
-                    `;
-                    grid.appendChild(card);
-                });
-            }
-
-            static playPlaylist(playlist) {
-                // Simulate playing a playlist
-                alert(`🎵 Now playing: ${playlist.title}\n\nThis would integrate with your music streaming service.`);
-                
-                // Update stats
-                const stats = LocalStorageManager.getUserStats();
-                stats.sessionsCompleted++;
-                stats.totalMinutes += 15;
-                stats.lastSessionDate = new Date().toISOString();
-                LocalStorageManager.saveUserStats(stats);
-                
-                updateStats();
-            }
-        }
 
         // Dashboard Initialization
-        function initializeDashboard() {
+        async function initializeDashboard() {
             const currentUser = LocalStorageManager.getCurrentUser();
             if (!currentUser) {
                 window.location.href = 'signin.html';
@@ -697,15 +825,11 @@
                 <span class="mood-text">${profile.title}</span>
             `;
 
-            // Generate playlists
-            const playlists = PlaylistGenerator.generatePlaylists(profile);
-            PlaylistGenerator.renderPlaylists(playlists);
-
             // Initialize AI chat
             new AIChatAssistant();
 
-            // Update stats
-            updateStats();
+            // Load personalized dashboard data from backend
+            await loadPersonalizedDashboardData();
 
             // Setup sign out
             document.getElementById('signoutBtn').addEventListener('click', function() {
@@ -716,11 +840,221 @@
             });
         }
 
+        async function loadPersonalizedDashboardData() {
+            try {
+                const response = await fetch('/api/dashboard-stats');
+                if (response.ok) {
+                    const data = await response.json();
+                    updateDashboardWithPersonalizedData(data);
+                } else {
+                    console.error('Failed to load dashboard data');
+                    // Fallback to local stats
+                    updateStats();
+                }
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                // Fallback to local stats
+                updateStats();
+            }
+        }
+
+        function updateDashboardWithPersonalizedData(data) {
+            // Update user statistics
+            const userStats = data.user_stats;
+            const personalizedData = data.personalized_data;
+            const communityStats = data.community_stats;
+            const recommendations = data.personalized_recommendations;
+
+            // Update stats cards
+            document.getElementById('sessionsCompleted').textContent = userStats.playlists_count;
+            document.getElementById('totalMinutes').textContent = userStats.tracks_count;
+            document.getElementById('streakDays').textContent = userStats.streak_days; // Changed from streakDays to streak_days
+            
+            // Add community statistics section
+            addCommunityStatsSection(communityStats);
+
+            // Add personalized recommendations section
+            addPersonalizedRecommendationsSection(recommendations, personalizedData);
+
+            // Add recent community activity
+            addCommunityActivitySection(data.recent_community_activity);
+        }
+
+        function addCommunityStatsSection(communityStats) {
+            // Check if community stats section already exists
+            if (document.getElementById('communityStatsSection')) {
+                return;
+            }
+
+            const mainContent = document.querySelector('.main-content');
+            const communityCard = document.createElement('div');
+            communityCard.className = 'card';
+            communityCard.innerHTML = `
+                <div class="card-header">
+                    <i class="fas fa-users card-icon"></i>
+                    <h2 class="card-title">Community Insights</h2>
+                </div>
+                <div class="community-stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">${communityStats.total_users}</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${communityStats.average_mood}/10</div>
+                        <div class="stat-label">Avg Community Mood</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${communityStats.average_stress}/10</div>
+                        <div class="stat-label">Avg Stress Level</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${communityStats.average_sleep}/10</div>
+                        <div class="stat-label">Avg Sleep Quality</div>
+                    </div>
+                </div>
+                <div class="mood-distribution">
+                    <h4>Community Mood Distribution</h4>
+                    <div class="mood-bars">
+                        <div class="mood-bar">
+                            <span>Stressed</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: ${(communityStats.mood_distribution.stressed / communityStats.total_users * 100)}%"></div>
+                            </div>
+                            <span>${communityStats.mood_distribution.stressed}</span>
+                        </div>
+                        <div class="mood-bar">
+                            <span>Energetic</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: ${(communityStats.mood_distribution.energetic / communityStats.total_users * 100)}%"></div>
+                            </div>
+                            <span>${communityStats.mood_distribution.energetic}</span>
+                        </div>
+                        <div class="mood-bar">
+                            <span>Focused</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: ${(communityStats.mood_distribution.focused / communityStats.total_users * 100)}%"></div>
+                            </div>
+                            <span>${communityStats.mood_distribution.focused}</span>
+                        </div>
+                        <div class="mood-bar">
+                            <span>Balanced</span>
+                            <div class="bar-container">
+                                <div class="bar" style="width: ${(communityStats.mood_distribution.balanced / communityStats.total_users * 100)}%"></div>
+                            </div>
+                            <span>${communityStats.mood_distribution.balanced}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            communityCard.id = 'communityStatsSection';
+            mainContent.appendChild(communityCard);
+        }
+
+        function addPersonalizedRecommendationsSection(recommendations, personalizedData) {
+            // Check if recommendations section already exists
+            if (document.getElementById('personalizedRecommendationsSection')) {
+                return;
+            }
+
+            const sidebar = document.querySelector('.sidebar');
+            const recommendationsCard = document.createElement('div');
+            recommendationsCard.className = 'card';
+            recommendationsCard.innerHTML = `
+                <div class="card-header">
+                    <i class="fas fa-star card-icon"></i>
+                    <h2 class="card-title">Personalized for You</h2>
+                </div>
+                <div class="personalized-info">
+                    <div class="info-item">
+                        <span class="label">Current Mood:</span>
+                        <span class="value">${personalizedData.current_mood || 'N/A'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Energy Level:</span>
+                        <span class="value">${personalizedData.energy_level || 'N/A'}/10</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Primary Goal:</span>
+                        <span class="value">${personalizedData.primary_goal || 'N/A'}</span>
+                    </div>
+                </div>
+                <div class="recommendations-list">
+                    <h4>Recommended Tracks</h4>
+                    ${recommendations.map(rec => `
+                        <div class="recommendation-item">
+                            <div class="track-info">
+                                <div class="track-title">${rec.title}</div>
+                                <div class="track-artist">${rec.artist}</div>
+                                <div class="track-genre">${rec.genre}</div>
+                            </div>
+                            <div class="track-score">Score: ${rec.score}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            recommendationsCard.id = 'personalizedRecommendationsSection';
+            sidebar.appendChild(recommendationsCard);
+        }
+
+        function addCommunityActivitySection(recentActivity) {
+            // Check if activity section already exists
+            if (document.getElementById('communityActivitySection')) {
+                return;
+            }
+
+            const sidebar = document.querySelector('.sidebar');
+            const activityCard = document.createElement('div');
+            activityCard.className = 'card';
+            activityCard.innerHTML = `
+                <div class="card-header">
+                    <i class="fas fa-clock card-icon"></i>
+                    <h2 class="card-title">Recent Community Activity</h2>
+                </div>
+                <div class="activity-list">
+                    ${recentActivity.map(activity => `
+                        <div class="activity-item">
+                            <div class="activity-mood">${getMoodEmoji(activity.mood_category)}</div>
+                            <div class="activity-details">
+                                <div class="activity-goal">${activity.primary_goal}</div>
+                                <div class="activity-music">${activity.preferred_music}</div>
+                                <div class="activity-time">${formatTimeAgo(activity.timestamp)}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            activityCard.id = 'communityActivitySection';
+            sidebar.appendChild(activityCard);
+        }
+
+        function getMoodEmoji(moodCategory) {
+            const emojis = {
+                'stressed': '😰',
+                'energetic': '⚡',
+                'tired': '😴',
+                'focused': '🎯',
+                'balanced': '😌'
+            };
+            return emojis[moodCategory] || '🎵';
+        }
+
+        function formatTimeAgo(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            return `${diffDays}d ago`;
+        }
+
         function updateStats() {
             const stats = LocalStorageManager.getUserStats();
             document.getElementById('sessionsCompleted').textContent = stats.sessionsCompleted;
             document.getElementById('totalMinutes').textContent = stats.totalMinutes;
-            document.getElementById('moodScore').textContent = stats.currentMoodScore;
             document.getElementById('streakDays').textContent = stats.streakDays;
         }
 
@@ -744,6 +1078,7 @@
         function retakeAssessment() {
             if (confirm('Would you like to retake the mood assessment? This will update your personalized recommendations.')) {
                 localStorage.removeItem(LocalStorageManager.MOOD_ASSESSMENT_KEY);
+                // Redirect to mood assessment
                 window.location.href = 'mood-assessment.html';
             }
         }
@@ -770,7 +1105,118 @@
         }
 
         // Initialize dashboard when page loads
-        document.addEventListener('DOMContentLoaded', initializeDashboard);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if this is a refresh from mood assessment
+            const urlParams = new URLSearchParams(window.location.search);
+            const isRefresh = urlParams.get('refresh') === 'true';
+            
+            if (isRefresh) {
+                // Clear any existing personalized sections
+                const existingSections = ['communityStatsSection', 'personalizedRecommendationsSection', 'communityActivitySection'];
+                existingSections.forEach(sectionId => {
+                    const section = document.getElementById(sectionId);
+                    if (section) section.remove();
+                });
+                
+                // Remove the refresh parameter from URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            initializeDashboard();
+
+            // Settings dropdown logic
+            const settingsBtn = document.getElementById('settingsBtn');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            const profileModal = document.getElementById('profileModal');
+            const profileOption = document.getElementById('profileOption');
+            const signoutOption = document.getElementById('signoutOption');
+            const closeProfileModal = document.getElementById('closeProfileModal');
+            let selectedAvatar = null;
+
+            settingsBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('hidden');
+            });
+            document.body.addEventListener('click', function() {
+                dropdownMenu.classList.add('hidden');
+            });
+            dropdownMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            profileOption.addEventListener('click', function(e) {
+                e.preventDefault();
+                dropdownMenu.classList.add('hidden');
+                profileModal.classList.remove('hidden');
+                loadProfileModal();
+            });
+            closeProfileModal.addEventListener('click', function() {
+                profileModal.classList.add('hidden');
+            });
+            signoutOption.addEventListener('click', async function(e) {
+                e.preventDefault();
+                // Call backend logout
+                await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+                localStorage.clear();
+                window.location.href = 'signin.html';
+            });
+            // Avatar selection logic
+            function loadProfileModal() {
+                // Example avatars (add more as needed)
+                const freeAvatars = [
+                    '😀','🎵','😎','🌈','🐱','🐶','🦄','🌟'
+                ];
+                const lockedAvatars = [
+                    {icon:'👑', goal:'Complete 5 sessions'},
+                    {icon:'🚀', goal:'Reach 7-day streak'},
+                    {icon:'🧘', goal:'Finish 3 mood quizzes'}
+                ];
+                const avatarGrid = document.getElementById('avatarGrid');
+                avatarGrid.innerHTML = '';
+                freeAvatars.forEach(avatar => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.textContent = avatar;
+                    btn.style.fontSize = '2rem';
+                    btn.style.background = 'none';
+                    btn.style.border = selectedAvatar === avatar ? '2px solid #10b981' : '1px solid #ccc';
+                    btn.style.borderRadius = '50%';
+                    btn.style.cursor = 'pointer';
+                    btn.style.padding = '0.3rem 0.5rem';
+                    btn.style.transition = 'border 0.2s';
+                    btn.addEventListener('click', function() {
+                        selectedAvatar = avatar;
+                        loadProfileModal();
+                    });
+                    avatarGrid.appendChild(btn);
+                });
+                lockedAvatars.forEach(locked => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.textContent = locked.icon;
+                    btn.style.fontSize = '2rem';
+                    btn.style.background = 'none';
+                    btn.style.border = '1px solid #ccc';
+                    btn.style.borderRadius = '50%';
+                    btn.style.cursor = 'not-allowed';
+                    btn.style.padding = '0.3rem 0.5rem';
+                    btn.style.opacity = '0.5';
+                    btn.title = `Locked: ${locked.goal}`;
+                    btn.disabled = true;
+                    avatarGrid.appendChild(btn);
+                });
+                // Load user info (stub: you can load from backend/localStorage)
+                document.getElementById('profileName').value = 'Your Name';
+                document.getElementById('profileEmail').value = 'your@email.com';
+                document.getElementById('profileBirthday').value = '';
+                document.getElementById('profileGender').value = '';
+            }
+            document.getElementById('profileForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Save changes (stub: send to backend)
+                profileModal.classList.add('hidden');
+                alert('Profile updated! (This would save to backend in production)');
+            });
+        });
     </script>
 </body>
 </html> 

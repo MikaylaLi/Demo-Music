@@ -6,6 +6,9 @@ import json
 import random
 from datetime import datetime, timedelta
 import os
+import requests
+
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', None)
 
 app = Flask(__name__)
 app.secret_key = 'majorchord_secret_key_2024'
@@ -24,6 +27,27 @@ def init_db():
             email TEXT UNIQUE NOT NULL,
             password_hash TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    # Quiz results table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS quiz_results (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            primary_mood TEXT,
+            energy_level INTEGER,
+            primary_goal TEXT,
+            preferred_music TEXT,
+            session_duration TEXT,
+            mood_category TEXT,
+            stress_level INTEGER,
+            sleep_quality INTEGER,
+            mood_score INTEGER,
+            symptoms TEXT,
+            answers_json TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id)
         )
     ''')
     
@@ -201,15 +225,13 @@ def register():
             (username, email, password_hash)
         )
         conn.commit()
-        
         user_id = cursor.lastrowid
-        session['user_id'] = user_id
-        session['username'] = username
         
         return jsonify({
-            'message': 'Registration successful',
+            'message': 'User registered successfully',
             'user_id': user_id,
-            'username': username
+            'username': username,
+            'email': email
         }), 201
         
     except sqlite3.IntegrityError:
@@ -220,34 +242,241 @@ def register():
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
-    username = data.get('username')
+    email = data.get('email')
     password = data.get('password')
     
-    if not all([username, password]):
-        return jsonify({'error': 'Username and password are required'}), 400
+    if not all([email, password]):
+        return jsonify({'error': 'Email and password are required'}), 400
     
     conn = sqlite3.connect('majorchord.db')
     cursor = conn.cursor()
     
-    cursor.execute('SELECT id, username, password_hash FROM users WHERE username = ?', (username,))
+    cursor.execute('SELECT id, username, email, password_hash FROM users WHERE email = ?', (email,))
     user = cursor.fetchone()
     conn.close()
     
-    if user and check_password_hash(user[2], password):
+    if user and check_password_hash(user[3], password):
         session['user_id'] = user[0]
-        session['username'] = user[1]
         return jsonify({
             'message': 'Login successful',
             'user_id': user[0],
-            'username': user[1]
+            'username': user[1],
+            'email': user[2]
         })
     else:
-        return jsonify({'error': 'Invalid credentials'}), 401
+        return jsonify({'error': 'Invalid email or password'}), 401
 
 @app.route('/api/logout', methods=['POST'])
 def logout():
     session.clear()
-    return jsonify({'message': 'Logout successful'})
+    return jsonify({'message': 'Logged out successfully'})
+
+# Quiz results API
+@app.route('/api/quiz-results', methods=['POST'])
+def save_quiz_results():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Authentication required'}), 401
+    
+    data = request.get_json()
+    user_id = session['user_id']
+    
+    # Extract quiz data
+    mood_profile = data.get('moodProfile', {})
+    answers = data.get('answers', {})
+    
+    conn = sqlite3.connect('majorchord.db')
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute('''
+            INSERT INTO quiz_results 
+            (user_id, primary_mood, energy_level, primary_goal, preferred_music, 
+             session_duration, mood_category, stress_level, sleep_quality, mood_score, 
+             symptoms, answers_json)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            user_id,
+            mood_profile.get('primaryMood'),
+            mood_profile.get('energyLevel'),
+            mood_profile.get('primaryGoal'),
+            mood_profile.get('preferredMusic'),
+            mood_profile.get('sessionDuration'),
+            mood_profile.get('category'),
+            answers.get('stress_level', 5),
+            answers.get('sleep_quality', 5),
+            answers.get('mood_score', 5),
+            answers.get('symptoms', ''),
+            json.dumps(answers)
+        ))
+        
+        conn.commit()
+        return jsonify({'message': 'Quiz results saved successfully'}), 201
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route('/api/dashboard-stats', methods=['GET'])
+def get_dashboard_stats():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Authentication required'}), 401
+    
+    user_id = session['user_id']
+    conn = sqlite3.connect('majorchord.db')
+    cursor = conn.cursor()
+    
+    try:
+        # Get user's latest quiz result
+        cursor.execute('''
+            SELECT primary_mood, energy_level, primary_goal, mood_category, 
+                   stress_level, sleep_quality, mood_score, created_at
+            FROM quiz_results 
+            WHERE user_id = ? 
+            ORDER BY created_at DESC 
+            LIMIT 1
+        ''', (user_id,))
+        user_quiz = cursor.fetchone()
+        
+        # Get user's playlists count
+        cursor.execute('SELECT COUNT(*) FROM user_playlists WHERE user_id = ?', (user_id,))
+        playlists_count = cursor.fetchone()[0]
+        
+        # Get user's total tracks
+        cursor.execute('''
+            SELECT COUNT(*) FROM playlist_tracks pt
+            JOIN user_playlists up ON pt.playlist_id = up.id
+            WHERE up.user_id = ?
+        ''', (user_id,))
+        tracks_count = cursor.fetchone()[0]
+        
+        # Get aggregated statistics from all users
+        cursor.execute('''
+            SELECT 
+                COUNT(DISTINCT user_id) as total_users,
+                AVG(energy_level) as avg_energy,
+                AVG(stress_level) as avg_stress,
+                AVG(sleep_quality) as avg_sleep,
+                AVG(mood_score) as avg_mood,
+                COUNT(CASE WHEN mood_category = 'stressed' THEN 1 END) as stressed_users,
+                COUNT(CASE WHEN mood_category = 'energetic' THEN 1 END) as energetic_users,
+                COUNT(CASE WHEN mood_category = 'tired' THEN 1 END) as tired_users,
+                COUNT(CASE WHEN mood_category = 'focused' THEN 1 END) as focused_users,
+                COUNT(CASE WHEN mood_category = 'balanced' THEN 1 END) as balanced_users
+            FROM quiz_results
+        ''')
+        aggregated_stats = cursor.fetchone()
+        
+        # Get recent quiz results from other users (anonymized)
+        cursor.execute('''
+            SELECT mood_category, primary_goal, preferred_music, created_at
+            FROM quiz_results 
+            WHERE user_id != ? 
+            ORDER BY created_at DESC 
+            LIMIT 10
+        ''', (user_id,))
+        recent_others = cursor.fetchall()
+        
+        # Get personalized recommendations based on user's mood
+        personalized_tracks = []
+        if user_quiz:
+            mood_category = user_quiz[3]
+            if mood_category == 'stressed':
+                cursor.execute('''
+                    SELECT title, artist, genre, stress_reduction_score
+                    FROM music_library 
+                    WHERE stress_reduction_score >= 7
+                    ORDER BY stress_reduction_score DESC 
+                    LIMIT 5
+                ''')
+            elif mood_category == 'energetic':
+                cursor.execute('''
+                    SELECT title, artist, genre, mood_boost_score
+                    FROM music_library 
+                    WHERE mood_boost_score >= 7
+                    ORDER BY mood_boost_score DESC 
+                    LIMIT 5
+                ''')
+            elif mood_category == 'tired':
+                cursor.execute('''
+                    SELECT title, artist, genre, sleep_aid_score
+                    FROM music_library 
+                    WHERE sleep_aid_score >= 7
+                    ORDER BY sleep_aid_score DESC 
+                    LIMIT 5
+                ''')
+            elif mood_category == 'focused':
+                cursor.execute('''
+                    SELECT title, artist, genre, focus_score
+                    FROM music_library 
+                    WHERE focus_score >= 7
+                    ORDER BY focus_score DESC 
+                    LIMIT 5
+                ''')
+            else:
+                cursor.execute('''
+                    SELECT title, artist, genre, 
+                           (stress_reduction_score + mood_boost_score + focus_score) / 3 as avg_score
+                    FROM music_library 
+                    ORDER BY avg_score DESC 
+                    LIMIT 5
+                ''')
+            personalized_tracks = cursor.fetchall()
+        
+        conn.close()
+        
+        # Format response
+        response = {
+            'user_stats': {
+                'playlists_count': playlists_count,
+                'tracks_count': tracks_count,
+                'last_quiz_date': user_quiz[7] if user_quiz else None
+            },
+            'personalized_data': {
+                'current_mood': user_quiz[0] if user_quiz else None,
+                'energy_level': user_quiz[1] if user_quiz else None,
+                'primary_goal': user_quiz[2] if user_quiz else None,
+                'mood_category': user_quiz[3] if user_quiz else None,
+                'stress_level': user_quiz[4] if user_quiz else None,
+                'sleep_quality': user_quiz[5] if user_quiz else None,
+                'mood_score': user_quiz[6] if user_quiz else None
+            },
+            'community_stats': {
+                'total_users': aggregated_stats[0] if aggregated_stats else 0,
+                'average_energy': round(aggregated_stats[1], 1) if aggregated_stats else 5,
+                'average_stress': round(aggregated_stats[2], 1) if aggregated_stats else 5,
+                'average_sleep': round(aggregated_stats[3], 1) if aggregated_stats else 5,
+                'average_mood': round(aggregated_stats[4], 1) if aggregated_stats else 5,
+                'mood_distribution': {
+                    'stressed': aggregated_stats[5] if aggregated_stats else 0,
+                    'energetic': aggregated_stats[6] if aggregated_stats else 0,
+                    'tired': aggregated_stats[7] if aggregated_stats else 0,
+                    'focused': aggregated_stats[8] if aggregated_stats else 0,
+                    'balanced': aggregated_stats[9] if aggregated_stats else 0
+                }
+            },
+            'recent_community_activity': [
+                {
+                    'mood_category': row[0],
+                    'primary_goal': row[1],
+                    'preferred_music': row[2],
+                    'timestamp': row[3]
+                } for row in recent_others
+            ],
+            'personalized_recommendations': [
+                {
+                    'title': row[0],
+                    'artist': row[1],
+                    'genre': row[2],
+                    'score': row[3]
+                } for row in personalized_tracks
+            ]
+        }
+        
+        return jsonify(response)
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # Health profile management
 @app.route('/api/health-profile', methods=['GET', 'POST', 'PUT'])
@@ -689,6 +918,14 @@ def signin():
 def signup():
     return render_template('signup.html')
 
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+
+@app.route('/test')
+def test_buttons():
+    return send_from_directory('.', 'test_buttons.html')
+
 @app.route('/api/audio/<filename>')
 def serve_audio(filename):
     """Serve audio files from the audio directory"""
@@ -696,6 +933,63 @@ def serve_audio(filename):
         return send_from_directory('audio', filename)
     except FileNotFoundError:
         return jsonify({'error': 'Audio file not found'}), 404
+
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    data = request.get_json()
+    user_message = data.get('message', '')
+    if not user_message:
+        return jsonify({'error': 'No message provided'}), 400
+
+    # Placeholder: If no API key, return a canned response
+    if not OPENAI_API_KEY:
+        return jsonify({'reply': "[AI] Sorry, the AI service is not configured yet. Please set your OpenAI API key.", 'sentiment': 'Unknown'})
+
+    try:
+        # Call OpenAI API for chat reply
+        response = requests.post(
+            'https://api.openai.com/v1/chat/completions',
+            headers={
+                'Authorization': f'Bearer {OPENAI_API_KEY}',
+                'Content-Type': 'application/json'
+            },
+            json={
+                'model': 'gpt-3.5-turbo',
+                'messages': [
+                    {'role': 'system', 'content': 'You are a helpful health and music assistant for the MajorChord app. Give music and wellness advice, and ask if the user wants to update their dashboard based on new symptoms.'},
+                    {'role': 'user', 'content': user_message}
+                ],
+                'max_tokens': 200,
+                'temperature': 0.7
+            }
+        )
+        result = response.json()
+        ai_reply = result['choices'][0]['message']['content'] if 'choices' in result and result['choices'] else '[AI] Sorry, no response.'
+
+        # Call OpenAI API for sentiment analysis
+        sentiment_prompt = f"Classify the sentiment or mood of this message as Positive, Negative, or Neutral, and if possible, give a one-word mood label (e.g., Happy, Sad, Anxious, Calm): {user_message}"
+        sentiment_response = requests.post(
+            'https://api.openai.com/v1/chat/completions',
+            headers={
+                'Authorization': f'Bearer {OPENAI_API_KEY}',
+                'Content-Type': 'application/json'
+            },
+            json={
+                'model': 'gpt-3.5-turbo',
+                'messages': [
+                    {'role': 'system', 'content': 'You are a mood and sentiment classifier. Reply with only the sentiment (Positive, Negative, Neutral) and a one-word mood label.'},
+                    {'role': 'user', 'content': sentiment_prompt}
+                ],
+                'max_tokens': 20,
+                'temperature': 0.0
+            }
+        )
+        sentiment_result = sentiment_response.json()
+        sentiment = sentiment_result['choices'][0]['message']['content'] if 'choices' in sentiment_result and sentiment_result['choices'] else 'Unknown'
+
+        return jsonify({'reply': ai_reply, 'sentiment': sentiment})
+    except Exception as e:
+        return jsonify({'error': str(e), 'sentiment': 'Unknown'}), 500
 
 if __name__ == '__main__':
     init_db()

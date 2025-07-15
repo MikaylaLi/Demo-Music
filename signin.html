@@ -406,6 +406,7 @@
         class LocalStorageManager {
             static USERS_KEY = 'healthyMusicUsers';
             static CURRENT_USER_KEY = 'healthyMusicCurrentUser';
+            static MOOD_ASSESSMENT_KEY = 'moodAssessmentResults';
 
             static getUsers() {
                 const users = localStorage.getItem(this.USERS_KEY);
@@ -438,6 +439,11 @@
 
             static clearCurrentUser() {
                 localStorage.removeItem(this.CURRENT_USER_KEY);
+            }
+
+            static getMoodAssessment() {
+                const assessment = localStorage.getItem(this.MOOD_ASSESSMENT_KEY);
+                return assessment ? JSON.parse(assessment) : null;
             }
         }
 
@@ -525,41 +531,37 @@
                 FormValidator.hideError('emailError');
                 FormValidator.hideError('passwordError');
 
-                // Simulate API call delay
                 UIManager.setLoading(true);
-                await new Promise(resolve => setTimeout(resolve, 1000));
-
-                // Check if user exists
-                const user = LocalStorageManager.findUser(email);
-                
-                if (!user) {
-                    FormValidator.showError('emailError', 'No account found with this email address');
+                try {
+                    const response = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ email, password })
+                    });
+                    const data = await response.json();
                     UIManager.setLoading(false);
-                    return false;
-                }
-
-                // Check password
-                if (user.password !== password) {
-                    FormValidator.showError('passwordError', 'Incorrect password');
-                    UIManager.setLoading(false);
-                    return false;
-                }
-
-                // Success - set current user and redirect
-                LocalStorageManager.setCurrentUser(user);
-                FormValidator.showSuccess('successMessage', 'Sign in successful! Redirecting...');
-                
-                setTimeout(() => {
-                    // Check if user has completed mood assessment
-                    const moodAssessment = LocalStorageManager.getMoodAssessment();
-                    if (!moodAssessment) {
-                        window.location.href = 'mood-assessment.html';
+                    if (response.ok) {
+                        FormValidator.showSuccess('successMessage', 'Sign in successful! Signing in...');
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 2000);
+                        return true;
                     } else {
-                        window.location.href = 'dashboard.html';
+                        if (data.error && data.error.toLowerCase().includes('email')) {
+                            FormValidator.showError('emailError', data.error);
+                        } else if (data.error && data.error.toLowerCase().includes('password')) {
+                            FormValidator.showError('passwordError', data.error);
+                        } else {
+                            FormValidator.showError('emailError', data.error || 'Sign in failed');
+                        }
+                        return false;
                     }
-                }, 1500);
-
-                return true;
+                } catch (err) {
+                    UIManager.setLoading(false);
+                    FormValidator.showError('emailError', 'Network error. Please try again.');
+                    return false;
+                }
             }
         }
 
@@ -591,12 +593,6 @@
                     FormValidator.hideError('passwordError');
                 }
             });
-
-            // Check if user is already signed in
-            const currentUser = LocalStorageManager.getCurrentUser();
-            if (currentUser) {
-                window.location.href = 'index.html';
-            }
         });
 
         // Local Storage Management

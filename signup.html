@@ -442,58 +442,6 @@
     </footer>
 
     <script>
-        // Local Storage Management
-        class LocalStorageManager {
-            static USERS_KEY = 'healthyMusicUsers';
-            static CURRENT_USER_KEY = 'healthyMusicCurrentUser';
-
-            static getUsers() {
-                const users = localStorage.getItem(this.USERS_KEY);
-                return users ? JSON.parse(users) : [];
-            }
-
-            static saveUsers(users) {
-                localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
-            }
-
-            static addUser(user) {
-                const users = this.getUsers();
-                users.push(user);
-                this.saveUsers(users);
-            }
-
-            static findUser(email) {
-                const users = this.getUsers();
-                return users.find(user => user.email.toLowerCase() === email.toLowerCase());
-            }
-
-            static setCurrentUser(user) {
-                localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(user));
-            }
-
-            static getCurrentUser() {
-                const user = localStorage.getItem(this.CURRENT_USER_KEY);
-                return user ? JSON.parse(user) : null;
-            }
-
-            static clearCurrentUser() {
-                localStorage.removeItem(this.CURRENT_USER_KEY);
-            }
-
-            static getMoodAssessmentKey() {
-                const user = this.getCurrentUser();
-                return user ? `healthyMusicMoodAssessment_${user.email}` : 'healthyMusicMoodAssessment';
-            }
-            static saveMoodAssessment(assessment) {
-                localStorage.setItem(this.getMoodAssessmentKey(), JSON.stringify(assessment));
-            }
-            static getMoodAssessment() {
-                const key = this.getMoodAssessmentKey();
-                const assessment = localStorage.getItem(key);
-                return assessment ? JSON.parse(assessment) : null;
-            }
-        }
-
         // Form Validation
         class FormValidator {
             static isValidEmail(email) {
@@ -582,86 +530,57 @@
 
         // Sign Up Handler
         class SignUpHandler {
-            static async handleSignUp(userData) {
-                // Validate all inputs
-                if (!FormValidator.isValidName(userData.name)) {
-                    FormValidator.showError('nameError', 'Name must be at least 2 characters long');
+            static async handleSignUp(username, email, password) {
+                // Validate inputs
+                if (!FormValidator.isValidName(username)) {
+                    FormValidator.showError('nameError', 'Please enter your name');
                     return false;
                 }
-
-                if (!FormValidator.isValidEmail(userData.email)) {
+                if (!FormValidator.isValidEmail(email)) {
                     FormValidator.showError('emailError', 'Please enter a valid email address');
                     return false;
                 }
-
-                if (!FormValidator.isValidPassword(userData.password)) {
+                if (!FormValidator.isValidPassword(password)) {
                     FormValidator.showError('passwordError', 'Password must be at least 6 characters');
                     return false;
                 }
-
-                if (!FormValidator.passwordsMatch(userData.password, userData.confirmPassword)) {
-                    FormValidator.showError('confirmPasswordError', 'Passwords do not match');
-                    return false;
-                }
-
-                if (!FormValidator.isValidBirthday(userData.birthday)) {
-                    FormValidator.showError('birthdayError', 'Please enter a valid birthday (must be 13+ years old)');
-                    return false;
-                }
-
-                if (!userData.gender) {
-                    FormValidator.showError('genderError', 'Please select your gender');
-                    return false;
-                }
-
                 // Clear previous errors
                 FormValidator.hideError('nameError');
                 FormValidator.hideError('emailError');
                 FormValidator.hideError('passwordError');
-                FormValidator.hideError('confirmPasswordError');
-                FormValidator.hideError('birthdayError');
-                FormValidator.hideError('genderError');
-
-                // Check if user already exists
-                const existingUser = LocalStorageManager.findUser(userData.email);
-                if (existingUser) {
-                    FormValidator.showError('emailError', 'An account with this email already exists');
+                UIManager.setLoading(true);
+                try {
+                    const response = await fetch('/api/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ username, email, password })
+                    });
+                    const data = await response.json();
+                    UIManager.setLoading(false);
+                    if (response.ok) {
+                        FormValidator.showSuccess('successMessage', 'Account created successfully! Welcome to MajorChord!');
+                        setTimeout(() => {
+                            window.location.href = 'signin.html';
+                        }, 2000);
+                        return true;
+                    } else {
+                        if (data.error && data.error.toLowerCase().includes('email')) {
+                            FormValidator.showError('emailError', data.error);
+                        } else if (data.error && data.error.toLowerCase().includes('username')) {
+                            FormValidator.showError('nameError', data.error);
+                        } else if (data.error && data.error.toLowerCase().includes('password')) {
+                            FormValidator.showError('passwordError', data.error);
+                        } else {
+                            FormValidator.showError('emailError', data.error || 'Sign up failed');
+                        }
+                        return false;
+                    }
+                } catch (err) {
+                    UIManager.setLoading(false);
+                    FormValidator.showError('emailError', 'Network error. Please try again.');
                     return false;
                 }
-
-                // Simulate API call delay
-                UIManager.setLoading(true);
-                await new Promise(resolve => setTimeout(resolve, 1500));
-
-                // Create new user
-                const newUser = {
-                    id: Date.now(),
-                    name: userData.name.trim(),
-                    email: userData.email.toLowerCase(),
-                    password: userData.password,
-                    birthday: userData.birthday,
-                    gender: userData.gender,
-                    createdAt: new Date().toISOString(),
-                    preferences: {
-                        favoriteGenres: [],
-                        healthGoals: [],
-                        meditationPreferences: []
-                    }
-                };
-
-                // Save user to local storage
-                LocalStorageManager.addUser(newUser);
-                LocalStorageManager.setCurrentUser(newUser);
-
-                // Show success message and redirect
-                FormValidator.showSuccess('successMessage', 'Account created successfully! Welcome to MajorChord!');
-                
-                setTimeout(() => {
-                    // Redirect to main page for mood quiz
-                    window.location.href = 'index.html';
-                }, 2000);
-
-                return true;
             }
         }
 
@@ -674,16 +593,14 @@
             signupForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                const userData = {
-                    name: document.getElementById('name').value,
-                    email: document.getElementById('email').value,
-                    password: document.getElementById('password').value,
-                    confirmPassword: document.getElementById('confirmPassword').value,
-                    birthday: document.getElementById('birthday').value,
-                    gender: document.getElementById('gender').value
-                };
+                const username = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                const birthday = document.getElementById('birthday').value;
+                const gender = document.getElementById('gender').value;
 
-                await SignUpHandler.handleSignUp(userData);
+                await SignUpHandler.handleSignUp(username, email, password);
             });
 
             // Real-time validation
@@ -699,10 +616,11 @@
             });
 
             // Check if user is already signed in
-            const currentUser = LocalStorageManager.getCurrentUser();
-            if (currentUser) {
-                window.location.href = 'index.html';
-            }
+            // This part is no longer needed as we are using backend registration
+            // const currentUser = LocalStorageManager.getCurrentUser();
+            // if (currentUser) {
+            //     window.location.href = 'index.html';
+            // }
 
             // Set max date for birthday (13 years ago)
             const birthdayInput = document.getElementById('birthday');
@@ -712,25 +630,26 @@
         });
 
         // Initialize with some demo users if none exist
-        if (LocalStorageManager.getUsers().length === 0) {
-            const demoUsers = [
-                {
-                    id: 1,
-                    name: 'Demo User',
-                    email: 'demo@example.com',
-                    password: 'demo123',
-                    birthday: '1990-01-01',
-                    gender: 'other',
-                    createdAt: new Date().toISOString(),
-                    preferences: {
-                        favoriteGenres: ['classical', 'ambient'],
-                        healthGoals: ['stress-reduction', 'better-sleep'],
-                        meditationPreferences: ['guided', 'nature-sounds']
-                    }
-                }
-            ];
-            LocalStorageManager.saveUsers(demoUsers);
-        }
+        // This part is no longer needed as we are using backend registration
+        // if (LocalStorageManager.getUsers().length === 0) {
+        //     const demoUsers = [
+        //         {
+        //             id: 1,
+        //             name: 'Demo User',
+        //             email: 'demo@example.com',
+        //             password: 'demo123',
+        //             birthday: '1990-01-01',
+        //             gender: 'other',
+        //             createdAt: new Date().toISOString(),
+        //             preferences: {
+        //                 favoriteGenres: ['classical', 'ambient'],
+        //                 healthGoals: ['stress-reduction', 'better-sleep'],
+        //                 meditationPreferences: ['guided', 'nature-sounds']
+        //             }
+        //         }
+        //     ];
+        //     LocalStorageManager.saveUsers(demoUsers);
+        // }
     </script>
 </body>
 </html>

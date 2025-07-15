@@ -386,6 +386,46 @@ function displayHealthInsights(insights) {
     `;
 }
 
+// === Global functions for test_buttons.html compatibility ===
+window.goToHealthPage = function() {
+    console.log('goToHealthPage called');
+    // Example: redirect or show health page
+    alert('Navigating to Health Page (stub)');
+};
+window.goToSessionsPage = function() {
+    console.log('goToSessionsPage called');
+    alert('Navigating to Sessions Page (stub)');
+};
+window.goToPlaylistPage = function() {
+    console.log('goToPlaylistPage called');
+    alert('Navigating to Playlist Page (stub)');
+};
+window.goBackToPage2 = function() {
+    console.log('goBackToPage2 called');
+    alert('Going back to Page 2 (stub)');
+};
+window.searchMusic = function(query) {
+    console.log('searchMusic called with query:', query);
+    alert('Searching music for: ' + query + ' (stub)');
+    // Optionally call MajorChordAPI.searchMusic
+};
+window.playSearchTrack = function(title, artist) {
+    console.log('playSearchTrack called:', title, artist);
+    alert('Playing track: ' + title + ' by ' + artist + ' (stub)');
+};
+window.playPlaylist = function(name) {
+    console.log('playPlaylist called:', name);
+    alert('Playing playlist: ' + name + ' (stub)');
+};
+window.displaySearchResults = function() {
+    console.log('displaySearchResults called');
+    alert('Displaying search results (stub)');
+};
+window.showMusicDiscoveryModal = function() {
+    console.log('showMusicDiscoveryModal called');
+    alert('Showing music discovery modal (stub)');
+};
+
 // Initialize API when page loads
 document.addEventListener('DOMContentLoaded', function() {
     window.majorChordAPI = new MajorChordAPI();

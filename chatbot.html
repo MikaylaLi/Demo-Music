@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MajorChord AI Chatbot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e0e7ef 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .chatbot-header {
+            background: #10b981;
+            color: white;
+            padding: 1.5rem 2rem;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .chatbot-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 2rem 0 1rem 0;
+        }
+        .chat-window {
+            width: 100%;
+            max-width: 480px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(16,185,129,0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            min-height: 320px;
+            max-height: 420px;
+        }
+        .chat-message {
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: flex-end;
+        }
+        .chat-message.user {
+            justify-content: flex-end;
+        }
+        .chat-bubble {
+            padding: 0.8rem 1.2rem;
+            border-radius: 16px;
+            max-width: 75%;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        .chat-message.user .chat-bubble {
+            background: #10b981;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-message.bot .chat-bubble {
+            background: #f3f4f6;
+            color: #222;
+            border-bottom-left-radius: 4px;
+        }
+        .chat-input-row {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-top: 1px solid #e5e7eb;
+            background: #f9fafb;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 0.7rem 1rem;
+            border-radius: 12px;
+            border: 1px solid #d1d5db;
+            font-size: 1rem;
+            outline: none;
+        }
+        .send-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0.7rem 1.2rem;
+            margin-left: 0.7rem;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .send-btn:hover {
+            background: #059669;
+        }
+        .update-dashboard-btn {
+            background: #fb923c;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.5rem 1.2rem;
+            margin-top: 1.2rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .update-dashboard-btn:hover {
+            background: #ea580c;
+        }
+        @media (max-width: 600px) {
+            .chat-window {
+                max-width: 100vw;
+                border-radius: 0;
+            }
+            .chatbot-header {
+                font-size: 1.3rem;
+                padding: 1rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chatbot-header">
+        <span><i class="fas fa-robot"></i> MajorChord AI Chatbot</span>
+        <a href="index.html" style="color:white;text-decoration:none;font-size:1.1rem;"><i class="fas fa-home"></i> Home</a>
+    </div>
+    <div class="chatbot-container">
+        <div class="chat-window">
+            <div class="chat-messages" id="chatMessages">
+                <!-- Chat messages will appear here -->
+            </div>
+            <form class="chat-input-row" id="chatForm" autocomplete="off">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." required />
+                <button type="submit" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Initial greeting and state
+        const chatMessages = document.getElementById('chatMessages');
+        let chatHistory = [];
+        let needsUpdatePrompted = false;
+        let lastBotContext = '';
+
+        function addMessage(text, sender = 'bot', sentiment = null) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'chat-message ' + sender;
+            const bubble = document.createElement('div');
+            bubble.className = 'chat-bubble';
+            bubble.textContent = text;
+            msgDiv.appendChild(bubble);
+            // If sentiment is provided and this is a user message, show it below
+            if (sentiment && sender === 'user') {
+                const sentimentDiv = document.createElement('div');
+                sentimentDiv.style.fontSize = '0.92em';
+                sentimentDiv.style.color = '#888';
+                sentimentDiv.style.marginTop = '0.2em';
+                sentimentDiv.textContent = 'Sentiment: ' + sentiment;
+                msgDiv.appendChild(sentimentDiv);
+            }
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function botReply(userText, userMsgDiv) {
+            // Show loading bubble
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'chat-message bot';
+            const loadingBubble = document.createElement('div');
+            loadingBubble.className = 'chat-bubble';
+            loadingBubble.textContent = 'Thinking...';
+            loadingDiv.appendChild(loadingBubble);
+            chatMessages.appendChild(loadingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userText })
+                });
+                const data = await response.json();
+                loadingDiv.remove();
+                if (data.reply) {
+                    addMessage(data.reply, 'bot');
+                } else if (data.error) {
+                    addMessage('[AI Error] ' + data.error, 'bot');
+                } else {
+                    addMessage('[AI] No response.', 'bot');
+                }
+                // Add sentiment to the last user message if available
+                if (typeof data.sentiment === 'string' && userMsgDiv) {
+                    const sentimentDiv = document.createElement('div');
+                    sentimentDiv.style.fontSize = '0.92em';
+                    sentimentDiv.style.color = '#888';
+                    sentimentDiv.style.marginTop = '0.2em';
+                    sentimentDiv.textContent = 'Sentiment: ' + data.sentiment;
+                    userMsgDiv.appendChild(sentimentDiv);
+                }
+            } catch (err) {
+                loadingDiv.remove();
+                addMessage('[AI] Network error. Please try again.', 'bot');
+            }
+        }
+
+        // Initial greeting
+        addMessage("Hello! I'm your AI assistant. What do you need help with today? You can ask for symptom help, music recommendations, or anything else.");
+
+        document.getElementById('chatForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+            // Add user message and keep reference to the div
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'chat-message user';
+            const bubble = document.createElement('div');
+            bubble.className = 'chat-bubble';
+            bubble.textContent = text;
+            msgDiv.appendChild(bubble);
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            chatHistory.push({ sender: 'user', text });
+            input.value = '';
+            botReply(text, msgDiv);
+        });
+    </script>
+</body>
+</html> 

@@ -677,8 +677,36 @@
                 recommendations: generateRecommendations(answers)
             };
 
+            // Save to localStorage
             LocalStorageManager.setMoodAssessment(results);
+            
+            // Save to backend API
+            saveQuizResultsToBackend(results);
+            
             showResults(results);
+        }
+
+        async function saveQuizResultsToBackend(results) {
+            try {
+                const response = await fetch('/api/quiz-results', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        moodProfile: results.moodProfile,
+                        answers: results.answers
+                    })
+                });
+                
+                if (response.ok) {
+                    console.log('Quiz results saved to backend successfully');
+                } else {
+                    console.error('Failed to save quiz results to backend');
+                }
+            } catch (error) {
+                console.error('Error saving quiz results:', error);
+            }
         }
 
         function analyzeMoodProfile(answers) {
@@ -833,7 +861,8 @@
         }
 
         function goToDashboard() {
-            window.location.href = 'dashboard.html';
+            // Force reload the dashboard with fresh data
+            window.location.href = 'dashboard.html?refresh=true';
         }
     </script>
 </body>

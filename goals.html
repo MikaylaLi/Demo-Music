@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Goals - MajorChord</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #a7c7e7 0%, #fbc2eb 100%);
+            color: #1a202c;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 700px;
+            margin: 2.5rem auto;
+            background: rgba(255,255,255,0.85);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+            padding: 2.5rem 2rem;
+        }
+        h1 {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 2.2rem;
+            color: #8b5cf6;
+            margin-bottom: 1.2rem;
+        }
+        .section {
+            margin-bottom: 2rem;
+        }
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #10b981;
+            margin-bottom: 0.7rem;
+        }
+        .goal-list {
+            list-style: none;
+            padding: 0;
+        }
+        .goal-item {
+            background: #f3f4f6;
+            border-radius: 10px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .goal-status {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .goal-status.met {
+            color: #10b981;
+        }
+        .goal-status.not-met {
+            color: #ef4444;
+        }
+        .progress-bar {
+            height: 10px;
+            background: #e0e7ef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #8b5cf6);
+            border-radius: 5px;
+        }
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #10b981;
+            color: white;
+            margin-top: 1.5rem;
+        }
+        .btn:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-bullseye"></i> Your Goals</h1>
+        <div class="section">
+            <div class="section-title">Collected Data</div>
+            <div id="userData">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">Current Goals</div>
+            <ul class="goal-list" id="goalList">
+                <!-- Populated by JS -->
+            </ul>
+        </div>
+        <div class="section">
+            <div class="section-title">Progress & Improvements</div>
+            <div id="progressSection">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+        <button class="btn" onclick="window.location.href='dashboard.html'"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+    </div>
+    <script>
+        // Placeholder: Simulate collected data from quiz/chatbox
+        const userData = {
+            name: 'Demo User',
+            email: 'demo@example.com',
+            mood: 'Stressed',
+            energy: 4,
+            sleep: 5,
+            lastGoal: 'Reduce stress',
+            sessionsCompleted: 3,
+            streak: 2,
+            quizCompleted: true
+        };
+        // Placeholder: Simulate goals
+        const goals = [
+            { text: 'Complete 5 music sessions', met: userData.sessionsCompleted >= 5, progress: userData.sessionsCompleted/5 },
+            { text: 'Reach a 7-day streak', met: userData.streak >= 7, progress: userData.streak/7 },
+            { text: 'Finish 3 mood quizzes', met: userData.quizCompleted, progress: userData.quizCompleted ? 1 : 0.66 },
+            { text: 'Improve energy to 7+', met: userData.energy >= 7, progress: userData.energy/7 }
+        ];
+        // Populate user data
+        document.getElementById('userData').innerHTML = `
+            <strong>Name:</strong> ${userData.name}<br>
+            <strong>Email:</strong> ${userData.email}<br>
+            <strong>Current Mood:</strong> ${userData.mood}<br>
+            <strong>Energy Level:</strong> ${userData.energy}/10<br>
+            <strong>Sleep Quality:</strong> ${userData.sleep}/10<br>
+            <strong>Last Goal:</strong> ${userData.lastGoal}
+        `;
+        // Populate goals
+        const goalList = document.getElementById('goalList');
+        goals.forEach(goal => {
+            const li = document.createElement('li');
+            li.className = 'goal-item';
+            li.innerHTML = `
+                <span>${goal.text}</span>
+                <span class="goal-status ${goal.met ? 'met' : 'not-met'}">${goal.met ? 'Met' : 'Not Met'}</span>
+            `;
+            goalList.appendChild(li);
+        });
+        // Progress section
+        document.getElementById('progressSection').innerHTML = goals.map(goal => `
+            <div style="margin-bottom: 1rem;">
+                <div>${goal.text}</div>
+                <div class="progress-bar"><div class="progress" style="width: ${Math.min(goal.progress*100,100)}%"></div></div>
+                <div style="font-size:0.95em; color:${goal.met ? '#10b981':'#ef4444'}; font-weight:600;">${goal.met ? 'Goal achieved!' : 'Keep going!'}</div>
+            </div>
+        `).join('');
+    </script>
+</body>
+</html> 

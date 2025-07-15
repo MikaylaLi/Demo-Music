@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        button { margin: 10px; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Button Function Test</h1>
+    
+    <div class="test-section">
+        <h2>Navigation Functions Test</h2>
+        <button onclick="testGoToHealthPage()">Test goToHealthPage</button>
+        <button onclick="testGoToSessionsPage()">Test goToSessionsPage</button>
+        <button onclick="testGoToPlaylistPage()">Test goToPlaylistPage</button>
+        <button onclick="testGoBackToPage2()">Test goBackToPage2</button>
+        <div id="navResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Music Functions Test</h2>
+        <button onclick="testSearchMusic()">Test searchMusic</button>
+        <button onclick="testPlaySearchTrack()">Test playSearchTrack</button>
+        <button onclick="testPlayPlaylist()">Test playPlaylist</button>
+        <div id="musicResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Function Availability Test</h2>
+        <button onclick="testFunctionAvailability()">Check All Functions</button>
+        <div id="availabilityResult" class="result"></div>
+    </div>
+
+    <script src="frontend_integration.js"></script>
+    <script>
+        // Test functions
+        function testGoToHealthPage() {
+            const result = document.getElementById('navResult');
+            if (typeof window.goToHealthPage === 'function') {
+                result.innerHTML = '<strong>✓ goToHealthPage function exists and is callable</strong>';
+                try {
+                    window.goToHealthPage();
+                    result.innerHTML += '<br>✓ Function executed without errors';
+                } catch (error) {
+                    result.innerHTML += '<br>✗ Error executing function: ' + error.message;
+                }
+            } else {
+                result.innerHTML = '<strong>✗ goToHealthPage function not found</strong>';
+            }
+        }
+
+        function testGoToSessionsPage() {
+            const result = document.getElementById('navResult');
+            if (typeof window.goToSessionsPage === 'function') {
+                result.innerHTML = '<strong>✓ goToSessionsPage function exists and is callable</strong>';
+                try {
+                    window.goToSessionsPage();
+                    result.innerHTML += '<br>✓ Function executed without errors';
+                } catch (error) {
+                    result.innerHTML += '<br>✗ Error executing function: ' + error.message;
+                }
+            } else {
+                result.innerHTML = '<strong>✗ goToSessionsPage function not found</strong>';
+            }
+        }
+
+        function testGoToPlaylistPage() {
+            const result = document.getElementById('navResult');
+            if (typeof window.goToPlaylistPage === 'function') {
+                result.innerHTML = '<strong>✓ goToPlaylistPage function exists and is callable</strong>';
+                try {
+                    window.goToPlaylistPage();
+                    result.innerHTML += '<br>✓ Function executed without errors';
+                } catch (error) {
+                    result.innerHTML += '<br>✗ Error executing function: ' + error.message;
+                }
+            } else {
+                result.innerHTML = '<strong>✗ goToPlaylistPage function not found</strong>';
+            }
+        }
+
+        function testGoBackToPage2() {
+            const result = document.getElementById('navResult');
+            if (typeof window.goBackToPage2 === 'function') {
+                result.innerHTML = '<strong>✓ goBackToPage2 function exists and is callable</strong>';
+                try {
+                    window.goBackToPage2();
+                    result.innerHTML += '<br>✓ Function executed without errors';
+                } catch (error) {
+                    result.innerHTML += '<br>✗ Error executing function: ' + error.message;
+                }
+            } else {
+                result.innerHTML = '<strong>✗ goBackToPage2 function not found</strong>';
+            }
+        }
+
+        function testSearchMusic() {
+            const result = document.getElementById('musicResult');
+            if (typeof window.searchMusic === 'function') {
+                result.innerHTML = '<strong>✓ searchMusic function exists and is callable</strong>';
+                try {
+                    window.searchMusic('test');
+                    result.innerHTML += '<br>✓ Function executed without errors';
+                } catch (error) {
+                    result.innerHTML += '<br>✗ Error executing function: ' + error.message;
+                }
+            } else {
+                result.innerHTML = '<strong>✗ searchMusic function not found</strong>';
+            }
+        }
+
+        function testPlaySearchTrack() {
+            const result = document.getElementById('musicResult');
+            if (typeof window.playSearchTrack === 'function') {
+                result.innerHTML = '<strong>✓ playSearchTrack function exists and is callable</strong>';
+                try {
+                    window.playSearchTrack('Test Track', 'Test Artist');
+                    result.innerHTML += '<br>✓ Function executed without errors';
+                } catch (error) {
+                    result.innerHTML += '<br>✗ Error executing function: ' + error.message;
+                }
+            } else {
+                result.innerHTML = '<strong>✗ playSearchTrack function not found</strong>';
+            }
+        }
+
+        function testPlayPlaylist() {
+            const result = document.getElementById('musicResult');
+            if (typeof window.playPlaylist === 'function') {
+                result.innerHTML = '<strong>✓ playPlaylist function exists and is callable</strong>';
+                try {
+                    window.playPlaylist('test');
+                    result.innerHTML += '<br>✓ Function executed without errors';
+                } catch (error) {
+                    result.innerHTML += '<br>✗ Error executing function: ' + error.message;
+                }
+            } else {
+                result.innerHTML = '<strong>✗ playPlaylist function not found</strong>';
+            }
+        }
+
+        function testFunctionAvailability() {
+            const result = document.getElementById('availabilityResult');
+            const functions = [
+                'goToHealthPage',
+                'goToSessionsPage', 
+                'goToPlaylistPage',
+                'goBackToPage2',
+                'searchMusic',
+                'playSearchTrack',
+                'playPlaylist',
+                'displaySearchResults',
+                'showMusicDiscoveryModal'
+            ];
+
+            let available = 0;
+            let html = '<h3>Function Availability:</h3>';
+            
+            functions.forEach(funcName => {
+                if (typeof window[funcName] === 'function') {
+                    html += `<div style="color: green;">✓ ${funcName} - Available</div>`;
+                    available++;
+                } else {
+                    html += `<div style="color: red;">✗ ${funcName} - Not Available</div>`;
+                }
+            });
+
+            html += `<br><strong>Total: ${available}/${functions.length} functions available</strong>`;
+            result.innerHTML = html;
+        }
+    </script>
+</body>
+</html> 
