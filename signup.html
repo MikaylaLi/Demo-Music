@@ -69,6 +69,68 @@
             align-items: center;
         }
 
+        /* ===== NAVBAR ENHANCEMENTS ===== */
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.4) !important;
+            transform: translateY(-1px);
+        }
+
+        .mobile-nav {
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1024px) {
+            .main-nav {
+                display: none !important;
+            }
+            
+            .mobile-menu-toggle {
+                display: block !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 0.5rem !important;
+            }
+            
+            .nav-links a {
+                padding: 0.4rem 0.8rem !important;
+                font-size: 0.9rem;
+            }
+
+            .container {
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.3rem !important;
+            }
+            
+            .nav-links a {
+                padding: 0.3rem 0.6rem !important;
+                font-size: 0.8rem;
+            }
+            
+            .nav-links a i {
+                display: none;
+            }
+        }
+
         .nav-links a {
             color: var(--text-light);
             text-decoration: none;
@@ -349,10 +411,64 @@
 <body>
     <header>
         <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-            <div class="logo">MajorChord</div>
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="signin.html">Sign In</a>
+            <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;">MajorChord</div>
+            
+            <!-- Main Navigation -->
+            <nav class="main-nav" style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="index.html" class="nav-btn" style="color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s; font-weight: 600; background: rgba(255,255,255,0.2);">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="dashboard.html" class="nav-btn" style="color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s; font-weight: 600; background: rgba(255,255,255,0.2);">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="mood-assessment.html" class="nav-btn" style="color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s; font-weight: 600; background: rgba(255,255,255,0.2);">
+                    <i class="fas fa-brain"></i> Mood Assessment
+                </a>
+                <a href="chatbot.html" class="nav-btn" style="color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s; font-weight: 600; background: rgba(255,255,255,0.2);">
+                    <i class="fas fa-comments"></i> AI Chat
+                </a>
+                <a href="goals.html" class="nav-btn" style="color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s; font-weight: 600; background: rgba(255,255,255,0.2);">
+                    <i class="fas fa-bullseye"></i> Goals
+                </a>
+            </nav>
+
+            <!-- Auth Section -->
+            <div class="nav-links" style="display: flex; gap: 1rem; align-items: center;">
+                <!-- Mobile Menu Toggle -->
+                <button id="mobileMenuToggle" class="mobile-menu-toggle" style="display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <a href="index.html" style="color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: background 0.3s; font-weight: 600; background: rgba(255,255,255,0.2);">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="signin.html" style="color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: background 0.3s; font-weight: 600; background: rgba(255,255,255,0.2);">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </a>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobileNav" class="mobile-nav" style="display: none; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 1rem; border-top: 1px solid rgba(255,255,255,0.3);">
+            <a href="index.html" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600;">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="dashboard.html" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600;">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="mood-assessment.html" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600;">
+                <i class="fas fa-brain"></i> Mood Assessment
+            </a>
+            <a href="chatbot.html" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600;">
+                <i class="fas fa-comments"></i> AI Chat
+            </a>
+            <a href="goals.html" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600;">
+                <i class="fas fa-bullseye"></i> Goals
+            </a>
+            <div style="border-top: 1px solid rgba(0,0,0,0.1); margin-top: 0.75rem; padding-top: 0.75rem;">
+                <a href="signin.html" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; font-weight: 600;">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </a>
             </div>
         </div>
     </header>
@@ -530,7 +646,7 @@
 
         // Sign Up Handler
         class SignUpHandler {
-            static async handleSignUp(username, email, password) {
+            static async handleSignUp(username, email, password, birthday, gender) {
                 // Validate inputs
                 if (!FormValidator.isValidName(username)) {
                     FormValidator.showError('nameError', 'Please enter your name');
@@ -554,7 +670,7 @@
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         credentials: 'include',
-                        body: JSON.stringify({ username, email, password })
+                        body: JSON.stringify({ username, email, password, birthday, gender })
                     });
                     const data = await response.json();
                     UIManager.setLoading(false);
@@ -600,7 +716,52 @@
                 const birthday = document.getElementById('birthday').value;
                 const gender = document.getElementById('gender').value;
 
-                await SignUpHandler.handleSignUp(username, email, password);
+                let isValid = true;
+
+                // Hide all errors first
+                ['name', 'email', 'password', 'confirmPassword', 'birthday', 'gender'].forEach(field => {
+                    FormValidator.hideError(`${field}Error`);
+                });
+
+                // Validate name
+                if (!FormValidator.isValidName(username)) {
+                    FormValidator.showError('nameError', 'Name must be at least 2 characters');
+                    isValid = false;
+                }
+
+                // Validate email
+                if (!FormValidator.isValidEmail(email)) {
+                    FormValidator.showError('emailError', 'Please enter a valid email address');
+                    isValid = false;
+                }
+
+                // Validate password
+                if (!FormValidator.isValidPassword(password)) {
+                    FormValidator.showError('passwordError', 'Password must be at least 6 characters');
+                    isValid = false;
+                }
+
+                // Validate password match
+                if (!FormValidator.passwordsMatch(password, confirmPassword)) {
+                    FormValidator.showError('confirmPasswordError', 'Passwords do not match');
+                    isValid = false;
+                }
+
+                // Validate birthday
+                if (!birthday || !FormValidator.isValidBirthday(birthday)) {
+                    FormValidator.showError('birthdayError', 'Please enter a valid birthday (must be at least 13 years old)');
+                    isValid = false;
+                }
+
+                // Validate gender
+                if (!gender) {
+                    FormValidator.showError('genderError', 'Please select your gender');
+                    isValid = false;
+                }
+
+                if (!isValid) return;
+
+                await SignUpHandler.handleSignUp(username, email, password, birthday, gender);
             });
 
             // Real-time validation
@@ -650,6 +811,51 @@
         //     ];
         //     LocalStorageManager.saveUsers(demoUsers);
         // }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auth is already handled by auth-config.js
+            // Just proceed with mobile menu functionality
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mobileNav = document.getElementById('mobileNav');
+            
+            if (mobileMenuToggle && mobileNav) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    const isOpen = mobileNav.style.display === 'block';
+                    mobileNav.style.display = isOpen ? 'none' : 'block';
+                    
+                    // Toggle icon
+                    const icon = mobileMenuToggle.querySelector('i');
+                    icon.className = isOpen ? 'fas fa-bars' : 'fas fa-times';
+                });
+            }
+
+            // Close mobile menu when clicking on a link
+            const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+            mobileNavItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    if (mobileNav) {
+                        mobileNav.style.display = 'none';
+                        const icon = mobileMenuToggle.querySelector('i');
+                        if (icon) icon.className = 'fas fa-bars';
+                    }
+                });
+            });
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (mobileNav && mobileMenuToggle && 
+                    !mobileNav.contains(event.target) && 
+                    !mobileMenuToggle.contains(event.target) &&
+                    mobileNav.style.display === 'block') {
+                    mobileNav.style.display = 'none';
+                    const icon = mobileMenuToggle.querySelector('i');
+                    if (icon) icon.className = 'fas fa-bars';
+                }
+            });
+        });
     </script>
+    <script src="frontend_integration.js"></script>
+    <script src="auth-config.js"></script>
 </body>
 </html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Debug - MajorChord</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .warning { background: #fff3cd; color: #856404; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Auth Debug Tool</h1>
+        
+        <div id="status" class="status info">Initializing...</div>
+        
+        <h3>Actions</h3>
+        <button onclick="checkAuth()">Check Auth Status</button>
+        <button onclick="testLogin()">Test Login</button>
+        <button onclick="testSession()">Test Session</button>
+        <button onclick="clearStorage()">Clear Storage</button>
+        <button onclick="reload()">Reload Page</button>
+        
+        <h3>Debug Log</h3>
+        <div id="log" class="log"></div>
+    </div>
+
+    <script src="frontend_integration.js"></script>
+    <script>
+        let logOutput = '';
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            logOutput += `[${timestamp}] ${message}\n`;
+            document.getElementById('log').textContent = logOutput;
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+        }
+        
+        async function checkAuth() {
+            log('=== Checking Auth Status ===');
+            
+            // Check localStorage
+            const userData = localStorage.getItem('majorchord_user');
+            log(`localStorage user data: ${userData ? 'EXISTS' : 'NOT FOUND'}`);
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    log(`User from localStorage: ${JSON.stringify(user, null, 2)}`);
+                } catch (e) {
+                    log(`Error parsing user data: ${e.message}`);
+                }
+            }
+            
+            // Check auth manager
+            if (window.authManager) {
+                log(`Auth manager exists: YES`);
+                log(`Auth manager initialized: ${window.authManager.isInitialized}`);
+                log(`User logged in: ${window.authManager.isLoggedIn()}`);
+                
+                const currentUser = window.authManager.getCurrentUser();
+                log(`Current user: ${currentUser ? JSON.stringify(currentUser, null, 2) : 'null'}`);
+            } else {
+                log(`Auth manager exists: NO`);
+            }
+            
+            // Check API
+            if (window.majorChordAPI) {
+                log(`API exists: YES`);
+                log(`API base URL: ${window.majorChordAPI.baseURL}`);
+            } else {
+                log(`API exists: NO`);
+            }
+        }
+        
+        async function testLogin() {
+            log('=== Testing Login ===');
+            
+            if (!window.authManager) {
+                log('ERROR: Auth manager not available');
+                return;
+            }
+            
+            // Test with demo credentials
+            const result = await window.authManager.login('demo@example.com', 'demo123');
+            log(`Login result: ${JSON.stringify(result, null, 2)}`);
+            
+            if (result.success) {
+                updateStatus('Login successful!', 'success');
+            } else {
+                updateStatus(`Login failed: ${result.error}`, 'error');
+            }
+        }
+        
+        async function testSession() {
+            log('=== Testing Session ===');
+            
+            if (!window.majorChordAPI) {
+                log('ERROR: API not available');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${window.majorChordAPI.baseURL}/session-check`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                log(`Session check response status: ${response.status}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`Session check response: ${JSON.stringify(data, null, 2)}`);
+                    updateStatus('Session check successful', 'success');
+                } else {
+                    const error = await response.text();
+                    log(`Session check error: ${error}`);
+                    updateStatus('Session check failed', 'error');
+                }
+            } catch (error) {
+                log(`Session check exception: ${error.message}`);
+                updateStatus('Session check exception', 'error');
+            }
+        }
+        
+        function clearStorage() {
+            log('=== Clearing Storage ===');
+            localStorage.clear();
+            log('localStorage cleared');
+            updateStatus('Storage cleared', 'warning');
+        }
+        
+        function reload() {
+            log('=== Reloading Page ===');
+            window.location.reload();
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            log('Page loaded');
+            
+            // Wait for auth manager to initialize
+            const checkAuthManager = () => {
+                if (window.authManager) {
+                    log('Auth manager found');
+                    updateStatus('Auth manager ready', 'success');
+                    checkAuth();
+                } else {
+                    log('Waiting for auth manager...');
+                    setTimeout(checkAuthManager, 100);
+                }
+            };
+            
+            checkAuthManager();
+        });
+    </script>
+</body>
+</html> 

@@ -3,9 +3,36 @@
  * JavaScript functions to interact with the Flask backend API
  */
 
+function getApiBaseUrl() {
+    if (window.env && window.env.API_BASE_URL) {
+        return window.env.API_BASE_URL;
+    }
+    
+    // Dynamically determine the base URL based on current location
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+    const pathname = window.location.pathname;
+    
+    // If we're on a path that includes /Demo-Music, use the current origin
+    if (pathname.includes('/Demo-Music')) {
+        return `${protocol}//${host}/api`;
+    }
+    
+    return 'http://localhost:5001/api';
+}
+
+// Helper function to generate navigation URLs that preserve path structure
+function getNavigationUrl(page) {
+    const currentPath = window.location.pathname;
+    if (currentPath.includes('/Demo-Music')) {
+        return `/Demo-Music/${page}`;
+    }
+    return `${page}.html`;
+}
+
 class MajorChordAPI {
-    constructor(baseURL = 'http://localhost:5000/api') {
-        this.baseURL = baseURL;
+    constructor() {
+        this.baseURL = getApiBaseUrl();
         this.user = null;
     }
 
@@ -35,14 +62,14 @@ class MajorChordAPI {
         }
     }
 
-    async login(username, password) {
+    async login(email, password) {
         try {
             const response = await fetch(`${this.baseURL}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ email, password }),
                 credentials: 'include'
             });
 
@@ -56,7 +83,8 @@ class MajorChordAPI {
                 return { success: false, error: error.error };
             }
         } catch (error) {
-            return { success: false, error: 'Network error' };
+            console.error('Login API error:', error);
+            return { success: false, error: `Network error: ${error.message}` };
         }
     }
 
@@ -75,6 +103,40 @@ class MajorChordAPI {
                 return { success: false, error: 'Logout failed' };
             }
         } catch (error) {
+            return { success: false, error: 'Network error' };
+        }
+    }
+
+    // NEW: Validate session with backend
+    async validateSession() {
+        try {
+            // Use the simpler session-check endpoint
+            const response = await fetch(`${this.baseURL}/session-check`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            console.log('Session validation response status:', response.status);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Session validation response data:', data);
+                
+                // If we get authenticated: true, session is valid
+                if (data.authenticated) {
+                    return { success: true, data: { user_id: data.user_id, username: data.username } };
+                } else {
+                    return { success: false, error: 'Session invalid' };
+                }
+            } else if (response.status === 401) {
+                console.log('Session validation failed: 401 Unauthorized');
+                return { success: false, error: 'Session invalid' };
+            } else {
+                console.log('Session validation failed: Unexpected status', response.status);
+                return { success: false, error: 'Session validation failed' };
+            }
+        } catch (error) {
+            console.error('Session validation error:', error);
             return { success: false, error: 'Network error' };
         }
     }
@@ -250,11 +312,7 @@ class MajorChordAPI {
 
     loadUserFromStorage() {
         const userData = localStorage.getItem('majorchord_user');
-        if (userData) {
-            this.user = JSON.parse(userData);
-            return this.user;
-        }
-        return null;
+        return userData ? JSON.parse(userData) : null;
     }
 
     isLoggedIn() {
@@ -262,209 +320,191 @@ class MajorChordAPI {
     }
 }
 
-// Example usage functions
-async function exampleUsage() {
-    const api = new MajorChordAPI();
-
-    // Check if user is already logged in
-    const savedUser = api.loadUserFromStorage();
-    if (savedUser) {
-        console.log('User already logged in:', savedUser.username);
+// Simplified Authentication Manager
+class SimpleAuthManager {
+    constructor() {
+        this.api = new MajorChordAPI();
+        this.currentUser = null;
+        this.isInitialized = false;
     }
 
-    // Example: Register a new user
-    const registerResult = await api.register('john_doe', 'john@example.com', 'password123');
-    if (registerResult.success) {
-        console.log('Registration successful:', registerResult.data);
-    } else {
-        console.log('Registration failed:', registerResult.error);
+    // Initialize and validate session
+    async init() {
+        console.log('SimpleAuthManager: Initializing...');
+        
+        // First try to load from storage
+        this.currentUser = this.api.loadUserFromStorage();
+        console.log('SimpleAuthManager: User from storage:', this.currentUser);
+        
+        if (this.currentUser) {
+            console.log('SimpleAuthManager: User found in storage, validating with backend...');
+            
+            // Validate session with backend
+            const validation = await this.api.validateSession();
+            console.log('SimpleAuthManager: Validation result:', validation);
+            
+            if (validation.success) {
+                console.log('SimpleAuthManager: Session validated successfully');
+                this.updateUI();
+                this.isInitialized = true;
+                return this.currentUser;
+            } else {
+                console.log('SimpleAuthManager: Session validation failed, but keeping user data as fallback. Error:', validation.error);
+                // Don't clear user data immediately - keep it as a fallback
+                // The user might still be logged in but the backend validation failed
+                this.updateUI();
+                this.isInitialized = true;
+                return this.currentUser;
+            }
+        }
+        
+        console.log('SimpleAuthManager: No valid session found');
+        this.updateUI();
+        this.isInitialized = true;
+        return null;
     }
 
-    // Example: Update health profile
-    const healthData = {
-        stress_level: 7,
-        sleep_quality: 4,
-        mood_score: 6,
-        energy_level: 5,
-        symptoms: ['anxiety', 'stress', 'insomnia']
-    };
-
-    const healthResult = await api.updateHealthProfile(healthData);
-    if (healthResult.success) {
-        console.log('Health profile updated successfully');
-    } else {
-        console.log('Health profile update failed:', healthResult.error);
+    // Check if user is logged in
+    isLoggedIn() {
+        return this.currentUser !== null;
     }
 
-    // Example: Get music recommendations
-    const recommendationsResult = await api.getRecommendations(5);
-    if (recommendationsResult.success) {
-        console.log('Music recommendations:', recommendationsResult.data.recommendations);
-    } else {
-        console.log('Failed to get recommendations:', recommendationsResult.error);
+    // Get current user
+    getCurrentUser() {
+        return this.currentUser;
     }
 
-    // Example: Get health insights
-    const insightsResult = await api.getHealthInsights();
-    if (insightsResult.success) {
-        console.log('Health insights:', insightsResult.data);
-    } else {
-        console.log('Failed to get insights:', insightsResult.error);
+    // Login
+    async login(email, password) {
+        console.log('SimpleAuthManager: Attempting login...');
+        const result = await this.api.login(email, password);
+        console.log('SimpleAuthManager: Login result:', result);
+        
+        if (result.success) {
+            this.currentUser = result.data;
+            console.log('SimpleAuthManager: Login successful, user set to:', this.currentUser);
+            this.updateUI();
+        } else {
+            console.log('SimpleAuthManager: Login failed:', result.error);
+        }
+        return result;
     }
 
-    // Example: Search for music
-    const searchResult = await api.searchMusic('calm');
-    if (searchResult.success) {
-        console.log('Search results:', searchResult.data.tracks);
-    } else {
-        console.log('Search failed:', searchResult.error);
+    // Logout
+    async logout() {
+        const result = await this.api.logout();
+        if (result.success) {
+            this.currentUser = null;
+            this.updateUI();
+        }
+        return result;
     }
 
-    // Example: Create a playlist
-    const playlistResult = await api.createPlaylist('My Wellness Playlist', 'Personalized music for my health journey');
-    if (playlistResult.success) {
-        console.log('Playlist created:', playlistResult.data);
-    } else {
-        console.log('Playlist creation failed:', playlistResult.error);
+    // Update UI based on auth state
+    updateUI() {
+        if (this.isLoggedIn()) {
+            this.showLoggedInState();
+        } else {
+            this.showLoggedOutState();
+        }
+    }
+
+    // Show logged in state
+    showLoggedInState() {
+        const user = this.currentUser;
+        
+        // Hide auth links
+        const authLinks = document.getElementById('authLinks');
+        const signinLink = document.getElementById('signinLink');
+        const signupLink = document.getElementById('signupLink');
+        
+        if (authLinks) authLinks.style.display = 'none';
+        if (signinLink) signinLink.style.display = 'none';
+        if (signupLink) signupLink.style.display = 'none';
+
+        // Show user section
+        const userSection = document.getElementById('userSection');
+        if (userSection) userSection.style.display = 'flex';
+
+        // Update user info
+        const userName = document.getElementById('userName');
+        const profileName = document.getElementById('profileName');
+        const profileEmail = document.getElementById('profileEmail');
+        const profileInitials = document.getElementById('profileInitials');
+        const profileInitialsLarge = document.getElementById('profileInitialsLarge');
+
+        if (userName) userName.textContent = user.username || 'User';
+        if (profileName) profileName.textContent = user.username || 'User';
+        if (profileEmail) profileEmail.textContent = user.email || '';
+
+        // Update profile initials
+        const initials = (user.username || 'U').substring(0, 1).toUpperCase();
+        if (profileInitials) profileInitials.textContent = initials;
+        if (profileInitialsLarge) profileInitialsLarge.textContent = initials;
+    }
+
+    // Show logged out state
+    showLoggedOutState() {
+        // Show auth links
+        const authLinks = document.getElementById('authLinks');
+        const signinLink = document.getElementById('signinLink');
+        const signupLink = document.getElementById('signupLink');
+        
+        if (authLinks) authLinks.style.display = 'flex';
+        if (signinLink) signinLink.style.display = 'inline-block';
+        if (signupLink) signupLink.style.display = 'inline-block';
+
+        // Hide user section
+        const userSection = document.getElementById('userSection');
+        if (userSection) userSection.style.display = 'none';
+    }
+
+    // Check auth and redirect if needed
+    async requireAuth(redirectUrl = null) {
+        if (!this.isInitialized) {
+            await this.init();
+        }
+        
+        if (!this.isLoggedIn()) {
+            const currentPath = window.location.pathname;
+            if (currentPath.includes('/Demo-Music')) {
+                window.location.href = redirectUrl || '/Demo-Music/signin';
+            } else {
+                window.location.href = redirectUrl || 'signin.html';
+            }
+            return false;
+        }
+        return true;
     }
 }
 
-// UI Helper Functions
-function displayRecommendations(recommendations) {
-    const container = document.getElementById('recommendations-container');
-    if (!container) return;
+// Initialize global auth manager
+window.authManager = new SimpleAuthManager();
 
-    container.innerHTML = '';
-    
-    recommendations.forEach((track, index) => {
-        const trackElement = document.createElement('div');
-        trackElement.className = 'recommendation-track';
-        trackElement.innerHTML = `
-            <h3>${track.title}</h3>
-            <p>by ${track.artist}</p>
-            <p>Genre: ${track.genre} | Mood: ${track.mood}</p>
-            <button onclick="addToPlaylist(${track.id})">Add to Playlist</button>
-        `;
-        container.appendChild(trackElement);
-    });
-}
-
-function displayHealthInsights(insights) {
-    const container = document.getElementById('health-insights-container');
-    if (!container) return;
-
-    container.innerHTML = `
-        <h2>Your Health Insights</h2>
-        <div class="health-metrics">
-            <div class="metric">
-                <span class="label">Stress Level:</span>
-                <span class="value">${insights.average_stress_level}/10</span>
-            </div>
-            <div class="metric">
-                <span class="label">Sleep Quality:</span>
-                <span class="value">${insights.average_sleep_quality}/10</span>
-            </div>
-            <div class="metric">
-                <span class="label">Mood Score:</span>
-                <span class="value">${insights.average_mood_score}/10</span>
-            </div>
-            <div class="metric">
-                <span class="label">Energy Level:</span>
-                <span class="value">${insights.average_energy_level}/10</span>
-            </div>
-        </div>
-        ${insights.recommendations ? `
-            <div class="recommendations">
-                <h3>Personalized Recommendations</h3>
-                ${insights.recommendations.map(rec => `
-                    <div class="recommendation">
-                        <p>${rec.message}</p>
-                    </div>
-                `).join('')}
-            </div>
-        ` : ''}
-    `;
-}
-
-// === Global functions for test_buttons.html compatibility ===
-window.goToHealthPage = function() {
-    console.log('goToHealthPage called');
-    // Example: redirect or show health page
-    alert('Navigating to Health Page (stub)');
-};
-window.goToSessionsPage = function() {
-    console.log('goToSessionsPage called');
-    alert('Navigating to Sessions Page (stub)');
-};
-window.goToPlaylistPage = function() {
-    console.log('goToPlaylistPage called');
-    alert('Navigating to Playlist Page (stub)');
-};
-window.goBackToPage2 = function() {
-    console.log('goBackToPage2 called');
-    alert('Going back to Page 2 (stub)');
-};
-window.searchMusic = function(query) {
-    console.log('searchMusic called with query:', query);
-    alert('Searching music for: ' + query + ' (stub)');
-    // Optionally call MajorChordAPI.searchMusic
-};
-window.playSearchTrack = function(title, artist) {
-    console.log('playSearchTrack called:', title, artist);
-    alert('Playing track: ' + title + ' by ' + artist + ' (stub)');
-};
-window.playPlaylist = function(name) {
-    console.log('playPlaylist called:', name);
-    alert('Playing playlist: ' + name + ' (stub)');
-};
-window.displaySearchResults = function() {
-    console.log('displaySearchResults called');
-    alert('Displaying search results (stub)');
-};
-window.showMusicDiscoveryModal = function() {
-    console.log('showMusicDiscoveryModal called');
-    alert('Showing music discovery modal (stub)');
-};
-
-// Initialize API when page loads
-document.addEventListener('DOMContentLoaded', function() {
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', async function() {
     window.majorChordAPI = new MajorChordAPI();
     
-    // Check if user is logged in
-    const user = window.majorChordAPI.loadUserFromStorage();
+    // Initialize authentication state
+    const user = await window.authManager.init();
+    
     if (user) {
         console.log('User logged in:', user.username);
-        // Update UI to show logged-in state
-        updateUIForLoggedInUser(user);
     } else {
         console.log('No user logged in');
-        // Update UI to show login/register options
-        updateUIForLoggedOutUser();
     }
 });
 
+// Legacy functions for backward compatibility
 function updateUIForLoggedInUser(user) {
-    // Update navigation
-    const navLinks = document.querySelector('.nav-links');
-    if (navLinks) {
-        navLinks.innerHTML = `
-            <span>Welcome, ${user.username}!</span>
-            <button onclick="logout()">Sign Out</button>
-        `;
+    if (window.authManager) {
+        window.authManager.updateUI();
     }
-
-    // Load user's health profile and recommendations
-    loadUserData();
 }
 
 function updateUIForLoggedOutUser() {
-    // Update navigation
-    const navLinks = document.querySelector('.nav-links');
-    if (navLinks) {
-        navLinks.innerHTML = `
-            <a href="signin.html">Sign In</a>
-            <a href="signup.html">Sign Up</a>
-        `;
+    if (window.authManager) {
+        window.authManager.updateUI();
     }
 }
 
@@ -485,11 +525,10 @@ async function loadUserData() {
 }
 
 async function logout() {
-    if (!window.majorChordAPI) return;
+    if (!window.authManager) return;
 
-    const result = await window.majorChordAPI.logout();
+    const result = await window.authManager.logout();
     if (result.success) {
-        updateUIForLoggedOutUser();
         window.location.reload();
     }
 }
@@ -497,4 +536,81 @@ async function logout() {
 // Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = MajorChordAPI;
-} 
+}
+
+// === SIMPLIFIED AUTH UTILITIES ===
+
+// Simple auth check function that can be used on any page
+async function checkAuth() {
+    if (!window.authManager) {
+        console.log('Auth manager not available');
+        return false;
+    }
+    
+    const isAuthenticated = await window.authManager.requireAuth();
+    return isAuthenticated;
+}
+
+// Simple auth redirect function for public pages (signin/signup)
+async function redirectIfLoggedIn() {
+    if (!window.authManager) {
+        return;
+    }
+    
+    const user = await window.authManager.init();
+    if (user) {
+        const currentPath = window.location.pathname;
+        if (currentPath.includes('/Demo-Music')) {
+            window.location.href = '/Demo-Music/dashboard';
+        } else {
+            window.location.href = 'dashboard.html';
+        }
+    }
+}
+
+// Simple logout function
+async function simpleLogout() {
+    if (!window.authManager) {
+        return;
+    }
+    
+    const result = await window.authManager.logout();
+    if (result.success) {
+        const currentPath = window.location.pathname;
+        if (currentPath.includes('/Demo-Music')) {
+            window.location.href = '/Demo-Music/signin';
+        } else {
+            window.location.href = 'signin.html';
+        }
+    }
+}
+
+// Auth wrapper for protected pages
+function protectPage() {
+    document.addEventListener('DOMContentLoaded', async function() {
+        const isAuthenticated = await checkAuth();
+        if (!isAuthenticated) {
+            return; // requireAuth handles the redirect
+        }
+        
+        // Page is now authenticated, continue with normal initialization
+        console.log('Page authenticated successfully');
+    });
+}
+
+// Auth wrapper for public pages
+function publicPage() {
+    document.addEventListener('DOMContentLoaded', async function() {
+        await redirectIfLoggedIn();
+        console.log('Public page loaded');
+    });
+}
+
+// Make auth utilities globally available
+window.authUtils = {
+    checkAuth,
+    redirectIfLoggedIn,
+    simpleLogout,
+    protectPage,
+    publicPage
+}; 

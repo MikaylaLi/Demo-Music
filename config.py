@@ -1,6 +1,7 @@
 import os
 from datetime import timedelta
 
+
 class Config:
     # Flask Configuration
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'majorchord_secret_key_2024'
@@ -21,7 +22,9 @@ class Config:
     CORS_ORIGINS = [
         'http://localhost:3000',
         'http://localhost:5000',
+        'http://localhost:5001',
         'http://127.0.0.1:5000',
+        'http://127.0.0.1:5001',
         'http://127.0.0.1:3000'
     ]
     

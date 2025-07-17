@@ -340,6 +340,38 @@
             font-size: 0.9rem;
         }
 
+        /* ===== NAVBAR ENHANCEMENTS ===== */
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.4) !important;
+            transform: translateY(-1px);
+        }
+
+        .mobile-nav {
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1024px) {
+            .main-nav {
+                display: none !important;
+            }
+            
+            .mobile-menu-toggle {
+                display: block !important;
+            }
+        }
+
         @media (max-width: 768px) {
             .assessment-container {
                 padding: 1rem;
@@ -356,17 +388,87 @@
             .navigation-buttons {
                 flex-direction: column;
             }
+
+            .nav-links {
+                gap: 0.5rem !important;
+            }
+            
+            .nav-links button {
+                padding: 0.4rem 0.8rem !important;
+                font-size: 0.9rem;
+            }
+
+            .container {
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.3rem !important;
+            }
+            
+            #userName {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
     <header>
         <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-            <div class="logo">MajorChord</div>
-            <div class="nav-links" style="display: flex; gap: 2rem; align-items: center;">
+            <div class="logo" onclick="window.location.href='index.html'" style="cursor: pointer;">MajorChord</div>
+            
+            <!-- Main Navigation -->
+            <nav class="main-nav" style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="index.html" class="nav-btn" style="color: #2d3748; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s; font-weight: 600; background: rgba(255,255,255,0.2);">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="dashboard.html" class="nav-btn" style="color: #2d3748; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s; font-weight: 600; background: rgba(255,255,255,0.2);">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="mood-assessment.html" class="nav-btn current" style="color: #2d3748; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s; font-weight: 600; background: rgba(255,255,255,0.3); border: 2px solid rgba(45,55,72,0.3);">
+                    <i class="fas fa-brain"></i> Mood Assessment
+                </a>
+                <a href="chatbot.html" class="nav-btn" style="color: #2d3748; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s; font-weight: 600; background: rgba(255,255,255,0.2);">
+                    <i class="fas fa-comments"></i> AI Chat
+                </a>
+                <a href="goals.html" class="nav-btn" style="color: #2d3748; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s; font-weight: 600; background: rgba(255,255,255,0.2);">
+                    <i class="fas fa-bullseye"></i> Goals
+                </a>
+            </nav>
+
+            <!-- User Section -->
+            <div class="nav-links" style="display: flex; gap: 1rem; align-items: center;">
+                <!-- Mobile Menu Toggle -->
+                <button id="mobileMenuToggle" class="mobile-menu-toggle" style="display: none; background: none; border: none; color: #2d3748; font-size: 1.5rem; cursor: pointer;">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
                 <span id="userName" style="color: #2d3748; font-weight: 600;"></span>
-                <button id="signoutBtn" style="background: rgba(255,255,255,0.9); color: #2d3748; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; transition: background 0.3s; font-weight: 600;">Sign Out</button>
+                <button id="signoutBtn" style="background: rgba(255,255,255,0.9); color: #2d3748; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; transition: background 0.3s; font-weight: 600;">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                </button>
             </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobileNav" class="mobile-nav" style="display: none; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 1rem; border-top: 1px solid rgba(255,255,255,0.3);">
+            <a href="index.html" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600;">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="dashboard.html" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600;">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="mood-assessment.html" class="mobile-nav-item current" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600; background: rgba(16,185,129,0.1);">
+                <i class="fas fa-brain"></i> Mood Assessment
+            </a>
+            <a href="chatbot.html" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600;">
+                <i class="fas fa-comments"></i> AI Chat
+            </a>
+            <a href="goals.html" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; font-weight: 600;">
+                <i class="fas fa-bullseye"></i> Goals
+            </a>
         </div>
     </header>
 
@@ -533,29 +635,60 @@
         }
 
         // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentUser = LocalStorageManager.getCurrentUser();
-            if (!currentUser) {
-                window.location.href = 'signin.html';
-                return;
-            }
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('Mood Assessment: Initializing...');
+            
+            // Wait for auth manager to be initialized and check authentication
+            const waitForAuthManager = async () => {
+                console.log('Mood Assessment: Checking for authManager...', !!window.authManager);
+                if (window.authManager) {
+                    console.log('Mood Assessment: AuthManager found, checking authentication...');
+                    
+                    // Check if user is authenticated
+                    const isAuthenticated = await window.authManager.requireAuth();
+                    if (!isAuthenticated) {
+                        console.log('Mood Assessment: User not authenticated, redirecting...');
+                        return; // requireAuth handles the redirect
+                    }
+                    
+                    console.log('Mood Assessment: User authenticated, proceeding with initialization...');
+                    
+                    const currentUser = window.authManager.getCurrentUser();
+                    document.getElementById('userName').textContent = `Welcome, ${currentUser.username}!`;
 
-            document.getElementById('userName').textContent = `Welcome, ${currentUser.name}!`;
+                    // Check if user has already completed assessment
+                    const existingAssessment = LocalStorageManager.getMoodAssessment();
+                    if (existingAssessment) {
+                        showResults(existingAssessment);
+                    } else {
+                        showWelcomeScreen();
+                    }
 
-            // Check if user has already completed assessment
-            const existingAssessment = LocalStorageManager.getMoodAssessment();
-            if (existingAssessment) {
-                showResults(existingAssessment);
-            } else {
-                showWelcomeScreen();
-            }
-
-            // Sign out functionality
-            document.getElementById('signoutBtn').addEventListener('click', function() {
-                localStorage.removeItem(LocalStorageManager.CURRENT_USER_KEY);
-                localStorage.removeItem(LocalStorageManager.MOOD_ASSESSMENT_KEY);
-                window.location.href = 'index.html';
-            });
+                    // Sign out functionality
+                    document.getElementById('signoutBtn').addEventListener('click', async function() {
+                        // Use global auth manager for logout
+                        if (window.authManager) {
+                            const result = await window.authManager.logout();
+                            if (result.success) {
+                                localStorage.removeItem(LocalStorageManager.CURRENT_USER_KEY);
+                                localStorage.removeItem(LocalStorageManager.MOOD_ASSESSMENT_KEY);
+                                window.location.href = 'index.html';
+                            }
+                        } else {
+                            // Fallback
+                            localStorage.removeItem(LocalStorageManager.CURRENT_USER_KEY);
+                            localStorage.removeItem(LocalStorageManager.MOOD_ASSESSMENT_KEY);
+                            window.location.href = 'index.html';
+                        }
+                    });
+                } else {
+                    // Wait a bit more for auth manager to initialize
+                    setTimeout(() => waitForAuthManager(), 100);
+                }
+            };
+            
+            // Start waiting for auth manager
+            waitForAuthManager();
         });
 
         function showWelcomeScreen() {
@@ -861,9 +994,57 @@
         }
 
         function goToDashboard() {
-            // Force reload the dashboard with fresh data
-            window.location.href = 'dashboard.html?refresh=true';
+            // Force reload the dashboard with fresh data using path-aware navigation
+            const currentPath = window.location.pathname;
+            if (currentPath.includes('/Demo-Music')) {
+                window.location.href = '/Demo-Music/dashboard?refresh=true';
+            } else {
+                window.location.href = 'dashboard.html?refresh=true';
+            }
         }
+
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mobileNav = document.getElementById('mobileNav');
+            
+            if (mobileMenuToggle && mobileNav) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    const isOpen = mobileNav.style.display === 'block';
+                    mobileNav.style.display = isOpen ? 'none' : 'block';
+                    
+                    // Toggle icon
+                    const icon = mobileMenuToggle.querySelector('i');
+                    icon.className = isOpen ? 'fas fa-bars' : 'fas fa-times';
+                });
+            }
+
+            // Close mobile menu when clicking on a link
+            const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+            mobileNavItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    if (mobileNav) {
+                        mobileNav.style.display = 'none';
+                        const icon = mobileMenuToggle.querySelector('i');
+                        if (icon) icon.className = 'fas fa-bars';
+                    }
+                });
+            });
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (mobileNav && mobileMenuToggle && 
+                    !mobileNav.contains(event.target) && 
+                    !mobileMenuToggle.contains(event.target) &&
+                    mobileNav.style.display === 'block') {
+                    mobileNav.style.display = 'none';
+                    const icon = mobileMenuToggle.querySelector('i');
+                    if (icon) icon.className = 'fas fa-bars';
+                }
+            });
+        });
     </script>
+    <script src="frontend_integration.js"></script>
+    <script src="auth-config.js"></script>
 </body>
 </html> 
