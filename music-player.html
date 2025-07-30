@@ -4,70 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Player - MajorChord</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
+            --primary: #b8c6db;
+            --secondary: #f5e6fa;
+            --accent: #fbc2eb;
+            --pastel-blue: #a7c7e7;
+            --pastel-purple: #e0c3fc;
+            --pastel-pink: #fbc2eb;
             --teal: #14b8a6;
+            --coral: #f97316;
+            --mint: #10b981;
+            --warm-orange: #fb923c;
             --soft-teal: #5eead4;
+            --light-coral: #fdba74;
             --glass-bg: rgba(255, 255, 255, 0.35);
             --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-blur: 18px;
             --text-dark: #1a202c;
+            --text-light: #fff;
             --text-muted: #4a5568;
+            --shadow-soft: 0 8px 32px rgba(31, 38, 135, 0.15);
+            --shadow-medium: 0 12px 40px rgba(31, 38, 135, 0.25);
+            --shadow-strong: 0 20px 60px rgba(31, 38, 135, 0.35);
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #a7c7e7 0%, #fbc2eb 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--pastel-blue) 0%, var(--pastel-pink) 100%);
             color: var(--text-dark);
-            min-height: 100vh;
+            overflow-x: hidden;
             line-height: 1.6;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
         }
 
-        .container { width: 90%; max-width: 1400px; margin: 0 auto; }
+        .hidden { 
+            display: none !important; 
+        }
 
         header {
             background: #8b5cf6;
-            color: white;
+            color: var(--text-light);
             padding: 1.5rem 0;
-            box-shadow: 0 4px 32px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 32px #0001;
         }
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
         .logo {
             font-size: 1.7rem;
             font-weight: bold;
-            cursor: pointer;
+            letter-spacing: 2px;
+            font-family: 'Quicksand', sans-serif;
         }
-
-        .nav-links { display: flex; gap: 1rem; align-items: center; }
-
-        .nav-btn {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            background: rgba(255,255,255,0.2);
-            transition: background 0.3s;
-        }
-
-        .nav-btn:hover { background: rgba(255,255,255,0.3); }
 
         .glass {
             background: var(--glass-bg);
             border-radius: 18px;
-            padding: 2rem;
-            backdrop-filter: blur(18px);
-            border: 1px solid var(--glass-border);
-            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1.5px solid var(--glass-border);
+        }
+
+        .music-player-container {
+            padding: 2rem 0;
         }
 
         .player-grid {
@@ -77,6 +92,21 @@
             margin-bottom: 2rem;
         }
 
+        .card {
+            background: var(--glass-bg);
+            border-radius: 18px;
+            padding: 2rem;
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
+        }
+
         .card-header {
             display: flex;
             align-items: center;
@@ -84,13 +114,55 @@
             margin-bottom: 1.5rem;
         }
 
-        .card-icon { font-size: 1.5rem; color: var(--teal); }
-        .card-title { font-size: 1.3rem; font-weight: 600; }
+        .card-icon {
+            font-size: 1.5rem;
+            color: var(--teal);
+        }
 
-        .now-playing { text-align: center; margin-bottom: 2rem; }
-        .track-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; }
-        .track-artist { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 0.5rem; }
-        .track-genre { font-size: 0.9rem; color: var(--teal); font-weight: 500; }
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Audio Player Styles */
+        .audio-player {
+            background: var(--glass-bg);
+            border-radius: 18px;
+            padding: 2rem;
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            margin-bottom: 2rem;
+        }
+
+        .now-playing {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .track-info {
+            margin-bottom: 1rem;
+        }
+
+        .track-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .track-artist {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .track-genre {
+            font-size: 0.9rem;
+            color: var(--teal);
+            font-weight: 500;
+        }
 
         .player-controls {
             display: flex;
@@ -108,22 +180,35 @@
             width: 50px;
             height: 50px;
             cursor: pointer;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+            font-size: 1.2rem;
         }
 
-        .control-btn:hover { background: var(--soft-teal); transform: scale(1.1); }
-        .control-btn.play-pause { width: 60px; height: 60px; font-size: 1.5rem; }
+        .control-btn:hover {
+            background: var(--soft-teal);
+            transform: scale(1.1);
+        }
+
+        .control-btn.play-pause {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+
+        .progress-container {
+            margin-bottom: 1rem;
+        }
 
         .progress-bar {
             width: 100%;
             height: 8px;
             background: rgba(255, 255, 255, 0.3);
             border-radius: 4px;
+            overflow: hidden;
             cursor: pointer;
-            margin-bottom: 1rem;
         }
 
         .progress-fill {
@@ -156,44 +241,15 @@
             cursor: pointer;
         }
 
-        .search-bar {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .search-input {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-dark);
-        }
-
-        .filter-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
-
-        .filter-btn {
-            padding: 0.5rem 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-dark);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .filter-btn:hover, .filter-btn.active {
-            background: var(--teal);
-            color: white;
-            border-color: var(--teal);
+        /* Playlist Styles */
+        .playlist-section {
+            margin-bottom: 2rem;
         }
 
         .playlist-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1rem;
-            margin-bottom: 2rem;
         }
 
         .playlist-card {
@@ -210,12 +266,38 @@
             transform: translateY(-3px);
         }
 
-        .playlist-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
-        .playlist-title { font-weight: 600; margin-bottom: 0.5rem; }
-        .playlist-desc { font-size: 0.9rem; opacity: 0.8; }
-        .track-count { font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7; }
+        .playlist-card.active {
+            background: var(--teal);
+            color: white;
+        }
 
-        .track-list { max-height: 400px; overflow-y: auto; }
+        .playlist-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .playlist-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .playlist-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .track-count {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            opacity: 0.7;
+        }
+
+        /* Track List Styles */
+        .track-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
 
         .track-item {
             display: flex;
@@ -228,13 +310,160 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .track-item:hover { background: rgba(255, 255, 255, 0.1); }
-        .track-item.playing { background: var(--teal); color: white; }
+        .track-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-        .track-number { font-weight: 600; min-width: 30px; }
-        .track-details { flex: 1; }
-        .track-name { font-weight: 500; margin-bottom: 0.25rem; }
-        .track-duration { font-size: 0.9rem; opacity: 0.7; }
+        .track-item.playing {
+            background: var(--teal);
+            color: white;
+        }
+
+        .track-number {
+            font-weight: 600;
+            min-width: 30px;
+        }
+
+        .track-details {
+            flex: 1;
+        }
+
+        .track-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .track-artist {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .track-duration {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .track-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Search and Filter */
+        .search-section {
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-dark);
+            font-size: 1rem;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--teal);
+            color: white;
+            border-color: var(--teal);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .player-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+            
+            .playlist-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .player-controls {
+                gap: 0.5rem;
+            }
+            
+            .control-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+            
+            .control-btn.play-pause {
+                width: 55px;
+                height: 55px;
+                font-size: 1.3rem;
+            }
+        }
+
+        /* Navigation */
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-btn {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: background 0.3s;
+            font-weight: 600;
+            background: rgba(255,255,255,0.2);
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
 
         .btn {
             padding: 0.75rem 1.5rem;
@@ -243,133 +472,182 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
             background: var(--teal);
             color: white;
         }
 
-        .btn:hover { background: var(--soft-teal); }
-
-        .demo-notice {
-            background: linear-gradient(135deg, #ff6b6b, #feca57);
-            color: white;
-            padding: 1rem;
-            border-radius: 12px;
-            margin: 1rem auto;
-            text-align: center;
-            font-weight: 500;
-            max-width: 1400px;
-            width: 90%;
+        .btn-primary:hover {
+            background: var(--soft-teal);
+            transform: translateY(-2px);
         }
 
-        @media (max-width: 1024px) { .player-grid { grid-template-columns: 1fr; } }
-        @media (max-width: 768px) {
-            .container { width: 95%; }
-            .playlist-grid { grid-template-columns: 1fr; }
-            .control-btn { width: 45px; height: 45px; }
-            .control-btn.play-pause { width: 55px; height: 55px; }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--text-dark);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="container header-content">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
             <div class="logo" onclick="window.location.href='dashboard.html'">MajorChord</div>
+            
             <nav class="nav-links">
-                <a href="dashboard.html" class="nav-btn"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                <a href="mood-assessment.html" class="nav-btn"><i class="fas fa-brain"></i> Mood Assessment</a>
-                <a href="music-player.html" class="nav-btn" style="background: rgba(255,255,255,0.4);"><i class="fas fa-music"></i> Music Player</a>
-                <a href="goals.html" class="nav-btn"><i class="fas fa-bullseye"></i> Goals</a>
-                <a href="chatbot.html" class="nav-btn"><i class="fas fa-comments"></i> AI Chat</a>
+                <a href="dashboard.html" class="nav-btn">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="mood-assessment.html" class="nav-btn">
+                    <i class="fas fa-brain"></i> Mood Assessment
+                </a>
+                <a href="music-player.html" class="nav-btn" style="background: rgba(255,255,255,0.4);">
+                    <i class="fas fa-music"></i> Music Player
+                </a>
+                <a href="goals.html" class="nav-btn">
+                    <i class="fas fa-bullseye"></i> Goals
+                </a>
+                <a href="chatbot.html" class="nav-btn">
+                    <i class="fas fa-comments"></i> AI Chat
+                </a>
             </nav>
         </div>
     </header>
 
-    <div class="demo-notice">
+    <!-- Audio Placeholder Notice -->
+    <div style="
+        background: linear-gradient(135deg, #ff6b6b, #feca57);
+        color: white;
+        padding: 1rem;
+        border-radius: 12px;
+        margin: 1rem auto;
+        text-align: center;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        max-width: 1400px;
+        width: 90%;
+    ">
         🎵 <strong>Demo Mode:</strong> Audio files are placeholders. Replace files in the audio/ directory with real MP3 files to play music!
     </div>
 
-    <div class="container" style="padding: 2rem 0;">
-        <h1 style="text-align: center; margin-bottom: 2rem;"><i class="fas fa-music"></i> Your Music Player</h1>
+    <div class="music-player-container">
+        <div class="container">
+            <h1 style="text-align: center; margin-bottom: 2rem; color: var(--text-dark);">
+                <i class="fas fa-music"></i> Your Music Player
+            </h1>
 
-        <!-- Audio Player -->
-        <div class="glass">
-            <div class="now-playing">
-                <div class="track-title" id="currentTrackTitle">Select a track to start playing</div>
-                <div class="track-artist" id="currentTrackArtist">-</div>
-                <div class="track-genre" id="currentTrackGenre">-</div>
-                
-                <div class="player-controls">
-                    <button class="control-btn" onclick="previousTrack()"><i class="fas fa-step-backward"></i></button>
-                    <button class="control-btn play-pause" onclick="togglePlayPause()"><i class="fas fa-play" id="playPauseIcon"></i></button>
-                    <button class="control-btn" onclick="nextTrack()"><i class="fas fa-step-forward"></i></button>
-                </div>
-                
-                <div class="progress-bar" onclick="seek(event)">
-                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-                </div>
-                <div class="time-display">
-                    <span id="currentTime">0:00</span>
-                    <span id="totalTime">0:00</span>
-                </div>
-                
-                <div class="volume-control">
-                    <i class="fas fa-volume-up"></i>
-                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50">
+            <!-- Audio Player -->
+            <div class="audio-player">
+                <div class="now-playing">
+                    <div class="track-info">
+                        <div class="track-title" id="currentTrackTitle">Select a track to start playing</div>
+                        <div class="track-artist" id="currentTrackArtist">-</div>
+                        <div class="track-genre" id="currentTrackGenre">-</div>
+                    </div>
+                    
+                    <div class="player-controls">
+                        <button class="control-btn" onclick="previousTrack()">
+                            <i class="fas fa-step-backward"></i>
+                        </button>
+                        <button class="control-btn play-pause" onclick="togglePlayPause()" id="playPauseBtn">
+                            <i class="fas fa-play" id="playPauseIcon"></i>
+                        </button>
+                        <button class="control-btn" onclick="nextTrack()">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-bar" onclick="seek(event)">
+                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                        </div>
+                        <div class="time-display">
+                            <span id="currentTime">0:00</span>
+                            <span id="totalTime">0:00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="volume-control">
+                        <i class="fas fa-volume-up"></i>
+                        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50">
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Search and Filter -->
-        <div class="search-bar">
-            <input type="text" class="search-input" id="searchInput" placeholder="Search for tracks, artists, or genres...">
-            <button class="btn" onclick="searchTracks()"><i class="fas fa-search"></i> Search</button>
-        </div>
-        
-        <div class="filter-buttons">
-            <button class="filter-btn active" onclick="filterByMood('all')">All</button>
-            <button class="filter-btn" onclick="filterByMood('stress-relief')">Stress Relief</button>
-            <button class="filter-btn" onclick="filterByMood('energy')">Energy Boost</button>
-            <button class="filter-btn" onclick="filterByMood('focus')">Focus</button>
-            <button class="filter-btn" onclick="filterByMood('sleep')">Sleep</button>
-            <button class="filter-btn" onclick="filterByMood('anxiety')">Anxiety Relief</button>
-            <button class="filter-btn" onclick="filterByMood('mood')">Mood Boost</button>
-        </div>
+            <!-- Search and Filter -->
+            <div class="search-section">
+                <div class="search-bar">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search for tracks, artists, or genres...">
+                    <button class="btn btn-primary" onclick="searchTracks()">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterByMood('all')">All</button>
+                    <button class="filter-btn" onclick="filterByMood('stress-relief')">Stress Relief</button>
+                    <button class="filter-btn" onclick="filterByMood('energy')">Energy Boost</button>
+                    <button class="filter-btn" onclick="filterByMood('focus')">Focus</button>
+                    <button class="filter-btn" onclick="filterByMood('sleep')">Sleep</button>
+                    <button class="filter-btn" onclick="filterByMood('anxiety')">Anxiety Relief</button>
+                    <button class="filter-btn" onclick="filterByMood('mood')">Mood Boost</button>
+                </div>
+            </div>
 
-        <!-- Main Content Grid -->
-        <div class="player-grid">
-            <div class="glass">
+            <!-- Main Content Grid -->
+            <div class="player-grid">
+                <!-- Personalized Playlists -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-heart card-icon"></i>
+                        <h2 class="card-title">Personalized for You</h2>
+                    </div>
+                    <div class="playlist-section">
+                        <div class="playlist-grid" id="personalizedPlaylists">
+                            <!-- Personalized playlists will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Tracks -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-list card-icon"></i>
+                        <h2 class="card-title">All Tracks</h2>
+                    </div>
+                    <div class="track-list" id="trackList">
+                        <!-- Tracks will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Playlist Section -->
+            <div class="card">
                 <div class="card-header">
-                    <i class="fas fa-heart card-icon"></i>
-                    <h2 class="card-title">Personalized for You</h2>
+                    <i class="fas fa-plus card-icon"></i>
+                    <h2 class="card-title">Create New Playlist</h2>
                 </div>
-                <div class="playlist-grid" id="personalizedPlaylists"></div>
-            </div>
-
-            <div class="glass">
-                <div class="card-header">
-                    <i class="fas fa-list card-icon"></i>
-                    <h2 class="card-title">All Tracks</h2>
+                <div style="display: flex; gap: 1rem; align-items: end;">
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Playlist Name</label>
+                        <input type="text" id="playlistName" class="search-input" placeholder="Enter playlist name...">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Description</label>
+                        <input type="text" id="playlistDescription" class="search-input" placeholder="Enter description...">
+                    </div>
+                    <button class="btn btn-primary" onclick="createPlaylist()">
+                        <i class="fas fa-plus"></i> Create Playlist
+                    </button>
                 </div>
-                <div class="track-list" id="trackList"></div>
-            </div>
-        </div>
-
-        <!-- Create Playlist -->
-        <div class="glass">
-            <div class="card-header">
-                <i class="fas fa-plus card-icon"></i>
-                <h2 class="card-title">Create New Playlist</h2>
-            </div>
-            <div style="display: flex; gap: 1rem; align-items: end;">
-                <div style="flex: 1;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Playlist Name</label>
-                    <input type="text" id="playlistName" class="search-input" placeholder="Enter playlist name...">
-                </div>
-                <div style="flex: 1;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Description</label>
-                    <input type="text" id="playlistDescription" class="search-input" placeholder="Enter description...">
-                </div>
-                <button class="btn" onclick="createPlaylist()"><i class="fas fa-plus"></i> Create Playlist</button>
             </div>
         </div>
     </div>
@@ -377,260 +655,516 @@
     <script src="frontend_integration.js"></script>
     <script src="auth-config.js"></script>
     <script>
-        // State
-        let currentTrack = null, isPlaying = false, allTracks = [], filteredTracks = [], playlists = [];
-        const audio = new Audio();
-        audio.volume = 0.5;
+        // Music Player State
+        let currentTrack = null;
+        let currentPlaylist = null;
+        let isPlaying = false;
+        let currentTime = 0;
+        let duration = 0;
+        let volume = 0.5;
+        let allTracks = [];
+        let filteredTracks = [];
+        let playlists = [];
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', async () => {
-            const waitForAuth = async () => {
+        // Audio element
+        const audio = new Audio();
+        audio.volume = volume;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('Music Player: Initializing...');
+            
+            // Wait for auth manager to be initialized and check authentication
+            const waitForAuthManager = async () => {
+                console.log('Music Player: Checking for authManager...', !!window.authManager);
                 if (window.authManager) {
-                    const isAuth = await window.authManager.requireAuth();
-                    if (!isAuth) return;
+                    console.log('Music Player: AuthManager found, checking authentication...');
+                    
+                    // Check if user is authenticated
+                    const isAuthenticated = await window.authManager.requireAuth();
+                    if (!isAuthenticated) {
+                        console.log('Music Player: User not authenticated, redirecting...');
+                        return; // requireAuth handles the redirect
+                    }
+                    
+                    console.log('Music Player: User authenticated, proceeding with initialization...');
+                    
+                    // Load tracks first, then playlists
                     await loadTracks();
                     await loadPlaylists();
                     setupEventListeners();
+                    updateUI();
                 } else {
-                    setTimeout(waitForAuth, 100);
+                    // Wait a bit more for auth manager to initialize
+                    setTimeout(() => waitForAuthManager(), 100);
                 }
             };
-            waitForAuth();
+            
+            // Start waiting for auth manager
+            waitForAuthManager();
         });
 
-        // Load tracks
+        // Load all available tracks
         async function loadTracks() {
             try {
                 const response = await fetch('/api/search?limit=100');
-                const data = response.ok ? await response.json() : null;
-                allTracks = data?.tracks || [
-                    { id: 1, title: 'Weightless', artist: 'Marconi Union', genre: 'Ambient', mood: 'calm', audio_file: 'bonsai-chill-lofi-365943.mp3', duration: 480 },
-                    { id: 2, title: 'Happy', artist: 'Pharrell Williams', genre: 'Pop', mood: 'energetic', audio_file: 'bonsai-chill-lofi-365943.mp3', duration: 233 },
-                    { id: 3, title: 'Claire de Lune', artist: 'Debussy', genre: 'Classical', mood: 'peaceful', audio_file: 'bonsai-chill-lofi-365943.mp3', duration: 300 },
-                    { id: 4, title: 'Sleep Well', artist: 'Sleep Sounds', genre: 'Ambient', mood: 'soothing', audio_file: 'bonsai-chill-lofi-365943.mp3', duration: 3600 },
-                    { id: 5, title: 'Anxiety Calm', artist: 'Calm Sounds', genre: 'Ambient', mood: 'soothing', audio_file: 'bonsai-chill-lofi-365943.mp3', duration: 1800 },
-                    { id: 6, title: 'Mood Boost', artist: 'Boost Music', genre: 'Pop', mood: 'uplifting', audio_file: 'bonsai-chill-lofi-365943.mp3', duration: 240 }
-                ];
-                filteredTracks = [...allTracks];
-                renderTrackList();
+                if (response.ok) {
+                    const data = await response.json();
+                    allTracks = data.tracks || [];
+                    filteredTracks = [...allTracks];
+                    console.log('Loaded tracks:', allTracks.length);
+                    renderTrackList();
+                } else {
+                    console.error('Failed to load tracks');
+                    // Load sample tracks as fallback
+                    loadSampleTracks();
+                }
             } catch (error) {
                 console.error('Error loading tracks:', error);
+                loadSampleTracks();
             }
         }
 
-        // Load playlists
+        // Load sample tracks as fallback
+        function loadSampleTracks() {
+            allTracks = [
+                { id: 1, title: 'Weightless', artist: 'Marconi Union', genre: 'Ambient', mood: 'calm', audio_file: 'weightless.mp3', duration: 480 },
+                { id: 2, title: 'Happy', artist: 'Pharrell Williams', genre: 'Pop', mood: 'energetic', audio_file: 'happy.mp3', duration: 233 },
+                { id: 3, title: 'Claire de Lune', artist: 'Debussy', genre: 'Classical', mood: 'peaceful', audio_file: 'claire_de_lune.mp3', duration: 300 },
+                { id: 4, title: 'Sleep Well', artist: 'Sleep Sounds', genre: 'Ambient', mood: 'soothing', audio_file: 'sleep_well.mp3', duration: 3600 },
+                { id: 5, title: 'Anxiety Calm', artist: 'Calm Sounds', genre: 'Ambient', mood: 'soothing', audio_file: 'anxiety_calm.mp3', duration: 1800 },
+                { id: 6, title: 'Mood Boost', artist: 'Boost Music', genre: 'Pop', mood: 'uplifting', audio_file: 'mood_boost.mp3', duration: 240 }
+            ];
+            filteredTracks = [...allTracks];
+            renderTrackList();
+        }
+
+        // Load user playlists
         async function loadPlaylists() {
             try {
                 const response = await fetch('/api/playlists');
-                const data = response.ok ? await response.json() : null;
-                playlists = data?.playlists || createDefaultPlaylists();
-                renderPersonalizedPlaylists();
+                if (response.ok) {
+                    const data = await response.json();
+                    playlists = data.playlists || [];
+                    console.log('Loaded playlists:', playlists.length);
+                    renderPersonalizedPlaylists();
+                } else {
+                    console.error('Failed to load playlists');
+                    createDefaultPlaylists();
+                }
             } catch (error) {
-                playlists = createDefaultPlaylists();
-                renderPersonalizedPlaylists();
+                console.error('Error loading playlists:', error);
+                createDefaultPlaylists();
             }
         }
 
-        // Create default playlists
+        // Create default playlists based on mood assessment
         function createDefaultPlaylists() {
-            const countMoods = (moods) => allTracks.filter(track => moods.includes(track.mood)).length;
-            return [
-                { id: 1, name: 'Stress Relief', description: 'Calming tracks to reduce stress', track_count: countMoods(['calm', 'soothing', 'peaceful']), mood: 'stress-relief' },
-                { id: 2, name: 'Energy Boost', description: 'Upbeat tracks for motivation', track_count: countMoods(['energetic', 'uplifting']), mood: 'energy' },
-                { id: 3, name: 'Focus & Concentration', description: 'Music for concentration', track_count: countMoods(['focused', 'neutral']), mood: 'focus' },
-                { id: 4, name: 'Sleep Aid', description: 'Gentle sounds for sleep', track_count: countMoods(['soothing', 'tranquil']), mood: 'sleep' }
+            const moodAssessment = JSON.parse(localStorage.getItem('moodAssessmentResults') || '{}');
+            const profile = moodAssessment.moodProfile || {};
+            
+            // Count tracks for each mood category
+            const stressReliefCount = allTracks.filter(track => ['calm', 'soothing', 'relaxing', 'tranquil', 'serene', 'peaceful'].includes(track.mood)).length;
+            const energyCount = allTracks.filter(track => ['energetic', 'upbeat', 'cheerful', 'bright', 'uplifting', 'exciting', 'vibrant'].includes(track.mood)).length;
+            const focusCount = allTracks.filter(track => ['focused', 'concentrated', 'neutral'].includes(track.mood)).length;
+            const sleepCount = allTracks.filter(track => ['soothing', 'tranquil', 'calming', 'relaxing'].includes(track.mood)).length;
+            
+            playlists = [
+                {
+                    id: 1,
+                    name: 'Stress Relief',
+                    description: 'Calming tracks to reduce stress and anxiety',
+                    track_count: stressReliefCount,
+                    mood: 'stress-relief'
+                },
+                {
+                    id: 2,
+                    name: 'Energy Boost',
+                    description: 'Upbeat tracks to increase energy and motivation',
+                    track_count: energyCount,
+                    mood: 'energy'
+                },
+                {
+                    id: 3,
+                    name: 'Focus & Concentration',
+                    description: 'Music to help you concentrate and stay focused',
+                    track_count: focusCount,
+                    mood: 'focus'
+                },
+                {
+                    id: 4,
+                    name: 'Sleep Aid',
+                    description: 'Gentle sounds to help you fall asleep',
+                    track_count: sleepCount,
+                    mood: 'sleep'
+                }
             ];
+            
+            renderPersonalizedPlaylists();
         }
 
-        // Render functions
+        // Render personalized playlists
         function renderPersonalizedPlaylists() {
-            const icons = { 'stress-relief': '🧘', 'energy': '⚡', 'focus': '🎯', 'sleep': '😴', 'anxiety': '😌', 'mood': '😊' };
-            document.getElementById('personalizedPlaylists').innerHTML = playlists.map(p => 
-                `<div class="playlist-card" onclick="loadPlaylist(${JSON.stringify(p).replace(/"/g, '&quot;')})">
-                    <span class="playlist-icon">${icons[p.mood] || '🎵'}</span>
-                    <div class="playlist-title">${p.name}</div>
-                    <div class="playlist-desc">${p.description}</div>
-                    <div class="track-count">${p.track_count} tracks</div>
-                </div>`
-            ).join('');
+            const container = document.getElementById('personalizedPlaylists');
+            container.innerHTML = '';
+
+            playlists.forEach(playlist => {
+                const playlistCard = document.createElement('div');
+                playlistCard.className = 'playlist-card';
+                playlistCard.onclick = () => loadPlaylist(playlist);
+                
+                const icon = getMoodIcon(playlist.mood);
+                
+                playlistCard.innerHTML = `
+                    <span class="playlist-icon">${icon}</span>
+                    <div class="playlist-title">${playlist.name}</div>
+                    <div class="playlist-desc">${playlist.description}</div>
+                    <div class="track-count">${playlist.track_count} tracks</div>
+                `;
+                
+                container.appendChild(playlistCard);
+            });
         }
 
+        // Get mood icon
+        function getMoodIcon(mood) {
+            const icons = {
+                'stress-relief': '🧘',
+                'energy': '⚡',
+                'focus': '🎯',
+                'sleep': '😴',
+                'anxiety': '😌',
+                'mood': '😊'
+            };
+            return icons[mood] || '🎵';
+        }
+
+        // Render track list
         function renderTrackList() {
-            document.getElementById('trackList').innerHTML = filteredTracks.map((track, i) =>
-                `<div class="track-item" onclick="playTrack(${JSON.stringify(track).replace(/"/g, '&quot;')})">
-                    <div class="track-number">${i + 1}</div>
+            const container = document.getElementById('trackList');
+            container.innerHTML = '';
+
+            filteredTracks.forEach((track, index) => {
+                const trackItem = document.createElement('div');
+                trackItem.className = 'track-item';
+                trackItem.onclick = () => playTrack(track);
+                
+                const duration = formatTime(track.duration || 0);
+                
+                trackItem.innerHTML = `
+                    <div class="track-number">${index + 1}</div>
                     <div class="track-details">
                         <div class="track-name">${track.title}</div>
                         <div class="track-artist">${track.artist}</div>
                     </div>
-                    <div class="track-duration">${formatTime(track.duration || 0)}</div>
+                    <div class="track-duration">${duration}</div>
                     <div class="track-actions">
-                        <button class="action-btn" onclick="event.stopPropagation(); alert('Added to favorites!')">
+                        <button class="action-btn" onclick="event.stopPropagation(); addToPlaylist(track)">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>
-                </div>`
-            ).join('');
+                `;
+                
+                container.appendChild(trackItem);
+            });
         }
 
-        // Play track
+        // Play a track
         function playTrack(track) {
             currentTrack = track;
-            audio.src = `songmp3/${track.audio_file}`;
+            
+            // Set the audio source to the actual audio file
+            audio.src = `@/audio/${track.audio_file}`;
+            
+            // Update UI
             document.getElementById('currentTrackTitle').textContent = track.title;
             document.getElementById('currentTrackArtist').textContent = track.artist;
             document.getElementById('currentTrackGenre').textContent = track.genre;
             
+            // Play the track
             audio.play().then(() => {
                 isPlaying = true;
                 updatePlayPauseButton();
-                updateTrackListUI();
-            }).catch(() => showAudioPlaceholderMessage(track));
+                console.log(`Now playing: ${track.title} - ${track.artist}`);
+            }).catch(error => {
+                console.error('Error playing track:', error);
+                // Show a more helpful message for placeholder files
+                showAudioPlaceholderMessage(track);
+            });
+            
+            // Update track list UI
+            updateTrackListUI();
         }
 
-        // Show placeholder message
+        // Show message for placeholder audio files
         function showAudioPlaceholderMessage(track) {
+            const message = `
+🎵 Audio Placeholder Detected
+
+The track "${track.title}" by ${track.artist} is currently a placeholder file.
+
+To add real audio:
+1. Replace the placeholder files in the audio/ directory with actual MP3 files
+2. Keep the same filenames (e.g., ${track.audio_file})
+3. Refresh the page
+
+For now, you can:
+• Browse the music library
+• Create playlists
+• Test the player interface
+• See mood-based recommendations
+
+The player is fully functional - just needs real audio files!
+            `;
+            
+            // Create a modal or alert with this message
             const modal = document.createElement('div');
-            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:1000';
-            modal.innerHTML = `<div style="background:white;padding:2rem;border-radius:18px;max-width:500px;margin:1rem;line-height:1.6">
-                <h3>🎵 Audio Placeholder Detected</h3>
-                <p>The track "${track.title}" is a placeholder file.</p>
-                <p>To add real audio: Replace files in the audio/ directory with actual MP3 files, keeping the same filenames (e.g., ${track.audio_file}).</p>
-                <div style="text-align:center;margin-top:1rem">
-                    <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background:#14b8a6;color:white;border:none;padding:0.5rem 1rem;border-radius:8px;cursor:pointer">Got it!</button>
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="
+                    background: white;
+                    padding: 2rem;
+                    border-radius: 18px;
+                    max-width: 500px;
+                    margin: 1rem;
+                    white-space: pre-line;
+                    font-family: 'Inter', sans-serif;
+                    line-height: 1.6;
+                ">
+                    ${message}
+                    <div style="text-align: center; margin-top: 1rem;">
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                                style="
+                                    background: var(--teal);
+                                    color: white;
+                                    border: none;
+                                    padding: 0.5rem 1rem;
+                                    border-radius: 8px;
+                                    cursor: pointer;
+                                ">
+                            Got it!
+                        </button>
+                    </div>
                 </div>
-            </div>`;
+            `;
+            
             document.body.appendChild(modal);
         }
 
-        // Player controls
+        // Toggle play/pause
         function togglePlayPause() {
-            if (!currentTrack && filteredTracks.length > 0) {
-                playTrack(filteredTracks[0]);
+            if (!currentTrack) {
+                // Play first track if none selected
+                if (filteredTracks.length > 0) {
+                    playTrack(filteredTracks[0]);
+                }
                 return;
             }
-            if (isPlaying) { audio.pause(); isPlaying = false; } 
-            else { audio.play(); isPlaying = true; }
+            
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+            } else {
+                audio.play();
+                isPlaying = true;
+            }
+            
             updatePlayPauseButton();
         }
 
+        // Update play/pause button
         function updatePlayPauseButton() {
-            document.getElementById('playPauseIcon').className = isPlaying ? 'fas fa-pause' : 'fas fa-play';
+            const icon = document.getElementById('playPauseIcon');
+            icon.className = isPlaying ? 'fas fa-pause' : 'fas fa-play';
         }
 
+        // Previous track
         function previousTrack() {
             if (!currentTrack) return;
-            const idx = filteredTracks.findIndex(t => t.id === currentTrack.id);
-            playTrack(filteredTracks[idx > 0 ? idx - 1 : filteredTracks.length - 1]);
+            
+            const currentIndex = filteredTracks.findIndex(t => t.id === currentTrack.id);
+            const previousIndex = currentIndex > 0 ? currentIndex - 1 : filteredTracks.length - 1;
+            playTrack(filteredTracks[previousIndex]);
         }
 
+        // Next track
         function nextTrack() {
             if (!currentTrack) return;
-            const idx = filteredTracks.findIndex(t => t.id === currentTrack.id);
-            playTrack(filteredTracks[idx < filteredTracks.length - 1 ? idx + 1 : 0]);
+            
+            const currentIndex = filteredTracks.findIndex(t => t.id === currentTrack.id);
+            const nextIndex = currentIndex < filteredTracks.length - 1 ? currentIndex + 1 : 0;
+            playTrack(filteredTracks[nextIndex]);
         }
 
+        // Seek in track
         function seek(event) {
             if (!currentTrack) return;
+            
             const rect = event.target.getBoundingClientRect();
-            audio.currentTime = ((event.clientX - rect.left) / rect.width) * audio.duration;
+            const percent = (event.clientX - rect.left) / rect.width;
+            const newTime = percent * duration;
+            audio.currentTime = newTime;
         }
 
-        // Search and filter
+        // Search tracks
         function searchTracks() {
             const query = document.getElementById('searchInput').value.toLowerCase();
-            filteredTracks = allTracks.filter(t => 
-                t.title.toLowerCase().includes(query) || 
-                t.artist.toLowerCase().includes(query) || 
-                t.genre.toLowerCase().includes(query)
+            
+            filteredTracks = allTracks.filter(track => 
+                track.title.toLowerCase().includes(query) ||
+                track.artist.toLowerCase().includes(query) ||
+                track.genre.toLowerCase().includes(query)
             );
+            
             renderTrackList();
         }
 
+        // Filter by mood
         function filterByMood(mood) {
+            // Update filter buttons
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             
-            const moodMap = {
-                'stress-relief': ['calm', 'soothing', 'peaceful'],
-                'energy': ['energetic', 'uplifting'],
-                'focus': ['focused', 'neutral'],
-                'sleep': ['soothing', 'tranquil'],
-                'anxiety': ['soothing', 'peaceful'],
-                'mood': ['bright', 'uplifting', 'cheerful']
-            };
+            if (mood === 'all') {
+                filteredTracks = [...allTracks];
+            } else {
+                // Map frontend mood names to database mood values
+                const moodMapping = {
+                    'stress-relief': ['calm', 'soothing', 'relaxing', 'tranquil', 'serene', 'peaceful'],
+                    'energy': ['energetic', 'upbeat', 'cheerful', 'bright', 'uplifting', 'exciting', 'vibrant'],
+                    'focus': ['focused', 'concentrated', 'neutral'],
+                    'sleep': ['soothing', 'tranquil', 'calming', 'relaxing'],
+                    'anxiety': ['soothing', 'gentle', 'calming', 'peaceful'],
+                    'mood': ['bright', 'uplifting', 'joyful', 'cheerful']
+                };
+                
+                const targetMoods = moodMapping[mood] || [mood];
+                filteredTracks = allTracks.filter(track => targetMoods.includes(track.mood));
+            }
             
-            filteredTracks = mood === 'all' ? [...allTracks] : 
-                allTracks.filter(track => (moodMap[mood] || [mood]).includes(track.mood));
             renderTrackList();
         }
 
-        // Playlist and utility functions
+        // Create playlist
         async function createPlaylist() {
             const name = document.getElementById('playlistName').value.trim();
             const description = document.getElementById('playlistDescription').value.trim();
-            if (!name) return alert('Please enter a playlist name');
+            
+            if (!name) {
+                alert('Please enter a playlist name');
+                return;
+            }
             
             try {
                 const response = await fetch('/api/playlists', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                     body: JSON.stringify({ name, description }),
                     credentials: 'include'
                 });
                 
                 if (response.ok) {
+                    const data = await response.json();
                     alert('Playlist created successfully!');
                     document.getElementById('playlistName').value = '';
                     document.getElementById('playlistDescription').value = '';
                     await loadPlaylists();
-                } else alert('Failed to create playlist');
+                } else {
+                    alert('Failed to create playlist');
+                }
             } catch (error) {
+                console.error('Error creating playlist:', error);
                 alert('Error creating playlist');
             }
         }
 
+        // Add track to playlist
+        function addToPlaylist(track) {
+            // For now, just show an alert
+            alert(`Added "${track.title}" to your favorites!`);
+        }
+
+        // Load playlist
         function loadPlaylist(playlist) {
+            currentPlaylist = playlist;
+            // Filter tracks by playlist mood
             filterByMood(playlist.mood);
+            
+            // Update filter button
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`[onclick="filterByMood('${playlist.mood}')"]`).classList.add('active');
         }
 
+        // Update track list UI
         function updateTrackListUI() {
-            document.querySelectorAll('.track-item').forEach(item => item.classList.remove('playing'));
+            document.querySelectorAll('.track-item').forEach(item => {
+                item.classList.remove('playing');
+            });
+            
             if (currentTrack) {
-                const item = Array.from(document.querySelectorAll('.track-item')).find(el => 
-                    el.innerHTML.includes(currentTrack.title));
-                if (item) item.classList.add('playing');
+                const currentItem = document.querySelector(`[onclick*="${currentTrack.id}"]`);
+                if (currentItem) {
+                    currentItem.classList.add('playing');
+                }
             }
         }
 
+        // Format time
         function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
         }
 
+        // Setup event listeners
         function setupEventListeners() {
-            audio.addEventListener('timeupdate', () => {
-                const percent = (audio.currentTime / audio.duration) * 100;
-                document.getElementById('progressFill').style.width = percent + '%';
-                document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
-            });
-            
+            // Audio events
+            audio.addEventListener('timeupdate', updateProgress);
             audio.addEventListener('loadedmetadata', () => {
-                document.getElementById('totalTime').textContent = formatTime(audio.duration);
+                duration = audio.duration;
+                document.getElementById('totalTime').textContent = formatTime(duration);
             });
-            
             audio.addEventListener('ended', nextTrack);
             
+            // Volume control
             document.getElementById('volumeSlider').addEventListener('input', (e) => {
-                audio.volume = e.target.value / 100;
+                volume = e.target.value / 100;
+                audio.volume = volume;
             });
             
+            // Search input
             document.getElementById('searchInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') searchTracks();
+                if (e.key === 'Enter') {
+                    searchTracks();
+                }
             });
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            currentTime = audio.currentTime;
+            const percent = (currentTime / duration) * 100;
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('currentTime').textContent = formatTime(currentTime);
+        }
+
+        // Update UI
+        function updateUI() {
+            // Any additional UI updates can go here
         }
     </script>
 </body>
