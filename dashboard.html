@@ -52,6 +52,58 @@
             display: none !important; 
         }
 
+        /* ===== NAVBAR ENHANCEMENTS ===== */
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.4) !important;
+            transform: translateY(-1px);
+        }
+
+        .mobile-nav {
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1024px) {
+            .main-nav {
+                display: none !important;
+            }
+            
+            .mobile-menu-toggle {
+                display: block !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+            
+            header .container {
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.3rem !important;
+            }
+            
+            #userName {
+                display: none;
+            }
+        }
+
         header {
             background: #8b5cf6;
             color: var(--text-light);
@@ -523,19 +575,74 @@
 <body>
     <header>
         <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-            <div class="logo">MajorChord</div>
+            <div class="logo" onclick="navigateToPage('index')" style="cursor: pointer;">MajorChord</div>
+            
+            <!-- Main Navigation -->
+            <nav class="main-nav" style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="#" onclick="navigateToPage('index'); return false;" class="nav-btn" style="color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s; font-weight: 600; background: rgba(255,255,255,0.2);">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="#" class="nav-btn current" style="color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s; font-weight: 600; background: rgba(255,255,255,0.3); border: 2px solid rgba(255,255,255,0.5);">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="#" onclick="navigateToPage('mood-assessment'); return false;" class="nav-btn" style="color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s; font-weight: 600; background: rgba(255,255,255,0.2);">
+                    <i class="fas fa-brain"></i> Mood Assessment
+                </a>
+                <a href="#" onclick="navigateToPage('music-player'); return false;" class="nav-btn" style="color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s; font-weight: 600; background: rgba(255,255,255,0.2);">
+                    <i class="fas fa-music"></i> Music Player
+                </a>
+                <a href="#" onclick="navigateToPage('chatbot'); return false;" class="nav-btn" style="color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s; font-weight: 600; background: rgba(255,255,255,0.2);">
+                    <i class="fas fa-comments"></i> AI Chat
+                </a>
+                <a href="#" onclick="navigateToPage('goals'); return false;" class="nav-btn" style="color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 20px; transition: all 0.3s; font-weight: 600; background: rgba(255,255,255,0.2);">
+                    <i class="fas fa-bullseye"></i> Goals
+                </a>
+            </nav>
+
+            <!-- User Section -->
             <div style="display: flex; align-items: center; gap: 1.5rem;">
-                <span id="userName" style="font-weight: 600;"></span>
+                <!-- Mobile Menu Toggle -->
+                <button id="mobileMenuToggle" class="mobile-menu-toggle" style="display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <span id="userName" style="font-weight: 600; color: white;"></span>
                 <div class="settings-dropdown" style="position: relative;">
                     <button id="settingsBtn" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">
                         <i class="fas fa-cog"></i>
                     </button>
                     <div id="dropdownMenu" class="hidden" style="position: absolute; right: 0; top: 2.5rem; background: white; color: #222; border-radius: 10px; box-shadow: 0 4px 16px #0002; min-width: 160px; z-index: 10;">
-                        <a href="#" id="profileOption" style="display: block; padding: 1rem 1.5rem; text-decoration: none; color: #222; border-bottom: 1px solid #eee;">Profile</a>
-                        <a href="#" id="signoutOption" style="display: block; padding: 1rem 1.5rem; text-decoration: none; color: #222;">Sign Out</a>
+                        <a href="#" id="profileOption" style="display: block; padding: 1rem 1.5rem; text-decoration: none; color: #222; border-bottom: 1px solid #eee;">
+                            <i class="fas fa-user"></i> Profile
+                        </a>
+                        <a href="#" onclick="navigateToPage('mood-assessment'); return false;" style="display: block; padding: 1rem 1.5rem; text-decoration: none; color: #222; border-bottom: 1px solid #eee;">
+                            <i class="fas fa-brain"></i> Retake Assessment
+                        </a>
+                        <a href="#" id="signoutOption" style="display: block; padding: 1rem 1.5rem; text-decoration: none; color: #222;">
+                            <i class="fas fa-sign-out-alt"></i> Sign Out
+                        </a>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobileNav" class="mobile-nav" style="display: none; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 1rem; border-top: 1px solid rgba(255,255,255,0.3);">
+            <a href="#" onclick="navigateToPage('index'); return false;" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600;">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="#" class="mobile-nav-item current" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600; background: rgba(16,185,129,0.1);">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="#" onclick="navigateToPage('mood-assessment'); return false;" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600;">
+                <i class="fas fa-brain"></i> Mood Assessment
+            </a>
+            <a href="#" onclick="navigateToPage('chatbot'); return false;" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600;">
+                <i class="fas fa-comments"></i> AI Chat
+            </a>
+            <a href="#" onclick="navigateToPage('goals'); return false;" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; font-weight: 600;">
+                <i class="fas fa-bullseye"></i> Goals
+            </a>
         </div>
     </header>
 
@@ -575,7 +682,7 @@
                             </div>
                         </div>
                         <div style="text-align: right; margin-bottom: 2rem;">
-                            <button class="btn btn-primary" onclick="window.location.href='goals.html'">View & Update Goals</button>
+                            <button class="btn btn-primary" onclick="navigateToPage('goals')">View & Update Goals</button>
                         </div>
                     </div>
                 </div>
@@ -628,7 +735,7 @@
                             <h2 class="card-title">Your Goals</h2>
                         </div>
                         <div style="margin-bottom: 1rem; color: #555;">Track your progress and see what you can achieve next!</div>
-                        <button class="btn btn-primary" onclick="window.location.href='goals.html'" style="width: 100%;">View & Update Goals</button>
+                        <button class="btn btn-primary" onclick="navigateToPage('goals')" style="width: 100%;">View & Update Goals</button>
                     </div>
                 </div>
             </div>
@@ -801,21 +908,24 @@
 
         // Dashboard Initialization
         async function initializeDashboard() {
-            const currentUser = LocalStorageManager.getCurrentUser();
-            if (!currentUser) {
-                window.location.href = 'signin.html';
-                return;
-            }
+            console.log('Dashboard: Starting initialization...');
+            
+            // Auth is already handled by auth-config.js
+            // Just proceed with dashboard initialization
 
+            console.log('Dashboard: User is logged in, continuing initialization...');
+            const currentUser = window.authManager.getCurrentUser();
+            console.log('Dashboard: Current user:', currentUser);
             const moodAssessment = LocalStorageManager.getMoodAssessment();
             if (!moodAssessment) {
-                window.location.href = 'mood-assessment.html';
+                // Show mood assessment prompt instead of redirecting
+                showMoodAssessmentPrompt();
                 return;
             }
 
             // Update welcome section
-            document.getElementById('userName').textContent = `Welcome, ${currentUser.name}!`;
-            document.getElementById('welcomeTitle').textContent = `Welcome back, ${currentUser.name}!`;
+            document.getElementById('userName').textContent = `Welcome, ${currentUser.username}!`;
+            document.getElementById('welcomeTitle').textContent = `Welcome back, ${currentUser.username}!`;
 
             // Update mood indicator
             const profile = moodAssessment.moodProfile;
@@ -832,11 +942,24 @@
             await loadPersonalizedDashboardData();
 
             // Setup sign out
-            document.getElementById('signoutBtn').addEventListener('click', function() {
-                localStorage.removeItem(LocalStorageManager.CURRENT_USER_KEY);
-                localStorage.removeItem(LocalStorageManager.MOOD_ASSESSMENT_KEY);
-                localStorage.removeItem(LocalStorageManager.USER_STATS_KEY);
-                window.location.href = 'index.html';
+            document.getElementById('signoutBtn').addEventListener('click', async function() {
+                // Use global auth manager for logout
+                if (window.authManager) {
+                    const result = await window.authManager.logout();
+                    if (result.success) {
+                        // Clear local storage items
+                        localStorage.removeItem(LocalStorageManager.CURRENT_USER_KEY);
+                        localStorage.removeItem(LocalStorageManager.MOOD_ASSESSMENT_KEY);
+                        localStorage.removeItem(LocalStorageManager.USER_STATS_KEY);
+                        window.location.href = 'index.html';
+                    }
+                } else {
+                    // Fallback
+                    localStorage.removeItem(LocalStorageManager.CURRENT_USER_KEY);
+                    localStorage.removeItem(LocalStorageManager.MOOD_ASSESSMENT_KEY);
+                    localStorage.removeItem(LocalStorageManager.USER_STATS_KEY);
+                    window.location.href = 'index.html';
+                }
             });
         }
 
@@ -1060,26 +1183,25 @@
 
         function startNewSession() {
             const moodAssessment = LocalStorageManager.getMoodAssessment();
-            if (moodAssessment) {
-                const profile = moodAssessment.moodProfile;
-                alert(`🎵 Starting a new ${profile.sessionDuration} session for ${profile.primaryGoal}...\n\nThis would open your music player with personalized tracks.`);
-                
-                // Update stats
-                const stats = LocalStorageManager.getUserStats();
-                stats.sessionsCompleted++;
-                stats.totalMinutes += profile.sessionDuration === 'short' ? 10 : profile.sessionDuration === 'medium' ? 20 : 45;
-                stats.lastSessionDate = new Date().toISOString();
-                LocalStorageManager.saveUserStats(stats);
-                
-                updateStats();
+            if (!moodAssessment) {
+                alert('Please complete the mood assessment first to get personalized recommendations.');
+                return;
+            }
+            
+            // Navigate to music player
+            const currentPath = window.location.pathname;
+            if (currentPath.includes('/Demo-Music')) {
+                window.location.href = '/Demo-Music/music-player';
+            } else {
+                window.location.href = 'music-player.html';
             }
         }
 
         function retakeAssessment() {
             if (confirm('Would you like to retake the mood assessment? This will update your personalized recommendations.')) {
                 localStorage.removeItem(LocalStorageManager.MOOD_ASSESSMENT_KEY);
-                // Redirect to mood assessment
-                window.location.href = 'mood-assessment.html';
+                // Use path-aware redirect
+                navigateToPage('mood-assessment');
             }
         }
 
@@ -1104,119 +1226,261 @@
             alert(historyText);
         }
 
-        // Initialize dashboard when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if this is a refresh from mood assessment
-            const urlParams = new URLSearchParams(window.location.search);
-            const isRefresh = urlParams.get('refresh') === 'true';
+        function showMoodAssessmentPrompt() {
+            // Update welcome section
+            document.getElementById('userName').textContent = 'Welcome!';
+            document.getElementById('welcomeTitle').textContent = 'Welcome to Your Dashboard!';
+
+            // Update mood indicator
+            const moodIndicator = document.getElementById('moodIndicator');
+            moodIndicator.innerHTML = `
+                <span class="mood-emoji">🎵</span>
+                <span class="mood-text">Take your mood assessment to get started!</span>
+            `;
+
+            // Show assessment prompt in main content
+            const mainContent = document.querySelector('.main-content');
+            mainContent.innerHTML = `
+                <div class="card" style="text-align: center; padding: 3rem;">
+                    <div class="card-header" style="justify-content: center;">
+                        <i class="fas fa-brain card-icon" style="font-size: 3rem;"></i>
+                    </div>
+                    <h2 style="margin-bottom: 1rem;">Complete Your Mood Assessment</h2>
+                    <p style="margin-bottom: 2rem; color: var(--text-muted); max-width: 500px; margin-left: auto; margin-right: auto;">
+                        To get personalized music recommendations and access your full dashboard, please complete our quick mood assessment first.
+                    </p>
+                    <button class="btn btn-primary" onclick="navigateToPage('mood-assessment')" style="font-size: 1.1rem; padding: 1rem 2rem;">
+                        <i class="fas fa-play"></i>
+                        Start Mood Assessment
+                    </button>
+                </div>
+            `;
+
+            // Initialize AI chat with limited functionality
+            new AIChatAssistant();
+        }
+
+        function navigateToPage(page) {
+            const currentPath = window.location.pathname;
+            let targetUrl;
             
-            if (isRefresh) {
-                // Clear any existing personalized sections
-                const existingSections = ['communityStatsSection', 'personalizedRecommendationsSection', 'communityActivitySection'];
-                existingSections.forEach(sectionId => {
-                    const section = document.getElementById(sectionId);
-                    if (section) section.remove();
-                });
-                
-                // Remove the refresh parameter from URL
-                window.history.replaceState({}, document.title, window.location.pathname);
+            if (currentPath.includes('/Demo-Music')) {
+                // Use /Demo-Music path structure
+                if (page === 'index') {
+                    targetUrl = '/Demo-Music';
+                } else {
+                    targetUrl = `/Demo-Music/${page}`;
+                }
+            } else {
+                // Use regular .html structure
+                if (page === 'index') {
+                    targetUrl = 'index.html';
+                } else {
+                    targetUrl = `${page}.html`;
+                }
             }
             
-            initializeDashboard();
+            if (targetUrl) {
+                window.location.href = targetUrl;
+            }
+        }
 
-            // Settings dropdown logic
-            const settingsBtn = document.getElementById('settingsBtn');
-            const dropdownMenu = document.getElementById('dropdownMenu');
-            const profileModal = document.getElementById('profileModal');
-            const profileOption = document.getElementById('profileOption');
-            const signoutOption = document.getElementById('signoutOption');
-            const closeProfileModal = document.getElementById('closeProfileModal');
-            let selectedAvatar = null;
+        // Mobile menu functionality and dashboard initialization
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Wait for auth manager to be initialized
+            const waitForAuthManager = async () => {
+                console.log('Dashboard: Checking for authManager...', !!window.authManager);
+                if (window.authManager) {
+                    console.log('Dashboard: AuthManager found, checking authentication...');
+                    
+                    // Check if user is authenticated
+                    const isAuthenticated = await window.authManager.requireAuth();
+                    if (!isAuthenticated) {
+                        console.log('Dashboard: User not authenticated, redirecting...');
+                        return; // requireAuth handles the redirect
+                    }
+                    
+                    console.log('Dashboard: User authenticated, proceeding with initialization...');
+                    // Initialize mobile menu
+                    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+                    const mobileNav = document.getElementById('mobileNav');
+                    
+                    if (mobileMenuToggle && mobileNav) {
+                        mobileMenuToggle.addEventListener('click', function() {
+                            const isOpen = mobileNav.style.display === 'block';
+                            mobileNav.style.display = isOpen ? 'none' : 'block';
+                            
+                            // Toggle icon
+                            const icon = mobileMenuToggle.querySelector('i');
+                            icon.className = isOpen ? 'fas fa-bars' : 'fas fa-times';
+                        });
+                    }
 
-            settingsBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                dropdownMenu.classList.toggle('hidden');
-            });
-            document.body.addEventListener('click', function() {
-                dropdownMenu.classList.add('hidden');
-            });
-            dropdownMenu.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-            profileOption.addEventListener('click', function(e) {
-                e.preventDefault();
-                dropdownMenu.classList.add('hidden');
-                profileModal.classList.remove('hidden');
-                loadProfileModal();
-            });
-            closeProfileModal.addEventListener('click', function() {
-                profileModal.classList.add('hidden');
-            });
-            signoutOption.addEventListener('click', async function(e) {
-                e.preventDefault();
-                // Call backend logout
-                await fetch('/api/logout', { method: 'POST', credentials: 'include' });
-                localStorage.clear();
-                window.location.href = 'signin.html';
-            });
-            // Avatar selection logic
-            function loadProfileModal() {
-                // Example avatars (add more as needed)
-                const freeAvatars = [
-                    '😀','🎵','😎','🌈','🐱','🐶','🦄','🌟'
-                ];
-                const lockedAvatars = [
-                    {icon:'👑', goal:'Complete 5 sessions'},
-                    {icon:'🚀', goal:'Reach 7-day streak'},
-                    {icon:'🧘', goal:'Finish 3 mood quizzes'}
-                ];
-                const avatarGrid = document.getElementById('avatarGrid');
-                avatarGrid.innerHTML = '';
-                freeAvatars.forEach(avatar => {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.textContent = avatar;
-                    btn.style.fontSize = '2rem';
-                    btn.style.background = 'none';
-                    btn.style.border = selectedAvatar === avatar ? '2px solid #10b981' : '1px solid #ccc';
-                    btn.style.borderRadius = '50%';
-                    btn.style.cursor = 'pointer';
-                    btn.style.padding = '0.3rem 0.5rem';
-                    btn.style.transition = 'border 0.2s';
-                    btn.addEventListener('click', function() {
-                        selectedAvatar = avatar;
+                    // Close mobile menu when clicking on a link
+                    const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+                    mobileNavItems.forEach(item => {
+                        item.addEventListener('click', function() {
+                            if (mobileNav) {
+                                mobileNav.style.display = 'none';
+                                const icon = mobileMenuToggle.querySelector('i');
+                                if (icon) icon.className = 'fas fa-bars';
+                            }
+                        });
+                    });
+
+                    // Close mobile menu when clicking outside
+                    document.addEventListener('click', function(event) {
+                        if (mobileNav && mobileMenuToggle && 
+                            !mobileNav.contains(event.target) && 
+                            !mobileMenuToggle.contains(event.target) &&
+                            mobileNav.style.display === 'block') {
+                            mobileNav.style.display = 'none';
+                            const icon = mobileMenuToggle.querySelector('i');
+                            if (icon) icon.className = 'fas fa-bars';
+                        }
+                    });
+
+                    // Check if this is a refresh from mood assessment
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const isRefresh = urlParams.get('refresh') === 'true';
+                    
+                    if (isRefresh) {
+                        // Clear any existing personalized sections
+                        const existingSections = ['communityStatsSection', 'personalizedRecommendationsSection', 'communityActivitySection'];
+                        existingSections.forEach(sectionId => {
+                            const section = document.getElementById(sectionId);
+                            if (section) section.remove();
+                        });
+                        
+                        // Remove the refresh parameter from URL
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                    
+                    initializeDashboard();
+
+                    // Settings dropdown logic
+                    const settingsBtn = document.getElementById('settingsBtn');
+                    const dropdownMenu = document.getElementById('dropdownMenu');
+                    const profileModal = document.getElementById('profileModal');
+                    const profileOption = document.getElementById('profileOption');
+                    const signoutOption = document.getElementById('signoutOption');
+                    const closeProfileModal = document.getElementById('closeProfileModal');
+                    let selectedAvatar = null;
+
+                    settingsBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        dropdownMenu.classList.toggle('hidden');
+                    });
+                    document.body.addEventListener('click', function() {
+                        dropdownMenu.classList.add('hidden');
+                    });
+                    dropdownMenu.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                    });
+                    profileOption.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        dropdownMenu.classList.add('hidden');
+                        profileModal.classList.remove('hidden');
                         loadProfileModal();
                     });
-                    avatarGrid.appendChild(btn);
-                });
-                lockedAvatars.forEach(locked => {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.textContent = locked.icon;
-                    btn.style.fontSize = '2rem';
-                    btn.style.background = 'none';
-                    btn.style.border = '1px solid #ccc';
-                    btn.style.borderRadius = '50%';
-                    btn.style.cursor = 'not-allowed';
-                    btn.style.padding = '0.3rem 0.5rem';
-                    btn.style.opacity = '0.5';
-                    btn.title = `Locked: ${locked.goal}`;
-                    btn.disabled = true;
-                    avatarGrid.appendChild(btn);
-                });
-                // Load user info (stub: you can load from backend/localStorage)
-                document.getElementById('profileName').value = 'Your Name';
-                document.getElementById('profileEmail').value = 'your@email.com';
-                document.getElementById('profileBirthday').value = '';
-                document.getElementById('profileGender').value = '';
-            }
-            document.getElementById('profileForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                // Save changes (stub: send to backend)
-                profileModal.classList.add('hidden');
-                alert('Profile updated! (This would save to backend in production)');
-            });
+                    closeProfileModal.addEventListener('click', function() {
+                        profileModal.classList.add('hidden');
+                    });
+                    signoutOption.addEventListener('click', async function(e) {
+                        e.preventDefault();
+                        // Use global auth manager for logout
+                        if (window.authManager) {
+                            const result = await window.authManager.logout();
+                            if (result.success) {
+                                // Use path-aware redirect
+                                const currentPath = window.location.pathname;
+                                if (currentPath.includes('/Demo-Music')) {
+                                    window.location.href = '/Demo-Music/signin';
+                                } else {
+                                    window.location.href = 'signin.html';
+                                }
+                            }
+                        } else {
+                            // Fallback
+                            await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+                            localStorage.clear();
+                            // Use path-aware redirect
+                            const currentPath = window.location.pathname;
+                            if (currentPath.includes('/Demo-Music')) {
+                                window.location.href = '/Demo-Music/signin';
+                            } else {
+                                window.location.href = 'signin.html';
+                            }
+                        }
+                    });
+                    // Avatar selection logic
+                    function loadProfileModal() {
+                        // Example avatars (add more as needed)
+                        const freeAvatars = [
+                            '😀','🎵','😎','🌈','🐱','🐶','🦄','🌟'
+                        ];
+                        const lockedAvatars = [
+                            {icon:'👑', goal:'Complete 5 sessions'},
+                            {icon:'🚀', goal:'Reach 7-day streak'},
+                            {icon:'🧘', goal:'Finish 3 mood quizzes'}
+                        ];
+                        const avatarGrid = document.getElementById('avatarGrid');
+                        avatarGrid.innerHTML = '';
+                        freeAvatars.forEach(avatar => {
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
+                            btn.textContent = avatar;
+                            btn.style.fontSize = '2rem';
+                            btn.style.background = 'none';
+                            btn.style.border = selectedAvatar === avatar ? '2px solid #10b981' : '1px solid #ccc';
+                            btn.style.borderRadius = '50%';
+                            btn.style.cursor = 'pointer';
+                            btn.style.padding = '0.3rem 0.5rem';
+                            btn.style.transition = 'border 0.2s';
+                            btn.addEventListener('click', function() {
+                                selectedAvatar = avatar;
+                                loadProfileModal();
+                            });
+                            avatarGrid.appendChild(btn);
+                        });
+                        lockedAvatars.forEach(locked => {
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
+                            btn.textContent = locked.icon;
+                            btn.style.fontSize = '2rem';
+                            btn.style.background = 'none';
+                            btn.style.border = '1px solid #ccc';
+                            btn.style.borderRadius = '50%';
+                            btn.style.cursor = 'not-allowed';
+                            btn.style.padding = '0.3rem 0.5rem';
+                            btn.style.opacity = '0.5';
+                            btn.title = `Locked: ${locked.goal}`;
+                            btn.disabled = true;
+                            avatarGrid.appendChild(btn);
+                        });
+                        // Load user info (stub: you can load from backend/localStorage)
+                        document.getElementById('profileName').value = 'Your Name';
+                        document.getElementById('profileEmail').value = 'your@email.com';
+                        document.getElementById('profileBirthday').value = '';
+                        document.getElementById('profileGender').value = '';
+                    }
+                    document.getElementById('profileForm').addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        // Save changes (stub: send to backend)
+                        profileModal.classList.add('hidden');
+                        alert('Profile updated! (This would save to backend in production)');
+                    });
+                } else {
+                    // Wait a bit more for auth manager to initialize
+                    setTimeout(() => waitForAuthManager(), 100);
+                }
+            };
+            
+            // Start waiting for auth manager
+            waitForAuthManager();
         });
     </script>
+    <script src="frontend_integration.js"></script>
+    <script src="auth-config.js"></script>
 </body>
 </html> 

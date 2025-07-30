@@ -1,18 +1,24 @@
-from flask import Flask, request, jsonify, session, render_template, send_from_directory
-from flask_cors import CORS
-from werkzeug.security import generate_password_hash, check_password_hash
-import sqlite3
 import json
-import random
-from datetime import datetime, timedelta
 import os
+import random
+import sqlite3
+from datetime import datetime, timedelta
+
 import requests
+from flask import (Flask, jsonify, render_template, request,
+                   send_from_directory, session)
+from flask_cors import CORS
+from werkzeug.security import check_password_hash, generate_password_hash
 
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', None)
 
 app = Flask(__name__)
-app.secret_key = 'majorchord_secret_key_2024'
-CORS(app)
+
+from config import Config
+
+app.config.from_object(Config)
+
+CORS(app, resources={r"/*": {"origins": Config.CORS_ORIGINS}}, supports_credentials=True)
 
 # Database initialization
 def init_db():
@@ -29,6 +35,18 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+    
+    # Add birthday column if not exists
+    try:
+        cursor.execute('ALTER TABLE users ADD COLUMN birthday DATE')
+    except sqlite3.OperationalError:
+        pass  # Column already exists
+    
+    # Add gender column if not exists
+    try:
+        cursor.execute('ALTER TABLE users ADD COLUMN gender TEXT')
+    except sqlite3.OperationalError:
+        pass  # Column already exists
     
     # Quiz results table
     cursor.execute('''
@@ -211,6 +229,8 @@ def register():
     username = data.get('username')
     email = data.get('email')
     password = data.get('password')
+    birthday = data.get('birthday')
+    gender = data.get('gender')
     
     if not all([username, email, password]):
         return jsonify({'error': 'All fields are required'}), 400
@@ -221,8 +241,8 @@ def register():
     try:
         password_hash = generate_password_hash(password)
         cursor.execute(
-            'INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)',
-            (username, email, password_hash)
+            'INSERT INTO users (username, email, password_hash, birthday, gender) VALUES (?, ?, ?, ?, ?)',
+            (username, email, password_hash, birthday, gender)
         )
         conn.commit()
         user_id = cursor.lastrowid
@@ -242,17 +262,22 @@ def register():
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
-    email = data.get('email')
+    identifier = data.get('email') or data.get('username')
     password = data.get('password')
     
-    if not all([email, password]):
-        return jsonify({'error': 'Email and password are required'}), 400
+    if not identifier or not password:
+        return jsonify({'error': 'Identifier and password are required'}), 400
     
     conn = sqlite3.connect('majorchord.db')
     cursor = conn.cursor()
     
-    cursor.execute('SELECT id, username, email, password_hash FROM users WHERE email = ?', (email,))
+    cursor.execute('SELECT id, username, email, password_hash FROM users WHERE email = ?', (identifier,))
     user = cursor.fetchone()
+    
+    if not user:
+        cursor.execute('SELECT id, username, email, password_hash FROM users WHERE username = ?', (identifier,))
+        user = cursor.fetchone()
+    
     conn.close()
     
     if user and check_password_hash(user[3], password):
@@ -264,7 +289,7 @@ def login():
             'email': user[2]
         })
     else:
-        return jsonify({'error': 'Invalid email or password'}), 401
+        return jsonify({'error': 'Invalid credentials'}), 401
 
 @app.route('/api/logout', methods=['POST'])
 def logout():
@@ -791,16 +816,14 @@ def search_music():
     query = request.args.get('q', '').strip()
     genre = request.args.get('genre', '')
     mood = request.args.get('mood', '')
-    
-    if not query and not genre and not mood:
-        return jsonify({'error': 'Search query, genre, or mood is required'}), 400
+    limit = request.args.get('limit', 20)
     
     conn = sqlite3.connect('majorchord.db')
     cursor = conn.cursor()
     
     # Build search query
     sql = '''
-        SELECT id, title, artist, genre, mood, tempo, energy_level, audio_file
+        SELECT id, title, artist, genre, mood, tempo, energy_level, audio_file, duration
         FROM music_library WHERE 1=1
     '''
     params = []
@@ -818,7 +841,8 @@ def search_music():
         sql += ' AND mood = ?'
         params.append(mood)
     
-    sql += ' ORDER BY title LIMIT 20'
+    sql += ' ORDER BY title LIMIT ?'
+    params.append(int(limit))
     
     cursor.execute(sql, params)
     tracks = cursor.fetchall()
@@ -834,7 +858,8 @@ def search_music():
             'mood': track[4],
             'tempo': track[5],
             'energy_level': track[6],
-            'audio_file': track[7]
+            'audio_file': track[7],
+            'duration': track[8]
         })
     
     return jsonify({'tracks': result, 'total': len(result)})
@@ -908,23 +933,103 @@ def health_insights():
 # Serve frontend
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return send_from_directory('.', 'index.html')
+
+@app.route('/Demo-Music')
+def demo_music_index():
+    return send_from_directory('.', 'index.html')
+
+@app.route('/Demo-Music/')
+def demo_music_index_slash():
+    return send_from_directory('.', 'index.html')
 
 @app.route('/signin')
 def signin():
-    return render_template('signin.html')
+    return send_from_directory('.', 'signin.html')
+
+@app.route('/Demo-Music/signin')
+def demo_music_signin():
+    return send_from_directory('.', 'signin.html')
 
 @app.route('/signup')
 def signup():
-    return render_template('signup.html')
+    return send_from_directory('.', 'signup.html')
+
+@app.route('/Demo-Music/signup')
+def demo_music_signup():
+    return send_from_directory('.', 'signup.html')
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    return send_from_directory('.', 'dashboard.html')
+
+@app.route('/Demo-Music/dashboard')
+def demo_music_dashboard():
+    return send_from_directory('.', 'dashboard.html')
 
 @app.route('/test')
 def test_buttons():
     return send_from_directory('.', 'test_buttons.html')
+
+@app.route('/Demo-Music/test')
+def demo_music_test():
+    return send_from_directory('.', 'test_buttons.html')
+
+@app.route('/chatbot')
+def chatbot():
+    return send_from_directory('.', 'chatbot.html')
+
+@app.route('/Demo-Music/chatbot')
+def demo_music_chatbot():
+    return send_from_directory('.', 'chatbot.html')
+
+@app.route('/goals')
+def goals():
+    return send_from_directory('.', 'goals.html')
+
+@app.route('/Demo-Music/goals')
+def demo_music_goals():
+    return send_from_directory('.', 'goals.html')
+
+@app.route('/mood-assessment')
+def mood_assessment():
+    return send_from_directory('.', 'mood-assessment.html')
+
+@app.route('/Demo-Music/mood-assessment')
+def demo_music_mood_assessment():
+    return send_from_directory('.', 'mood-assessment.html')
+
+@app.route('/music-player')
+def music_player():
+    return send_from_directory('.', 'music-player.html')
+
+@app.route('/Demo-Music/music-player')
+def demo_music_music_player():
+    return send_from_directory('.', 'music-player.html')
+
+@app.route('/auth-debug')
+def auth_debug():
+    return send_from_directory('.', 'auth-debug.html')
+
+@app.route('/Demo-Music/auth-debug')
+def demo_music_auth_debug():
+    return send_from_directory('.', 'auth-debug.html')
+
+@app.route('/auth-debug-simple')
+def auth_debug_simple():
+    return send_from_directory('.', 'auth-debug-simple.html')
+
+@app.route('/Demo-Music/auth-debug-simple')
+def demo_music_auth_debug_simple():
+    return send_from_directory('.', 'auth-debug-simple.html')
+
+@app.route('/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('.', filename)
+
+@app.route('/Demo-Music/<path:filename>')
+def demo_music_serve_static(filename):
+    return send_from_directory('.', filename)
 
 @app.route('/api/audio/<filename>')
 def serve_audio(filename):
@@ -933,6 +1038,22 @@ def serve_audio(filename):
         return send_from_directory('audio', filename)
     except FileNotFoundError:
         return jsonify({'error': 'Audio file not found'}), 404
+
+@app.route('/@/audio/<filename>')
+def serve_audio_alias(filename):
+    """Serve audio files from the audio directory using @/audio alias"""
+    try:
+        return send_from_directory('audio', filename)
+    except FileNotFoundError:
+        return jsonify({'error': 'Audio file not found'}), 404
+
+@app.route('/@/js/<filename>')
+def serve_js_alias(filename):
+    """Serve JavaScript files from the js directory using @/js alias"""
+    try:
+        return send_from_directory('js', filename)
+    except FileNotFoundError:
+        return jsonify({'error': 'JavaScript file not found'}), 404
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -991,7 +1112,45 @@ def chat():
     except Exception as e:
         return jsonify({'error': str(e), 'sentiment': 'Unknown'}), 500
 
+# New endpoint to expose environment variables
+@app.route('/api/env')
+def env():
+    return jsonify({
+        'OPENAI_API_KEY': os.environ.get('OPENAI_API_KEY'),
+        'API_BASE_URL': os.environ.get('API_BASE_URL')
+    })
+
+# Simple session check endpoint
+@app.route('/api/session-check')
+def session_check():
+    """Simple endpoint to check if user session is valid"""
+    if 'user_id' not in session:
+        return jsonify({'authenticated': False, 'error': 'No session'}), 401
+    
+    user_id = session['user_id']
+    conn = sqlite3.connect('majorchord.db')
+    cursor = conn.cursor()
+    
+    try:
+        # Get user info
+        cursor.execute('SELECT username, email FROM users WHERE id = ?', (user_id,))
+        user = cursor.fetchone()
+        conn.close()
+        
+        if user:
+            return jsonify({
+                'authenticated': True,
+                'user_id': user_id,
+                'username': user[0],
+                'email': user[1]
+            })
+        else:
+            return jsonify({'authenticated': False, 'error': 'User not found'}), 401
+    except Exception as e:
+        conn.close()
+        return jsonify({'authenticated': False, 'error': str(e)}), 500
+
 if __name__ == '__main__':
     init_db()
     populate_sample_data()
-    app.run(debug=True, host='0.0.0.0', port=5000) 
+    app.run(debug=True, port=5001) 

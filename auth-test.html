@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication State Test - MajorChord</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .auth-state {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        .nav-test {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔐 Authentication State Test Page</h1>
+    
+    <div class="test-section">
+        <h2>Current Authentication State</h2>
+        <div id="authState" class="auth-state">Loading...</div>
+        <div id="userInfo"></div>
+        <button onclick="refreshAuthState()">Refresh State</button>
+        <button onclick="clearAuthState()">Clear Auth State</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Navigation Elements Test</h2>
+        <p>These elements should appear/disappear based on authentication state:</p>
+        
+        <!-- Test auth links (should hide when logged in) -->
+        <div class="nav-test">
+            <h4>Auth Links (should hide when logged in):</h4>
+            <div id="authLinks" style="display: flex; gap: 1rem;">
+                <a href="signin.html" id="signinLink">🔑 Sign In</a>
+                <a href="signup.html" id="signupLink">👤 Sign Up</a>
+            </div>
+        </div>
+
+        <!-- Test user section (should show when logged in) -->
+        <div class="nav-test">
+            <h4>User Section (should show when logged in):</h4>
+            <div id="userSection" style="display: none;">
+                <span>Welcome, <span id="userName">User</span>!</span>
+                <div>
+                    <span id="profileInitials">U</span>
+                    <span id="profileName">User</span>
+                    <span id="profileEmail">user@example.com</span>
+                    <span id="profileInitialsLarge">U</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Actions</h2>
+        <button onclick="simulateLogin()">🔓 Simulate Login</button>
+        <button onclick="simulateLogout()">🔒 Simulate Logout</button>
+        <button onclick="testNavigationPages()">📄 Test Navigation Pages</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="testResults"></div>
+    </div>
+
+    <script src="frontend_integration.js"></script>
+    <script>
+        let testResults = [];
+
+        function addTestResult(message, type = 'info') {
+            testResults.push({ message, type, timestamp: new Date().toLocaleTimeString() });
+            updateTestResults();
+        }
+
+        function updateTestResults() {
+            const container = document.getElementById('testResults');
+            container.innerHTML = testResults.map(result => 
+                `<div class="status ${result.type}">[${result.timestamp}] ${result.message}</div>`
+            ).join('');
+        }
+
+        function refreshAuthState() {
+            if (!window.authManager) {
+                addTestResult('❌ AuthManager not found!', 'error');
+                return;
+            }
+
+            const user = window.authManager.getCurrentUser();
+            const isLoggedIn = window.authManager.isLoggedIn();
+            
+            document.getElementById('authState').textContent = isLoggedIn ? '✅ LOGGED IN' : '❌ LOGGED OUT';
+            document.getElementById('authState').style.color = isLoggedIn ? 'green' : 'red';
+            
+            if (user) {
+                document.getElementById('userInfo').innerHTML = `
+                    <div><strong>Username:</strong> ${user.username}</div>
+                    <div><strong>Email:</strong> ${user.email}</div>
+                    <div><strong>User ID:</strong> ${user.user_id}</div>
+                `;
+            } else {
+                document.getElementById('userInfo').innerHTML = '<div>No user data available</div>';
+            }
+
+            addTestResult(`Auth state refreshed: ${isLoggedIn ? 'LOGGED IN' : 'LOGGED OUT'}`, isLoggedIn ? 'success' : 'info');
+            
+            // Test navigation element visibility
+            const authLinks = document.getElementById('authLinks');
+            const userSection = document.getElementById('userSection');
+            
+            addTestResult(`Auth links display: ${authLinks.style.display}`, 'info');
+            addTestResult(`User section display: ${userSection.style.display}`, 'info');
+        }
+
+        function clearAuthState() {
+            localStorage.removeItem('majorchord_user');
+            addTestResult('Cleared auth state from localStorage', 'info');
+            if (window.authManager) {
+                window.authManager.currentUser = null;
+                window.authManager.updateAllUIElements();
+            }
+            refreshAuthState();
+        }
+
+        async function simulateLogin() {
+            // Create fake user data
+            const fakeUser = {
+                user_id: 999,
+                username: 'testuser',
+                email: 'test@example.com'
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('majorchord_user', JSON.stringify(fakeUser));
+            
+            // Update auth manager
+            if (window.authManager) {
+                window.authManager.currentUser = fakeUser;
+                window.authManager.updateAllUIElements();
+            }
+            
+            addTestResult('✅ Simulated login successful', 'success');
+            refreshAuthState();
+        }
+
+        async function simulateLogout() {
+            if (window.authManager) {
+                await window.authManager.logout();
+                addTestResult('✅ Simulated logout successful', 'success');
+            } else {
+                clearAuthState();
+                addTestResult('✅ Manual logout completed', 'info');
+            }
+            refreshAuthState();
+        }
+
+        function testNavigationPages() {
+            const pages = ['index.html', 'dashboard.html', 'signin.html', 'signup.html', 'mood-assessment.html', 'chatbot.html', 'goals.html'];
+            addTestResult(`📄 Available pages to test: ${pages.join(', ')}`, 'info');
+            addTestResult('💡 Navigate to these pages and verify auth state persists correctly', 'info');
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            addTestResult('🚀 Auth test page loaded', 'success');
+            
+            // Wait for auth manager to initialize
+            setTimeout(() => {
+                if (window.authManager) {
+                    addTestResult('✅ AuthManager found and initialized', 'success');
+                    
+                    // Add auth state change listener
+                    window.authManager.onAuthStateChange((user) => {
+                        addTestResult(`🔄 Auth state changed: ${user ? 'LOGGED IN' : 'LOGGED OUT'}`, user ? 'success' : 'info');
+                        refreshAuthState();
+                    });
+                } else {
+                    addTestResult('❌ AuthManager not found!', 'error');
+                }
+                
+                refreshAuthState();
+            }, 200);
+        });
+    </script>
+</body>
+</html> 

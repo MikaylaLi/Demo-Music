@@ -90,9 +90,158 @@
         .btn:hover {
             background: #059669;
         }
+
+        /* ===== HEADER STYLES ===== */
+        header {
+            background: #8b5cf6;
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.1);
+        }
+
+        .header-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.7rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            cursor: pointer;
+        }
+
+        /* ===== NAVBAR ENHANCEMENTS ===== */
+        .nav-btn {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s;
+            font-weight: 600;
+            background: rgba(255,255,255,0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.4) !important;
+            transform: translateY(-1px);
+        }
+
+        .nav-btn.current {
+            background: rgba(255,255,255,0.3);
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+
+        .mobile-nav {
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1024px) {
+            .main-nav {
+                display: none !important;
+            }
+            
+            .mobile-menu-toggle {
+                display: block !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                width: 95%;
+            }
+
+            .container {
+                margin: 1.5rem auto;
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.3rem !important;
+            }
+
+            .container {
+                margin: 1rem auto;
+                padding: 1.5rem 1rem;
+            }
+        }
     </style>
 </head>
 <body>
+    <header>
+        <div class="header-container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="logo" onclick="window.location.href='index.html'">MajorChord</div>
+            
+            <!-- Main Navigation -->
+            <nav class="main-nav" style="display: flex; align-items: center; gap: 1.5rem;">
+                <a href="index.html" class="nav-btn">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="dashboard.html" class="nav-btn">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="mood-assessment.html" class="nav-btn">
+                    <i class="fas fa-brain"></i> Mood Assessment
+                </a>
+                <a href="chatbot.html" class="nav-btn">
+                    <i class="fas fa-comments"></i> AI Chat
+                </a>
+                <a href="goals.html" class="nav-btn current">
+                    <i class="fas fa-bullseye"></i> Goals
+                </a>
+            </nav>
+
+            <!-- User Section -->
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <!-- Mobile Menu Toggle -->
+                <button id="mobileMenuToggle" class="mobile-menu-toggle" style="display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <a href="dashboard.html" style="color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600;">
+                    <i class="fas fa-arrow-left"></i> Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobileNav" class="mobile-nav" style="display: none; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 1rem; border-top: 1px solid rgba(255,255,255,0.3); margin-top: 1rem; border-radius: 10px;">
+            <a href="index.html" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600;">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="dashboard.html" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600;">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="mood-assessment.html" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600;">
+                <i class="fas fa-brain"></i> Mood Assessment
+            </a>
+            <a href="chatbot.html" class="mobile-nav-item" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.1); font-weight: 600;">
+                <i class="fas fa-comments"></i> AI Chat
+            </a>
+            <a href="goals.html" class="mobile-nav-item current" style="display: block; color: #2d3748; text-decoration: none; padding: 0.75rem 0; font-weight: 600; background: rgba(16,185,129,0.1);">
+                <i class="fas fa-bullseye"></i> Goals
+            </a>
+        </div>
+    </header>
+
     <div class="container">
         <h1><i class="fas fa-bullseye"></i> Your Goals</h1>
         <div class="section">
@@ -163,6 +312,75 @@
                 <div style="font-size:0.95em; color:${goal.met ? '#10b981':'#ef4444'}; font-weight:600;">${goal.met ? 'Goal achieved!' : 'Keep going!'}</div>
             </div>
         `).join('');
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('Goals: Initializing...');
+            
+            // Wait for auth manager to be initialized and check authentication
+            const waitForAuthManager = async () => {
+                console.log('Goals: Checking for authManager...', !!window.authManager);
+                if (window.authManager) {
+                    console.log('Goals: AuthManager found, checking authentication...');
+                    
+                    // Check if user is authenticated
+                    const isAuthenticated = await window.authManager.requireAuth();
+                    if (!isAuthenticated) {
+                        console.log('Goals: User not authenticated, redirecting...');
+                        return; // requireAuth handles the redirect
+                    }
+                    
+                    console.log('Goals: User authenticated, proceeding with initialization...');
+                    
+                    // Proceed with mobile menu functionality
+                    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+                    const mobileNav = document.getElementById('mobileNav');
+                    
+                    if (mobileMenuToggle && mobileNav) {
+                        mobileMenuToggle.addEventListener('click', function() {
+                            const isOpen = mobileNav.style.display === 'block';
+                            mobileNav.style.display = isOpen ? 'none' : 'block';
+                            
+                            // Toggle icon
+                            const icon = mobileMenuToggle.querySelector('i');
+                            icon.className = isOpen ? 'fas fa-bars' : 'fas fa-times';
+                        });
+                    }
+
+                    // Close mobile menu when clicking on a link
+                    const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+                    mobileNavItems.forEach(item => {
+                        item.addEventListener('click', function() {
+                            if (mobileNav) {
+                                mobileNav.style.display = 'none';
+                                const icon = mobileMenuToggle.querySelector('i');
+                                if (icon) icon.className = 'fas fa-bars';
+                            }
+                        });
+                    });
+
+                    // Close mobile menu when clicking outside
+                    document.addEventListener('click', function(event) {
+                        if (mobileNav && mobileMenuToggle && 
+                            !mobileNav.contains(event.target) && 
+                            !mobileMenuToggle.contains(event.target) &&
+                            mobileNav.style.display === 'block') {
+                            mobileNav.style.display = 'none';
+                            const icon = mobileMenuToggle.querySelector('i');
+                            if (icon) icon.className = 'fas fa-bars';
+                        }
+                    });
+                } else {
+                    // Wait a bit more for auth manager to initialize
+                    setTimeout(() => waitForAuthManager(), 100);
+                }
+            };
+            
+            // Start waiting for auth manager
+            waitForAuthManager();
+        });
     </script>
+    <script src="frontend_integration.js"></script>
+    <script src="auth-config.js"></script>
 </body>
 </html> 
